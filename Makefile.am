@@ -1,0 +1,12 @@
+# $Id$
+# $URL: $
+
+SUBDIRS = src include config
+
+EXTRA_DIST = bootstrap AUTHORS TODO NEWS test.txt
+
+docdir = $(datadir)/doc/$(PACKAGE)
+doc_DATA = ChangeLog
+
+$(top_srcdir)/ChangeLog: $(top_srcdir)/NEWS
+	svn update; svn2cl --include-rev

@@ -1,0 +1,123 @@
+     wordt op een verdere stijging gerekend.Het aantal horeca-bedrijven steeg
+
+-"'t 1
+-"Molly 1
+-"Natuurlijk 1
+-"Steeds 1
+-"Van 1
+-"een 1
+-"en 1
+
+-'45 1
+-'56 1
+-'60 1
+
+-,,solidariteit''- 1
+
+--,,De 2
+--,,daaraan 1
+--,,vrij 1
+--- 141
+---- 28
+----- 28
+-----175.018----- 1
+-----21.141--- 1
+-----4 1
+----1,13----1,26-- 3
+----1,44----1,40-- 3
+----1,48----1,48-- 3
+----1,56----1,63-- 3
+
+
+----____-- 12
+
+--103,59--(101,75 1
+
+-1946 1
+-1948 1
+-1956 1
+-1965 1
+
+-@en 1
+-@in 1
+-@met 1
+-@waar 1
+
+andere een lid van de na-oorlogse generatie -Beate Karsfeld- hem het
+
+* eenheid van tokenizen: kijken over regels heen naar dingen als hierboven
+
+de roem van Daimler- -Benz vestigden . Maar hij tekende ook de nieuwe
+
+* SGML tags bewaren:
+  nu in VNU krantenteksten: <p> en <lb>
+  in Volkskrant en Groene ook nog: <b>, </b>, <i>, </i>
+
+hebben .. .. HpH Hoofdstukken over het kamp en over de felle vriendschap
+(origineel: hebben.... HpH Hoofdstukken over het kamp en over de felle vriendschap)
+
+de opium , weliswaar werd zij communiste , weliswaar . . . . Maar ! Zij was
+(origineel: de opium, weliswaar werd zij communiste, weliswaar ....Maar! Zij was)
+
+0,38)-- 1
+
+l987 wordt dan: HpH Percentage ----- opvolgende
+16 over eerste - 9.759 (- 9.574) -- 9.759 (- 9.574)--- 1.561 (- 1.531)
+25 over volgende 7.505 (- 7.373) - 17.264 ( 16.947) -- 3.437 (- 3.374)
+32 idem
+Het te betalen bedrag wordt naar beneden afgerond. Bedragen van | 140
+(was | 137) en minder worden niet geheven. De grens waarboven men een
+
+nieuwe wagen stapten , naar | 23@300.- . In ' 82 en ' 83 lag de som nog op
+
+* kijken naar apestaartjes
+
+punten na cijfers losmaken:
+
+1987. 1
+1988. 1
+1991/1992. 1
+1@000. 1
+2. 13
+
+
+[corpus@pi1560 ~/Basic]$ nice +10 wc *.txt*
+2741757 27808443 179041362 anda.txt.0.01
+ 942724 9156169 57567824 bd98.txt.0.01
+ 937911 9305906 58576374 ed98.txt.0.01
+2737186 24585239 154742112 ge96.txt.0.01
+2428060 24168920 151945582 ge97.txt.0.01
+ 244996 2778362 17651876 groe.txt.0.01
+ 599789 6979704 44491064 volk.txt.0.01
+10632423 104782743 664016194 total
+
+[corpus@pi1560 ~/Basic]$ nice +10 gawk '{for (i=1;i<NF;i++) if ($i~/^[A-Za-z][-A-Za-z]*\.[,\!?):;]*$/ && $(i+1)~/^[a-z]/) {match($i,/\./); print substr($i,0,RSTART)}}' *txt* | sort | uniq -c > potentiele_afkortingen
+wc potentiele_afkortingen   2488
+
+perl -e 'open(ABBR,"<abbr.ned") or die "Cannot open abbr.ned\n"; @lines=<ABBR>; foreach $line (@lines) { chop($line); $abbr{$line}=1;} close(ABBR); @lines=<STDIN>; foreach $line (@lines) { if ($line=~/^ *[0-9]+\t([-A-Za-z]+)\. *\n$/ && not(exists($abbr{$1}))) { if ($line!~/^ *[0-9]+\t[A-Z]\. *\n$/) { print "$line"; }}}' < potentiele_afkortingen > potentiele_afkortingen2
+wc potentiele_afkortingen2   2355
+
+
+- aan begin en eind van woord altijd loshalen
+,, aan het begin (of achter -) samen los
+sequentie van - of . samen laten
+lijst met <SGML-tags> die bewaard moeten blijven inlezen
+punten na cijfers losmaken
+' voor getallen loshalen tenzij precies twee cijfers ('45)
+
+<utt>
+
+head -1000 /mnt/corpus/Basic/bd98.sgml.0.01 | gawk 'BEGIN{ORS=" "}{print $0}' | perl /mnt/corpus/Tokenizer/tokenize.pl ned | gawk 'BEGIN{RS="<utt>"}{print $0}' | more
+
+
+*** anda
+gijzeling in Iran van52 Amerikanen
+eind l979 tot begin l98l aansleepte
+<utt> VernederingDe 52 gevangenen van fanatieke
+Ronald Reagan stelde in l980
+zal zijn".GrootspraakIedereen wist dat het
+had na de ' doemdenk'-jaren van Carter
+ging er nu extra geld naar anti - terreureenheden
+
+
+

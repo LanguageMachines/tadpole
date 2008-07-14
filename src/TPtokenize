@@ -1,0 +1,405 @@
+#! /usr/bin/perl -w
+
+#######################################################################
+
+# Tokenize
+# Copyright (c) 1998 Sabine Buchholz
+#         
+# Tokenize is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# Tokenize is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# For more information and updates, see:
+# http://ilk.uvt.nl/tadpole
+
+#######################################################################
+
+# known problems:
+# inclusief de '20.000 gedocumenteerde gevallen'
+# vs.
+# in '40-'45 was geen schande voor een lid van de
+# at the moment: separate ' from number except if number has exactly two digits
+
+# 1. Het gaat slecht met de economie.
+# vs.
+# MDA was de originele 'Love Drug' van 1968.
+# at the moment: always separate "." from number unless "." is mentioned in file "ordinals"
+
+# een peiler van de maatschappij met -ei- in plaats van met -ij-.
+# Niet alle actrices hoeven in relatiedrama's of -komedies 
+# vs.
+# Joegoslavi&euml; -het land van de zuid-Slaven- is ontstaan rond 
+# at the moment: separate - at beginning and end
+
+# Jason Epstein zegt dat zijn (inmiddels ex-)vrouw
+# Een psychoanalytische studie van Irvine Schiffer over de rol van charisma in onze massa- (en media-)maatschappij
+
+#######################################################################
+
+if (@ARGV==0) {
+    die "You must choose a language as first argument, e.g. tokenize.pl eng < file!\n";
+}
+else {
+    $lang=$ARGV[0];
+}
+
+$path='./config';
+
+print STDERR " TPtokenizer: Initializing ... \n";
+
+# read in the known abbreviations
+open(FH,"<$path/abbr.$lang") or die "Cannot open $path/abbr.$lang!\n";
+@lines=<FH>;
+foreach $line (@lines) {   # for each line
+    if ($line!~/^#/) {     # except comment
+	chop($line);
+	$abbr{$line}=1;
+    }
+}
+close(FH);
+
+# read in the known words starting with "'"
+# e.g. 's morgens => 's morgens
+open(FH,"<$path/apostrof.$lang") or die "Cannot open $path/apostrof.$lang!\n";
+@lines=<FH>;
+foreach $line (@lines) {   # for each line
+    if ($line!~/^#/) {     # except comment
+	chop($line);
+	$apo{$line}=1;
+    }
+}
+close(FH);
+
+# read in the known special words
+# e.g. haste => hast du / nen => einen / ie => hij / zum => zu dem / cannot => can not
+open(FH,"<$path/special_words.$lang") or die "Cannot open $path/special_words.$lang!\n";
+@lines=<FH>;
+foreach $line (@lines) {   # for each line
+    if ($line!~/^#/) {     # except comment
+	chop($line);
+	if ($line=~/^(\S+) (\S+)$/) {
+	    $spec1{$1}=$2;
+	}
+	elsif ($line=~/^(\S+) (\S+) (\S+)$/) {
+	    $spec2{$1}=1;
+	    $spec2_1{$1}=$2;
+	    $spec2_2{$1}=$3;
+	}
+	else {
+	    print STDERR "Illegal line in file special_words: $line\n";
+	}
+    }
+}
+close(FH);
+
+# read in the known special prefixes
+# e.g. l'avoir => l' avoir
+$max_pref=0;
+open(FH,"<$path/prefixes.$lang") or die "Cannot open $path/prefixes.$lang!\n";
+@lines=<FH>;
+foreach $line (@lines) {   # for each line
+    if ($line!~/^#/) {     # except comment
+	chop($line);
+	if ($line=~/^(\S+) (\S+)$/) {
+	    $pref{$1}=$2;
+	    if (length($1)>$max_pref) {
+		$max_pref=length($1);
+	    }
+	}
+	else {
+	    print STDERR "Illegal line in file prefixes: $line\n";
+	}
+    }
+}
+close(FH);
+
+# read in the known special suffixes
+# e.g. it's => it 's / Peter's => Peter 's / dat-ie => dat ie/hij
+$max_suff=0;
+open(FH,"<$path/suffixes.$lang") or die "Cannot open $path/suffixes.$lang!\n";
+@lines=<FH>;
+foreach $line (@lines) {   # for each line
+    if ($line!~/^#/) {     # except comment
+	chop($line);
+	if ($line=~/^(\S+) (\S+)$/) {
+	    $suff{$1}=$2;
+	    if (length($1)>$max_suff) {
+		$max_suff=length($1);
+	    }
+	}
+	else {
+	    print STDERR "Illegal line in file suffixes: $line\n";
+	}
+    }
+}
+close(FH);
+
+# read in the known suffixes for ordinals
+# 1e en 2de => 1e en 2de
+open(FH, "<$path/ordinals.$lang") or die "Cannot open $path/ordinals.$lang!\n";
+@lines=<FH>;
+foreach $line (@lines) {   # for each line
+    if ($line!~/^#/) {     # except comment
+	chop($line);
+	$ordinals{$line} = 1;
+    }
+}
+close(FH);
+
+# read in the known measurements
+# e.g. 5km => 5 km
+open(FH,"<$path/measure.$lang") or die "Cannot open $path/measure.$lang!\n";
+@lines=<FH>;
+foreach $line (@lines) {   # for each line
+    if ($line!~/^#/) {     # except comment
+	chop($line);
+	$meas{$line}=1;
+    }
+}
+close(FH);
+
+# read in the known currency names
+# e.g. f5,- => f 5,-
+open(FH,"<$path/money") or die "Cannot open $path/money!\n";
+@lines=<FH>;
+foreach $line (@lines) {   # for each line
+    if ($line!~/^#/) {     # except comment
+	chop($line);
+	$money{$line}=1;
+    }
+}
+close(FH);
+
+# read in the known SGML tags
+open(FH,"<$path/sgml") or die "Cannot open $path/sgml!\n";
+@lines=<FH>;
+foreach $line (@lines) {   # for each line
+    if ($line!~/^#/) {     # except comment
+	chop($line);
+	$sgml{$line}=1;
+    }
+}
+close(FH);
+
+#read in HTML char modifiers (&.acute ...)
+open(FH,"<$path/HTMLtags") or die "Cannot open $path/HTMLtags!\n";
+
+# to display & enter accented chars in emacs, do:
+# M-x load-library iso-transl
+# M-x standard-display-european
+
+# niet aanwezige accenten:
+# typos: eaigu, guml, uuol, gacute, eacutg, euol, ewml 
+# typos zijn opgenomen in hash met als resultaat het goede symbool ...
+
+# *slash
+# Yuml
+
+@lines=<FH>;
+foreach $line (@lines) {
+    chop($line);
+    if (substr($line,0,1) eq '#') {
+	next;
+    }
+    @tmpAccents = split(/ /,$line);
+#    $tags{$line}=1;
+    $tags{$tmpAccents[0]} = $tmpAccents[1];
+}
+close(FH);
+# Yek!
+$tags{"nbsp"}=" ";
+# to print the tag2symbol table (%tags) (on STDERR):
+# uncomment following 3 lines
+#while (($key, $value) = each(%tags)) {
+#    print STDERR "tag: $key \t symbol: $value \n";
+#}
+
+# print STDERR "Init done\n";
+
+$counter=0;
+@lines=<STDIN>;
+foreach $line (@lines) {
+    $counter++;
+#   print STDERR "$counter\r";
+    chop($line);
+#   print "inputline: $line\n";
+
+# tokenize
+    $line=~s/(<[^<>]+>)/ $1 /g;             # SGML-tags
+# paragraph or line break followed by capital letter: end of utterance:
+    $line=~s/([^ ,])(( +<\/?(p|P|lb)>)+) +([^ a-zA-Z]*[A-Z])/$1 <utt> $2 $5/g;  
+    $line=~s/&amp;/ & /g;
+    $line=~s/&pound;/ &pound; /g;
+    $line=~s/&nbsp;/ /g;
+    $line=~s/(\S*[A-Za-z]),([A-Za-z]\S*)/$1 , $2/g;  # punctuation with missing space
+    @words=split(/\s+/,$line);
+    if (@words>0) {                   
+	if ($words[0] eq '') {        # extra blanks at beginning of line
+	    shift(@words);
+	}
+	if ($words[-1] eq '') {       # extra blanks at end of line
+	    pop(@words);
+	}
+	@words2=();                   
+	while (@words>0) {
+	    $word=shift(@words);
+#	    print STDERR "$word ";
+
+	    if ($word=~/^<(.*)>$/ && exists($sgml{$1})) {
+		push(@words2,$word);
+		next;
+	    }
+
+# punctuation with missing space
+	    if ($word=~/^(.*[a-z]\.)([A-Z][^.]*)$/) { # gerekend.Het afnemen.Jaarlijks # not: U.S.
+	        $tmp1=$1;
+		$tmp2=$2;
+		if ($tmp1!~/@|www|http/) {
+		    unshift(@words,$tmp2);
+		    $word=$tmp1;
+		}
+	    }
+
+# word starts with punctuation # don't separate ,, ... -- '' etc.
+	    while ( $word=~/^([#"(){}\[\]!?:;@\$%^&*+|=~<>\/\\_]|\.+|,+|-+|`+|'+)(.+)$/ ) {
+	        $tmp1=$1;
+		$tmp2=$2;
+		if (exists($apo{$word}) # 's morgens
+		    || ( $tmp1 eq '(' && $tmp2=~/\)[-A-Za-z]/ ) # (oud-)student, (her)-introductie
+		    || ( $tmp1 eq '.' && $tmp2=~/^[0-9]/ ) # kaliber .22
+		    || ( $tmp1 eq "'" && $tmp2=~/^[0-9][0-9](-|$)/ ) # '93 '93-'94
+		    || ( $tmp1 eq '&' && $tmp2=~/^[A-Za-z]+;/ )
+		    || $word=~/^(\.+|,+|-+|`+|'+)$/ # don't split --- etc.
+		    ) { # &aacute; and other accents
+		    last;
+		}
+		else {
+		    push(@words2,$tmp1);
+		    $word=$tmp2;
+	        }
+	    }
+
+	    @suffixes=();
+# word ends in punctuation # don't separate ,, ... -- '' 5,- etc.
+	    while ( $word=~/^(.+?)([#"(){}\[\]!?:;@\$%^&*+|=~<>\/\\_]|\.+|,+|-+|`+|'+|\.-|,-)$/ ) {
+		$tmp1=$1;
+		$tmp2=$2;
+# special problem of period: abbreviation or punctuation?
+		if ( ( $tmp2 eq '.' 
+# no abbreviation-period if other punctuation in front
+		      && $tmp1!~/[-#`'"(){}\[\]!?:;,@\$%^&*+|=~<>\/\\_]$/
+# list of known abbreviations with period
+		      && ( exists($abbr{$tmp1})		  
+# probably abbreviation if next word (if it exists) starts with lower case letter # not: bla. <p>
+		          || (@words>0 && $words[0]=~/^[-`'"(){}\[\]!?:;,@\$%^*+|=~>\/\\]*[a-z]/)
+# one single capital letter is probably second initial
+                          || $tmp1=~/^[A-Z]$/
+# probably abbreviation if one of ,;:?! follows
+                          || (@suffixes>0 && $suffixes[0]=~/^,;:?!$/)
+# probably abbreviation if another period inside word: e.g. A.M. 
+                          || $tmp1=~/^[A-Za-z]+(\.[-A-Za-z])+$/
+# special case of ordinal numbers (if indicated in file "ordinals")
+                          || (exists($ordinals{'.'}) && $tmp1=~/^[0-9]+$/)
+                         ) 
+                     ) 
+                    || ($tmp2 eq '"' && $tmp1=~/[0-9]$/)        # 14" scherm
+                    || ($tmp2 eq ')' && $tmp1=~/[A-Za-z]\(/)    # koning(in)
+                    || ($tmp2 eq ';' && $tmp1=~/&[A-Za-z]+$/)   # &aacu; and other accents
+		    || $word=~/^(\.+|,+|-+|`+|'+)$/ # don't split --- etc.
+                    || (($tmp2 eq '.-' || $tmp2 eq ',-') && $tmp1=~/[0-9]$/) # f5,-
+		   ) {
+		    last;
+		}
+	        else {
+                    unshift(@suffixes,$tmp2); # separate punctuation from rest
+		    $word=$tmp1;
+                    if (($tmp2 eq '.' || $tmp2 eq '!' || $tmp2 eq '?')
+                        && (@words==0 || $words[0] ne '<utt>')){
+                        push(@suffixes,'<utt>');
+                    }
+	        }
+	    }
+
+# special words: e.g. haste => hast du / nen => einen / ie => hij / zum => zu dem / cannot => can not
+        if (exists($spec1{$word})) {
+            $word=$spec1{$word};
+        }
+        elsif (exists($spec2{$word})) {
+	     unshift(@suffixes,$spec2_2{$word});            # store second part
+	     $word=$spec2_1{$word};
+        }
+# special suffixes: it's => it 's / Peter's => Peter 's / dat-ie => dat ie/hij
+        for ($i=1;$i<=$max_suff && $i<length($word);$i++) {
+            $s=substr($word,length($word)-$i);
+            if (exists($suff{$s})) {
+                unshift(@suffixes,$s);        # store suffix
+                $word=substr($word,0,length($word)-$i);
+                last;
+            }
+        }
+# special prefixes: l'avoir => l' avoir
+        for ($i=1;$i<=$max_pref && $i<length($word);$i++) {
+            $p=substr($word,0,$i);
+            if (exists($pref{$p})) {		
+                push(@words2,$p);             # store prefix
+                $word=substr($word,$i); 
+                last;
+            }
+        }
+
+# split f5,- hfl50 DM0,50 BEF7,50
+         if ($word=~/^([a-zA-Z]+)([-0-9.,]+)$/ && exists($money{$1})) {
+	     push(@words2,$1);
+	     $word=$2;
+         }
+# split 180C, 350F, 12oz, 375g, 2.5cm, 450-900g, 1-2lb, 170,500km etc.
+         if ($word=~/^([-0-9.,]+)([a-zA-Z]+)$/ && exists($meas{$2})) {
+	     unshift(@suffixes,$2);
+	     $word=$1;
+         }
+# split 450-900 etc. 
+         if ($word=~/^('?[0-9.,]+)(-+)('?[0-9.,]+)$/) {
+	     unshift(@suffixes,$3);
+	     unshift(@suffixes,$2);
+	     $word=$1;
+         }
+
+# do something with numerals (1e, 2-e, 3de)
+#         if($word=~/^([0-9]+)(-?)([a-zA-Z]+)$/ && exists($ordinals{$3})) {
+#             unshift(@suffixes, $3);
+#             unshift(@suffixes, $2);
+#             $word = $1;
+#         }
+
+# remove HTML char tags (&.acute ...)
+         while ($word=~/(.*)&([a-zA-Z]+);(.*)/) {
+             if (exists($tags{$2})) {
+                 $word = $1 . $tags{$2} .$3;
+             }
+             else {
+                 print STDERR "tag: $2 Not Found!\n";
+                 # NIET "&$2;" terugzetten, want infinitive loop in combi
+                 # met global match ...
+                 $word = $1 . "TAG$2/TAG" . $3;
+             }
+         }
+
+# $word now contains the true word
+	 push(@words2,$word);
+	 if (@suffixes>0) {
+# append punctuation cut from end
+	     splice(@words2,$#words2+1,0,@suffixes);
+         }
+    }
+    print "@words2\n";
+}}
+

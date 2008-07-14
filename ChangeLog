@@ -1,0 +1,802 @@
+2008-05-13 14:22  sloot
+
+	* [r2128] src/mbma_mod.cxx: refactored more
+
+2008-05-13 12:26  sloot
+
+	* [r2127] src/mbma_mod.cxx: more refactoring. more to do
+
+2008-05-13 12:13  sloot
+
+	* [r2126] src/mbma_mod.cxx: and more cleanup
+
+2008-05-13 11:29  sloot
+
+	* [r2125] config/mconfig, src/mbma_mod.cxx: minimal changes
+
+2008-05-13 11:06  sloot
+
+	* [r2124] src/mbma_mod.cxx: small improvement
+
+2008-05-13 08:12  sloot
+
+	* [r2123] src/mbma_mod.cxx: code cleanup
+
+2008-05-13 07:55  sloot
+
+	* [r2122] src/mblem_mod.cxx: code cleanup and TAGGED a PROBLEM
+
+2008-05-13 07:13  sloot
+
+	* [r2121] src/mblem_mod.cxx: cleaned up debug code
+
+2008-05-13 07:11  sloot
+
+	* [r2120] src/mblem_mod.cxx: replaced terrible clumsy code by
+	  one-liner
+
+2008-05-06 13:50  sloot
+
+	* [r2113] config/lconfig: more debugging!
+
+2008-05-06 13:49  sloot
+
+	* [r2112] src/mblem_mod.cxx: small improvement again
+
+2008-05-06 13:31  sloot
+
+	* [r2111] src/mblem_mod.cxx: cleanup
+
+2008-05-06 12:52  sloot
+
+	* [r2110] src/mwu_chunker_mod.cxx: small update
+
+2008-05-06 12:26  sloot
+
+	* [r2109] config/mconfig, src/mbma_mod.cxx: more debug cleanup
+
+2008-05-06 12:17  sloot
+
+	* [r2108] config/lconfig, src/mblem_mod.cxx: mblem honours own 'd'
+	  option now
+
+2008-05-06 12:02  sloot
+
+	* [r2107] include/tadpole/Tadpole.h, include/tadpole/mblem_mod.h,
+	  include/tadpole/mbma_mod.h, include/tadpole/mwu_chunker_mod.h:
+	  it's 2008!
+
+2008-05-06 12:00  sloot
+
+	* [r2106] include/tadpole/Tadpole.h, include/tadpole/mblem_mod.h,
+	  include/tadpole/mbma_mod.h, src/Tadpole-util.cxx,
+	  src/Tadpole.cxx, src/mblem_mod.cxx, src/mbma_mod.cxx,
+	  src/mwu_chunker_mod.cxx: cleaned up DEBUG mess
+
+2008-05-06 11:29  sloot
+
+	* [r2105] config/mconfig, include/tadpole/Tadpole.h,
+	  include/tadpole/mbma_mod.h, src/mbma_mod.cxx: removed some slack
+	  also fixed strange DARING thing...
+
+2008-05-06 10:52  sloot
+
+	* [r2104] src/Tadpole-util.cxx, src/Tadpole.cxx, src/mblem_mod.cxx,
+	  src/mbma_mod.cxx, src/mwu_chunker_mod.cxx: it's 2008 now!
+
+2008-04-22 15:24  sloot
+
+	* [r2096] src/mblem_mod.cxx: small clearifying patch
+
+2008-04-22 14:41  sloot
+
+	* [r2095] src/Tadpole-util.cxx, src/mbma_mod.cxx: removed WEB demo
+	  stuff
+
+2008-04-15 14:42  sloot
+
+	* [r2084] Makefile.am, README, README2.in, configure.ac: One README
+	  left
+
+2008-03-31 10:29  sloot
+
+	* [r2015] configure.ac, src/mblem_mod.cxx: added compiler flags for
+	  gcc and fixed warnings that showed up then
+
+2008-03-18 10:47  sloot
+
+	* [r1998] trunk/Dimbl, trunk/Dimbl/.cvsignore, trunk/Dimbl/src,
+	  trunk/Dimbl/src/.cvsignore, trunk/Mbt3, trunk/Mbt3/.cvsignore,
+	  trunk/Mbt3/src, trunk/Mbt3/src/.cvsignore, ., .cvsignore, src,
+	  src/.cvsignore, trunk/Timbl6, trunk/Timbl6/.cvsignore,
+	  trunk/Timbl6/src, trunk/Timbl6/src/.cvsignore: added ignores
+
+2008-03-18 09:44  sloot
+
+	* [r1995] configure.ac: - added libtool awareness
+	  - bumped version
+
+2008-02-20 13:06  sloot
+
+	* [r1953] acinclude.m4: fixed PKG_* stuff
+
+2008-01-22 15:22  sloot
+
+	* [r1910] trunk/Mbt3/ChangeLog, trunk/Mbt3/Makefile.am,
+	  trunk/Mbt3/configure.ac, trunk/Mbt3/mbt.pc.in, ChangeLog,
+	  configure.ac: added pkg-config stuff
+
+2007-12-04 09:44  sloot
+
+	* [r1820] trunk/Mbt3/ChangeLog, ChangeLog: changed
+
+2007-12-04 09:44  sloot
+
+	* [r1819] configure.ac: changed order of tests. test for libTimbl
+	  and libMbt aftet sockets check.
+
+2007-12-03 14:03  sloot
+
+	* [r1815] AUTHORS, ChangeLog, Makefile.am, NEWS, README, TODO:
+	  finishing packaging, i hope
+
+2007-11-28 14:58  sloot
+
+	* [r1798] configure.ac: phew again
+
+2007-11-28 14:24  sloot
+
+	* [r1795] configure.ac: fixed build for openmp for g++ and when
+	  CXX=xlc++
+
+2007-11-28 11:15  sloot
+
+	* [r1793] trunk/Dimbl/configure.ac, trunk/Mbt3/configure.ac,
+	  configure.ac: conditional mabi=64 test
+
+2007-11-28 11:03  sloot
+
+	* [r1792] configure.ac: changed tests for libTimbl and libMbt
+
+2007-11-26 14:53  sloot
+
+	* [r1784] include/tadpole/Tadpole.h, src/Tadpole-util.cxx,
+	  src/mblem_mod.cxx, src/mbma_mod.cxx: removed unused (and wrong)
+	  unpanic function
+
+2007-11-26 14:09  sloot
+
+	* [r1783] Makefile.am, configure.ac, src/Makefile.am: cleaned build
+
+2007-11-26 10:37  sloot
+
+	* [r1777] configure.ac: added -beta to version.
+	  added -mabi=64 test
+
+2007-11-06 14:45  sloot
+
+	* [r1770] src/Tadpole-util.cxx: fixed PATH
+
+2007-11-06 14:24  sloot
+
+	* [r1767] ., .cvsignore: more to ignore
+
+2007-11-06 14:22  sloot
+
+	* [r1766] Makefile.am, README, README.in, README2.in, configure.ac:
+	  fixed, sort of...
+
+2007-11-06 13:46  sloot
+
+	* [r1760] trunk/Dimbl/README, trunk/Dimbl/README.in,
+	  trunk/Dimbl/configure.ac, trunk/Mbt3/Makefile.am,
+	  trunk/Mbt3/README, trunk/Mbt3/README.in, trunk/Mbt3/configure.ac,
+	  README, README.in, configure.ac: replaced README by README.in
+
+2007-11-06 13:21  sloot
+
+	* [r1759] config, config/.cvsignore: to ignore
+
+2007-11-06 13:20  sloot
+
+	* [r1758] config/HTMLchars, config/HTMLtags, config/Makefile.am,
+	  config/abbr.deu.tmp, config/abbr.ned, config/apostrof.ned,
+	  config/measure.ned, config/money, config/ordinals.ned,
+	  config/prefixes.ned, config/sgml, config/special_words.ned,
+	  config/suffixes.ned, config/vreemd, src/TPtokenize: realy need
+	  these files...
+
+2007-11-05 14:19  sloot
+
+	* [r1755] trunk/Dimbl/include/dimbl/Makefile.am,
+	  include/tadpole/Makefile.am: fixed
+
+2007-11-05 14:05  sloot
+
+	* [r1754] src/Tadpole.cxx, src/mwu_chunker_mod.cxx: small cleanup
+
+2007-11-05 13:23  sloot
+
+	* [r1753] include/tadpole/Makefile.am, src/Makefile.am: removed
+	  tagger_mod
+
+2007-11-05 13:23  sloot
+
+	* [r1752] configure.ac: oeps
+
+2007-11-05 13:05  sloot
+
+	* [r1751] include/tadpole/tagger_mod.h, src/tagger_mod.cxx: not
+	  needed anymore
+
+2007-11-05 13:05  sloot
+
+	* [r1750] src/Tadpole.cxx: now we use the MBT API directly
+	  small code cleanup
+
+2007-11-05 09:39  sloot
+
+	* [r1749] Makefile.am, configure.ac, src/Makefile.am,
+	  src/Tadpole-util.cxx, src/Tadpole.cxx: changed config
+
+2007-10-31 13:27  sloot
+
+	* [r1746] Tokenizer: moved to ./config dir, except for tokenize.pl,
+	  which is moved to ./src
+
+2007-10-31 11:34  sloot
+
+	* [r1745] src/Makefile.am, src/Tadpole-util.cxx,
+	  src/linetokenize.c: included trivial linetokenize.c program as
+	  function in Tadpole-util
+
+2007-10-29 14:41  sloot
+
+	* [r1744] Makefile.am: mbt dir not needed anymore
+
+2007-10-29 14:08  sloot
+
+	* [r1742] configure.ac: added test for libTimbl and libMbt
+
+2007-10-29 12:53  sloot
+
+	* [r1741] README: life got more easy now
+
+2007-10-29 09:44  sloot
+
+	* [r1740] config/cgn-wotan-dcoi.mbt.1paxes,
+	  config/cgn-wotan-dcoi.mbt.known.dddwfWawa,
+	  config/cgn-wotan-dcoi.mbt.known.dddwfWawa.wgt,
+	  config/cgn-wotan-dcoi.mbt.lex,
+	  config/cgn-wotan-dcoi.mbt.lex.ambi.05,
+	  config/cgn-wotan-dcoi.mbt.settings,
+	  config/cgn-wotan-dcoi.mbt.top500,
+	  config/cgn-wotan-dcoi.mbt.unknown.chnppdddwFawasss, mbt: moved to
+	  config dir
+
+2007-10-26 22:08  antalb
+
+	* [r1739] src/mblem_mod.cxx: repaired another problem when prefix
+	  not found
+
+2007-10-26 21:01  antalb
+
+	* [r1738] src/mblem_mod.cxx: ready for 0.04
+
+2007-10-26 20:19  antalb
+
+	* [r1737] config/mblem.tree, config/mblem.tree.wgt: cleaned the
+	  mblem tree big time
+
+2007-10-25 21:10  antalb
+
+	* [r1731] src/mblem_mod.cxx: turned debugging off; finalized
+	  version 0.04
+
+2007-10-25 21:06  antalb
+
+	* [r1730] config/mblem.tree, config/mblem.tree.wgt: repaired major
+	  errors with prefix "ge"/"be"
+
+2007-10-25 20:19  antalb
+
+	* [r1728] README, config/mblem.tree, config/mblem.tree.wgt,
+	  src/Tadpole.cxx, src/mblem_mod.cxx: corrected a few past
+	  participle cases (credits to Lieve Macken)
+
+2007-10-25 19:46  antalb
+
+	* [r1726] src/mblem_mod.cxx: repaired mblem error with words longer
+	  than 20 chars
+
+2007-10-25 19:24  antalb
+
+	* [r1725] config/mblem.tree, config/mblem.tree.wgt: repaired "onze
+	  - onze" -> "onze - ons" lemmatization (thanks to Lieve Macken)
+
+2007-10-16 15:22  sloot
+
+	* [r1722] TODO: something to do ;)
+
+2007-10-16 15:09  sloot
+
+	* [r1720] Makefile.am: cleaned
+
+2007-10-16 15:09  sloot
+
+	* [r1719] configure.ac: the default for --with-mbt and --with-timbl
+	  is now de value of --prefix
+
+2007-10-16 12:52  sloot
+
+	* [r1718] src/tagger_mod.cxx: hmm
+
+2007-10-16 12:51  sloot
+
+	* [r1717] config/mblem.transtable, config/mblem.tree,
+	  config/mblem.tree.wgt, config/mbma.igtree,
+	  config/mbma.igtree.wgt: moved config files
+
+2007-10-16 12:50  sloot
+
+	* [r1716] mblem: and more config stuff moved
+
+2007-10-16 12:48  sloot
+
+	* [r1715] config/lconfig, config/mconfig, config/mwu.suspects5,
+	  config/mwuconfig, include/tadpole/Tadpole.h,
+	  include/tadpole/mblem_mod.h, include/tadpole/mbma_mod.h,
+	  include/tadpole/mwu_chunker_mod.h, include/tadpole/tagger_mod.h,
+	  mbma, mwu, src/Tadpole.cxx, src/mblem_mod.cxx, src/mbma_mod.cxx,
+	  src/mwu_chunker_mod.cxx: reshuffled config stuff. Should all end
+	  up in ./config
+
+2007-10-16 11:29  sloot
+
+	* [r1714] cgntags.main, cgntags.sub, config/cgntags.main,
+	  config/cgntags.sub, src/Tadpole.cxx, src/mwu_chunker_mod.cxx:
+	  added -c option to specify location of config files. Default =
+	  ./config/
+	  moved cgn data to config dir
+
+2007-10-16 09:02  sloot
+
+	* [r1713] README, gconfig: removed unused file
+	  changed example call of Tadpole
+
+2007-10-16 08:52  sloot
+
+	* [r1712] config, config/lconfig, config/mconfig, config/mwuconfig,
+	  lconfig, mconfig, mwuconfig, src/Tadpole.cxx: moved config files
+	  to convig dir
+	  removed braindead calls to prefixWithAbsolutePath()
+
+2007-10-15 13:00  sloot
+
+	* [r1711] include/tadpole/Tadpole.h, src/Tadpole.cxx: use package
+	  VERSION
+
+2007-10-10 06:43  sloot
+
+	* [r1704] ChangeLog: forgotten
+
+2007-10-09 14:39  sloot
+
+	* [r1703] Makefile.am, configure.ac: ok, it works!
+
+2007-10-09 14:07  sloot
+
+	* [r1702] ., .cvsignore, src, src/.cvsignore: mwah
+
+2007-10-09 14:06  sloot
+
+	* [r1701] ., .cvsignore, src, src/.cvsignore: updated
+
+2007-10-09 14:04  sloot
+
+	* [r1700] ., .cvsignore, Tokenizer/linetokenize.c, include,
+	  include/.cvsignore, include/tadpole, include/tadpole/.cvsignore,
+	  src, src/.cvsignore, src/linetokenize.c: cleanup CVS
+
+2007-10-09 14:01  sloot
+
+	* [r1699] src/Tadpole-util.cxx: fixed (but I don't like it)
+
+2007-10-09 13:44  sloot
+
+	* [r1698] Makefile, src/Tadpole-util.cxx, src/Tadpole.cxx,
+	  src/mblem_mod.cxx, src/mbma_mod.cxx, src/mwu_chunker_mod.cxx,
+	  src/tagger_mod.cxx: almost there
+
+2007-10-09 13:39  sloot
+
+	* [r1697] acinclude.m4: and more
+
+2007-10-09 13:38  sloot
+
+	* [r1696] include/Makefile.am, include/tadpole/Makefile.am,
+	  src/Makefile.am: new files
+
+2007-10-09 13:37  sloot
+
+	* [r1695] AUTHORS, Makefile.am, NEWS, TODO, bootstrap,
+	  configure.ac: new files for Package
+
+2007-10-09 13:35  sloot
+
+	* [r1694] include, include/tadpole, include/tadpole/Tadpole.h,
+	  include/tadpole/mblem_mod.h, include/tadpole/mbma_mod.h,
+	  include/tadpole/mwu_chunker_mod.h, include/tadpole/tagger_mod.h,
+	  src, src/Tadpole-util.cxx, src/Tadpole.cxx, src/mblem_mod.cxx,
+	  src/mbma_mod.cxx, src/mwu_chunker_mod.cxx, src/tagger_mod.cxx:
+	  added
+
+2007-10-09 13:35  sloot
+
+	* [r1693] Tadpole-util.cxx, Tadpole.cxx, Tadpole.h, mblem_mod.cxx,
+	  mblem_mod.h, mbma_mod.cxx, mbma_mod.h, mwu_chunker_mod.cxx,
+	  mwu_chunker_mod.h, tagger_mod.cxx, tagger_mod.h: removed
+
+2007-10-08 20:10  antalb
+
+	* [r1685] Makefile: altered Makefile to go with new Timbl and Mbt
+	  setup; release should be
+	  simultaneous!
+
+2007-10-08 07:12  antalb
+
+	* [r1681] Tadpole.cxx: better handling of mismatch in CGN/CELEX
+	  tags in words at start of sentence
+
+2007-10-07 22:06  antalb
+
+	* [r1680] mblem/mblem.tree: new mblem tree file
+
+2007-10-07 19:18  antalb
+
+	* [r1678] Tadpole.cxx, mblem_mod.cxx, mbma_mod.cxx: resolved
+	  terrible error in handling past participles
+
+2007-10-07 08:22  antalb
+
+	* [r1677] mbt/cgn-wotan-dcoi.mbt.known.dddwfWawa,
+	  mbt/cgn-wotan-dcoi.mbt.known.dddwfWawa.wgt,
+	  mbt/cgn-wotan-dcoi.mbt.lex, mbt/cgn-wotan-dcoi.mbt.lex.ambi.05,
+	  BG/cgn-wotan-dcoi.mbt: resolved one more incorrect tag
+
+2007-10-05 21:18  antalb
+
+	* [r1676] Tadpole.cxx: resolved + in line again
+
+2007-10-04 18:51  antalb
+
+	* [r1675] Tadpole.cxx: repaired empty line problem
+
+2007-10-03 17:47  antalb
+
+	* [r1674] Tadpole-util.cxx, Tadpole.cxx: avoided URL cleanup
+	  procedure, which ate "+" and "%", causing segfaults when
+	  a sentence contained only one "+" or "%".
+
+2007-10-01 20:34  antalb
+
+	* [r1649] mwu_chunker_mod.cxx: added intended handling of sequences
+	  of proper names not in the fixed MWU
+	  list
+
+2007-10-01 18:51  antalb
+
+	* [r1648] Tadpole-util.cxx, Tadpole.cxx: repaired % issue. No more
+	  checking for hexadecimal strings.
+
+2007-10-01 16:10  antalb
+
+	* [r1647] mbt/cgn-wotan-dcoi.mbt.known.dddwfWawa,
+	  mbt/cgn-wotan-dcoi.mbt.known.dddwfWawa.wgt,
+	  mbt/cgn-wotan-dcoi.mbt.lex: updated the tagger
+
+2007-10-01 09:56  antalb
+
+	* [r1645] mbt/cgn-wotan-dcoi.mbt.known.dddwfWawa,
+	  mbt/cgn-wotan-dcoi.mbt.known.dddwfWawa.wgt,
+	  mbt/cgn-wotan-dcoi.mbt.lex, mbt/cgn-wotan-dcoi.mbt.lex.ambi.05,
+	  mbt/cgn-wotan-dcoi.mbt.unknown.chnppdddwFawasss: new updated
+	  tagger
+
+2007-10-01 07:53  antalb
+
+	* [r1643] Tadpole-util.cxx, Tadpole.cxx, Tadpole.h: remove .tok and
+	  .lin files after processing
+
+2007-09-30 22:22  antalb
+
+	* [r1642] README: updated README to 0.03 and added Ko as programmer
+
+2007-09-30 21:59  antalb
+
+	* [r1641] Tadpole.cxx, mblem_mod.cxx: repaired some serious errors
+	  in mblem, causing mblem to match with the
+	  incorrect tag
+
+2007-09-30 20:07  antalb
+
+	* [r1640] mblem/mblem.tree, mblem/mblem.tree.wgt: new mblem.tree
+
+2007-09-15 17:59  antalb
+
+	* [r1627] mblem_mod.cxx, mbma_mod.cxx, mwuconfig: set the right
+	  debug options and fixed MWUs
+
+2007-08-20 17:24  antalb
+
+	* [r1596] README: adapted the README on Erik TKS's suggestions
+
+2007-08-14 12:55  sloot
+
+	* [r1595] Tadpole.cxx: removed unused variable.
+	  set DEBUG = 0
+
+2007-08-14 12:44  sloot
+
+	* [r1594] Tadpole-util.cxx, Tadpole.cxx, mblem_mod.cxx,
+	  mbma_mod.cxx, mwu_chunker_mod.cxx: change
+
+2007-08-14 08:34  sloot
+
+	* [r1593] Tadpole.cxx, mconfig: fixed bug in debugging output SIC
+
+2007-08-13 15:49  sloot
+
+	* [r1592] Tadpole.cxx: small cleanup
+
+2007-08-06 10:04  sloot
+
+	* [r1573] mbma_mod.cxx: split up in more leaner/meaner functions
+
+2007-08-04 22:33  antalb
+
+	* [r1572] mbma/mbma.data: moved mbma.data to background data
+	  Tadpole tree
+
+2007-08-04 22:32  antalb
+
+	* [r1571] mbt/cgn-wotan-dcoi.mbt: removed the mbt main file to the
+	  background data Tadpole tree
+
+2007-07-31 14:29  sloot
+
+	* [r1570] Makefile: gcc is the default
+
+2007-07-31 14:27  sloot
+
+	* [r1569] Makefile: added lines for icpc + openmp
+
+2007-07-31 14:19  sloot
+
+	* [r1568] Tadpole.cxx, mblem_mod.cxx, mbma_mod.cxx,
+	  mwu_chunker_mod.cxx, tagger_mod.cxx: parallel usion openmp (when
+	  available)
+
+2007-07-31 14:11  sloot
+
+	* [r1567] Tadpole.cxx: phew
+
+2007-07-31 13:24  sloot
+
+	* [r1566] Tadpole.cxx: new omp attempt
+
+2007-07-31 12:54  sloot
+
+	* [r1565] Tadpole.cxx: attempt to use a bit of openmp
+
+2007-07-31 10:33  sloot
+
+	* [r1564] mwu_chunker_mod.cxx: damn
+
+2007-07-31 10:25  sloot
+
+	* [r1563] mwu_chunker_mod.cxx, tagger_mod.cxx: getting closer
+
+2007-07-31 09:24  sloot
+
+	* [r1562] tokenizer_mod.cxx, tokenizer_mod.h: not used at all
+
+2007-07-31 08:55  sloot
+
+	* [r1561] Tokenizer/linetokenize.c: 64 bits fix
+
+2007-07-31 08:55  sloot
+
+	* [r1560] Tadpole-util.cxx, Tadpole.cxx, Tadpole.h, mbma_mod.cxx,
+	  mbma_mod.h: more C++ than ever
+
+2007-07-31 07:34  sloot
+
+	* [r1559] Tadpole-util.cxx: small change
+
+2007-07-31 07:34  sloot
+
+	* [r1558] tagger_mod.cxx: removed spurious ';'
+
+2007-07-30 15:33  sloot
+
+	* [r1557] mblem_mod.cxx: more 64 bit stuff
+
+2007-07-30 15:22  sloot
+
+	* [r1556] mbma_mod.cxx: one more hiding resolved
+
+2007-07-30 15:19  sloot
+
+	* [r1555] mbma_mod.cxx: getting closer
+
+2007-07-30 15:06  sloot
+
+	* [r1554] Tadpole.cxx: 64 bit fix
+
+2007-07-30 15:04  sloot
+
+	* [r1553] mbma_mod.cxx: and more
+
+2007-07-30 14:26  sloot
+
+	* [r1552] mwu_chunker_mod.cxx: 64 bit's stuff
+
+2007-07-30 14:15  sloot
+
+	* [r1551] mwu_chunker_mod.cxx: and more
+
+2007-07-30 14:02  sloot
+
+	* [r1550] Tadpole.cxx, mblem_mod.cxx, mblem_mod.h, mbma_mod.cxx,
+	  mbma_mod.h, mwu_chunker_mod.cxx, mwu_chunker_mod.h,
+	  tagger_mod.cxx, tagger_mod.h: al lot of C ==> C++ stuff
+
+2007-07-30 09:57  sloot
+
+	* [r1549] mbma_mod.cxx: next step
+
+2007-07-25 15:13  sloot
+
+	* [r1548] mbma_mod.cxx: gross attempt to split in some usable
+	  parts.
+	  more C++ also....
+
+2007-07-24 14:17  sloot
+
+	* [r1547] mbma_mod.cxx: more improvements. difficult because of bug
+	  in original!
+
+2007-07-23 16:12  sloot
+
+	* [r1546] mbma_mod.cxx: next step
+
+2007-07-23 15:35  sloot
+
+	* [r1545] mbma_mod.cxx: a lot of cleanup. More to do!
+
+2007-07-17 14:58  sloot
+
+	* [r1544] mbma_mod.cxx: try to revert
+
+2007-07-17 14:24  sloot
+
+	* [r1543] mbma_mod.cxx: 64 bits adaptations, dumps CORE!64 bits
+	  adaptations, dumps CORE!64 bits adaptations, dumps CORE!64 bits
+	  adaptations, dumps CORE!
+
+2007-07-17 13:58  sloot
+
+	* [r1542] Tadpole.cxx: satisfy Intel compiler
+
+2007-07-17 13:55  sloot
+
+	* [r1541] Tadpole-util.cxx: 64 bits fix
+
+2007-07-17 13:46  sloot
+
+	* [r1540] Tadpole-util.cxx, Tadpole.h, mbma_mod.cxx: more 64 bit
+	  stuff
+
+2007-07-17 13:14  sloot
+
+	* [r1539] Makefile, Tadpole.cxx, mbma_mod.cxx: try to make it 64
+	  bit clean
+
+2007-07-16 15:27  sloot
+
+	* [r1538] Tadpole.cxx: and more
+
+2007-07-16 15:21  sloot
+
+	* [r1537] Tadpole.cxx, Tadpole.h, mblem_mod.h, mbma_mod.h,
+	  mwu_chunker_mod.h, tagger_mod.h: start to satisfy Intel compiler
+
+2007-07-13 16:56  antalb
+
+	* [r1529] Makefile, mbma_mod.cxx: fixed for Darwin
+
+2007-07-12 11:23  antalb
+
+	* [r1528] Tokenizer/linetokenize.c, Tokenizer/tokenize.pl: added
+	  GPL stuff to tokenize.pl and linetokenize.c
+
+2007-07-12 09:54  antalb
+
+	* [r1527] Makefile, README, test.txt: added README
+
+2007-07-12 09:12  antalb
+
+	* [r1526] Tadpole.cxx, Tadpole.h: updated code with version number
+	  (0.02 to start with)
+
+2007-07-12 08:33  antalb
+
+	* [r1525] test.txt: *** empty log message ***
+
+2007-07-12 08:19  antalb
+
+	* [r1524] Makefile: changed Makefile to also compile
+	  Tokenizer/linetokenize
+
+2007-07-06 12:45  antalb
+
+	* [r1484] mblem/mblem.tree: changed mblem tree
+
+2007-07-04 14:09  antalb
+
+	* [r1482] COPYING, Tadpole-util.cxx, Tadpole.cxx, Tadpole.h,
+	  mblem_mod.cxx, mblem_mod.h, mbma_mod.cxx, mbma_mod.h,
+	  mwu_chunker_mod.cxx, mwu_chunker_mod.h, tagger_mod.cxx,
+	  tagger_mod.h, tokenizer_mod.cxx, tokenizer_mod.h: updated GPL
+	  info, added GPL 3 license text (in file COPYING)
+
+2007-07-04 11:17  antalb
+
+	* [r1481] Tadpole-util.cxx, Tadpole.cxx, Tadpole.h,
+	  mblem/mblem.tree, mblem/mblem.tree.wgt, mblem_mod.cxx,
+	  mbma_mod.cxx, mwu_chunker_mod.cxx, tagger_mod.cxx,
+	  tokenizer_mod.cxx: entered GPL notices
+
+2007-07-03 21:44  antalb
+
+	* [r1480] Makefile, Tadpole.cxx, Tokenizer/linetokenize,
+	  cgntags.main, cgntags.sub, tstconfig: *** empty log message ***
+
+2007-06-18 21:37  antalb
+
+	* [r1440] Tadpole-util.cxx, Tadpole.cxx, mblem_mod.cxx,
+	  mbma_mod.cxx, mwu_chunker_mod.cxx, tagger_mod.cxx,
+	  tokenizer_mod.cxx: changed all internal references from
+	  ILKWrapper to Tadpole;
+	  Tadpole now builds.
+
+2007-06-18 21:30  antalb
+
+	* [r1439] ILKWrapper-util.cxx, ILKWrapper.cxx, ILKWrapper.h,
+	  Makefile, Tadpole-util.cxx, Tadpole.cxx, Tadpole.h: renamed
+	  ILKWrapper to Tadpole
+
+2007-06-18 21:11  antalb
+
+	* [r1436] ., ILKWrapper-util.cxx, ILKWrapper.cxx, ILKWrapper.h,
+	  Makefile, Tokenizer, Tokenizer/HTMLchars, Tokenizer/HTMLtags,
+	  Tokenizer/abbr.deu.tmp, Tokenizer/abbr.ned,
+	  Tokenizer/apostrof.ned, Tokenizer/linetokenize,
+	  Tokenizer/linetokenize.c, Tokenizer/measure.ned, Tokenizer/money,
+	  Tokenizer/ordinals.ned, Tokenizer/prefixes.ned, Tokenizer/sgml,
+	  Tokenizer/special_words.ned, Tokenizer/suffixes.ned,
+	  Tokenizer/tokenize.pl, Tokenizer/vreemd, gconfig, lconfig, mblem,
+	  mblem/mblem.transtable, mblem/mblem.tree, mblem/mblem.tree.wgt,
+	  mblem_mod.cxx, mblem_mod.h, mbma, mbma/mbma.data,
+	  mbma/mbma.igtree, mbma/mbma.igtree.wgt, mbma_mod.cxx, mbma_mod.h,
+	  mbt, mbt/cgn-wotan-dcoi.mbt, mbt/cgn-wotan-dcoi.mbt.1paxes,
+	  mbt/cgn-wotan-dcoi.mbt.known.dddwfWawa,
+	  mbt/cgn-wotan-dcoi.mbt.known.dddwfWawa.wgt,
+	  mbt/cgn-wotan-dcoi.mbt.lex, mbt/cgn-wotan-dcoi.mbt.lex.ambi.05,
+	  mbt/cgn-wotan-dcoi.mbt.settings, mbt/cgn-wotan-dcoi.mbt.top500,
+	  mbt/cgn-wotan-dcoi.mbt.unknown.chnppdddwFawasss, mconfig, mwu,
+	  mwu/mwu.suspects5, mwu_chunker_mod.cxx, mwu_chunker_mod.h,
+	  mwuconfig, tagger_mod.cxx, tagger_mod.h, tokenizer_mod.cxx,
+	  tokenizer_mod.h, tstconfig: Initial revision
+
