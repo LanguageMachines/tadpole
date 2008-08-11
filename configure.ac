@@ -15,8 +15,8 @@ AC_DEFINE_DIR([SYSCONF_PATH], sysconfdir, sysconfdir)
 AC_DEFINE_DIR([LOCALSTATE_PATH], localstatedir, localstatedir)
 
 
-# Checks for programs.
-AC_PROG_CXX( [g++] )
+# Checks for programs. (Intel compiler first)
+AC_PROG_CXX( [icpc g++] )
 AC_PROG_CC
 
 # use libtool
@@ -62,7 +62,7 @@ if test "$ac_cv_header_omp_h" = "yes"; then
        LIBS=$oldLIBS
      fi
    else
-     if test "$ac_cv_env_CXX_value" == "xlc++"; then
+     if test "$ac_cv_prog_ac_ct_CXX" == "xlc++"; then
        oldCPPFLAGS=$CPPFLAGS
        oldLDFLAGS=$LDFLAGS
        CPPFLAGS="$CPPFLAGS -qsmp -qsuppress=1500-029"
@@ -73,7 +73,7 @@ if test "$ac_cv_header_omp_h" = "yes"; then
          LDFLAGS=$oldLDFLAGS
        fi
      else
-       if test "$ac_cv_env_CXX_value" == "icpc"; then
+       if test "$ac_cv_prog_ac_ct_CXX" == "icpc"; then
          oldCPPFLAGS=$CPPFLAGS
          oldLDFLAGS=$LDFLAGS
          CPPFLAGS="$CPPFLAGS -openmp"
