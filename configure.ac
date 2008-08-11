@@ -17,7 +17,6 @@ AC_DEFINE_DIR([LOCALSTATE_PATH], localstatedir, localstatedir)
 
 # Checks for programs. (Intel compiler first)
 AC_PROG_CXX( [icpc g++] )
-AC_PROG_CC
 
 # use libtool
 AC_PROG_LIBTOOL
@@ -199,6 +198,8 @@ if test "$ac_cv_prog_ac_ct_CXX" == "g++"; then
       AC_MSG_RESULT( [Ok] )
   fi
   CPPFLAGS="$CPPFLAGS -W -Wall"
+else
+  CPPFLAGS="$CPPFLAGS -Wcheck"
 fi
 
 # Checks for library functions.
