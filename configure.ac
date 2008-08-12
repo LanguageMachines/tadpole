@@ -14,9 +14,21 @@ AC_DEFINE_DIR([BIN_PATH], bindir, bindir)
 AC_DEFINE_DIR([SYSCONF_PATH], sysconfdir, sysconfdir)
 AC_DEFINE_DIR([LOCALSTATE_PATH], localstatedir, localstatedir)
 
+if test x"${CXXFLAGS+set}" = xset; then
+  # the user set CXXFLAGS; don't override it.
+  cxx_flags_were_set=true
+else
+  cxx_flags_were_set=false
+fi
 
-# Checks for programs. (Intel compiler first)
+# Checks for programs.
+# when available, we prefer the Intel Compiler
 AC_PROG_CXX( [icpc g++] )
+
+if $cxx_flags_were_set; then
+  CXXFLAGS=$CXXFLAGS
+fi
+
 
 # use libtool
 AC_PROG_LIBTOOL
@@ -51,35 +63,35 @@ doOmp=0
 if test "$ac_cv_header_omp_h" = "yes"; then
    if test "$ac_cv_prog_ac_ct_CXX" == "g++"; then
      AC_MSG_NOTICE( [Test for gcc's gomp] )
-     oldCPPFLAGS=$CPPFLAGS
+     oldCXXFLAGS=$CXXFLAGS
      oldLIBS=$LIBS
-     CPPFLAGS="$CPPFLAGS -fopenmp"
+     CXXFLAGS="$CXXFLAGS -fopenmp"
      LIBS="$LIBS -lgomp"
      AC_SEARCH_LIBS( omp_get_num_threads, [gomp], [doOmp=1] )
      if test "$doOmp" != "1"; then
-       CPPFLAGS=$oldCPPFLAGS
+       CXXFLAGS=$oldCXXFLAGS
        LIBS=$oldLIBS
      fi
    else
      if test "$ac_cv_prog_ac_ct_CXX" == "xlc++"; then
-       oldCPPFLAGS=$CPPFLAGS
+       oldCXXFLAGS=$CXXFLAGS
        oldLDFLAGS=$LDFLAGS
-       CPPFLAGS="$CPPFLAGS -qsmp -qsuppress=1500-029"
+       CXXFLAGS="$CXXFLAGS -qsmp -qsuppress=1500-029"
        LDFLAGS="$LDFLAGS -qsmp"
        AC_SEARCH_LIBS( omp_get_num_threads, [], [doOmp=1] )
        if test "$doOmp" != "1"; then
-         CPPFLAGS=$oldCPPFLAGS
+         CXXFLAGS=$oldCXXFLAGS
          LDFLAGS=$oldLDFLAGS
        fi
      else
        if test "$ac_cv_prog_ac_ct_CXX" == "icpc"; then
-         oldCPPFLAGS=$CPPFLAGS
+         oldCXXFLAGS=$CXXFLAGS
          oldLDFLAGS=$LDFLAGS
-         CPPFLAGS="$CPPFLAGS -openmp"
+         CXXFLAGS="$CXXFLAGS -openmp"
          LDFLAGS="$LDFLAGS -openmp"
          AC_SEARCH_LIBS( omp_get_num_threads, [], [doOmp=1] )
          if test "$doOmp" != "1"; then
-           CPPFLAGS=$oldCPPFLAGS
+           CXXFLAGS=$oldCXXFLAGS
            LDFLAGS=$oldLDFLAGS
          fi
        fi
@@ -92,7 +104,7 @@ if test "$doOmp" == "1"; then
 else
    AC_MSG_NOTICE( We don't seem top have Open MP )
    LIBS="$LIBS -lpthread"
-   CPPFLAGS="$CPPFLAGS -DPTHREADS"
+   CXXFLAGS="$CXXFLAGS -DPTHREADS"
 fi
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -105,16 +117,16 @@ AC_TYPE_SIZE_T
 # inspired by feh-1.3.4/configure.ac.  Tnx Tom Gilbert and feh hackers.
 AC_ARG_WITH(timbl,
        [  --with-timbl=DIR       use timbl installed in <DIR>],
-       [CPPFLAGS="$CPPFLAGS -I$withval/include"
+       [CXXFLAGS="$CXXFLAGS -I$withval/include"
        LIBS="-L$withval/lib $LIBS"],
-       [CPPFLAGS="$CPPFLAGS -I$prefix/include"
+       [CXXFLAGS="$CXXFLAGS -I$prefix/include"
        LIBS="-L$prefix/lib $LIBS"] )
 
 AC_ARG_WITH(mbt,
        [  --with-mbt=DIR       use Mbt installed in <DIR>],
-       [CPPFLAGS="$CPPFLAGS -I$withval/include"
+       [CXXFLAGS="$CXXFLAGS -I$withval/include"
        LIBS="-L$withval/lib $LIBS"],
-       [CPPFLAGS="$CPPFLAGS -I$prefix/include"
+       [CXXFLAGS="$CXXFLAGS -I$prefix/include"
        LIBS="-L$prefix/lib $LIBS"] )
 
 dnl
@@ -184,22 +196,22 @@ AC_DEFINE_UNQUOTED(TIMBL_SOCKLEN_T,$ac_cv_check_socklen_t, "sock_len" )
 if test "$ac_cv_prog_ac_ct_CXX" == "g++"; then
   have_abi64=0
   oldLibs=$LIBS
-  oldCPPFLAGS=$CPPFLAGS
+  oldCXXFLAGS=$CXXFLAGS
   LIBS="$LIBS -mabi=64 -mips4"
-  CPPFLAGS="$CPPFLAGS -mabi=64 -mips4"
+  CXXFLAGS="$CXXFLAGS -mabi=64 -mips4"
   AC_MSG_CHECKING([-mabi=64 compiler flag] )
   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[const char hw[] = "Hello World\n";]])],
                  [have_abi64=1])
   if test "$have_abi64" == "0"; then
       LIBS=$oldLibs
-      CPPFLAGS=$oldCPPFLAGS
+      CXXFLAGS=$oldCXXFLAGS
       AC_MSG_RESULT( [No] )
   else
       AC_MSG_RESULT( [Ok] )
   fi
-  CPPFLAGS="$CPPFLAGS -W -Wall"
+  CXXFLAGS="$CXXFLAGS -W -Wall"
 else
-  CPPFLAGS="$CPPFLAGS -Wcheck"
+  CXXFLAGS="$CXXFLAGS -Wcheck"
 fi
 
 # Checks for library functions.
@@ -219,21 +231,21 @@ if test "$pkgconfigpath" != "NONE"; then
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$withval/lib/pkgconfig"],
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$prefix/lib/pkgconfig"])
   PKG_CHECK_MODULES([timbl], [timbl >= 6.1.1] )
-  CPPFLAGS="$CPPFLAGS $timbl_CFLAGS"
+  CXXFLAGS="$CXXFLAGS $timbl_CFLAGS"
   LIBS="$LIBS $timbl_LIBS"
   AC_ARG_WITH(mbt,
        [  --with-mbt=DIR       use mbt installed in <DIR>],
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$withval/lib/pkgconfig"],
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$prefix/lib/pkgconfig"])
   PKG_CHECK_MODULES([mbt], [mbt >= 3.1.1] )
-  CPPFLAGS="$CPPFLAGS $mbt_CFLAGS"
+  CXXFLAGS="$CXXFLAGS $mbt_CFLAGS"
   LIBS="$LIBS $mbt_LIBS"
 else
   AC_ARG_WITH(timbl,
        [  --with-timbl=DIR       use timbl installed in <DIR>],
-       [CPPFLAGS="$CPPFLAGS -I$withval/include"
+       [CXXFLAGS="$CXXFLAGS -I$withval/include"
         LIBS="-L$withval/lib $LIBS"],
-        [CPPFLAGS="$CPPFLAGS -I$prefix/include"
+        [CXXFLAGS="$CXXFLAGS -I$prefix/include"
         LIBS="-L$prefix/lib $LIBS"])
 
   noTimbl=0
@@ -243,9 +255,9 @@ else
   fi
   AC_ARG_WITH(mbt,
        [  --with-mbt=DIR       use mbt installed in <DIR>],
-       [CPPFLAGS="$CPPFLAGS -I$withval/include"
+       [CXXFLAGS="$CXXFLAGS -I$withval/include"
         LIBS="-L$withval/lib $LIBS"],
-        [CPPFLAGS="$CPPFLAGS -I$prefix/include"
+        [CXXFLAGS="$CXXFLAGS -I$prefix/include"
         LIBS="-L$prefix/lib $LIBS"])
 
   noMbt=0
