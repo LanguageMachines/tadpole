@@ -52,7 +52,7 @@ else {
     $lang=$ARGV[0];
 }
 
-$path='./config';
+$path='@prefix@/etc/@PACKAGE@';
 
 print STDERR " TPtokenizer: Initializing ... \n";
 

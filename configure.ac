@@ -271,6 +271,7 @@ fi
 AC_OUTPUT([
   Makefile
   src/Makefile
+  src/TPtokenize
   config/Makefile
   include/Makefile
   include/tadpole/Makefile

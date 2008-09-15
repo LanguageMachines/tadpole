@@ -10,4 +10,4 @@ bin_SCRIPTS = TPtokenize
 Tadpole_SOURCES = mbma_mod.cxx mblem_mod.cxx mwu_chunker_mod.cxx \
 	Tadpole.cxx Tadpole-util.cxx 
 
-EXTRA_DIST = TPtokenize
+EXTRA_DIST = TPtokenize.in
