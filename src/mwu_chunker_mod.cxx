@@ -41,11 +41,48 @@ using namespace std;
 
 mymap2 MWUs;
 
+
 namespace mwuChunker {
 
   string mwuFileName = "";
   string myCFS = "_";
   int mwuDebug = 0;
+
+  string splitTag( const string& tag ){
+    vector<string> fields;
+    string tagResult;
+    string modsResult;
+    int numparts = split_at_first_of( tag, fields, string(myCFS) );
+    for( int i=0; i < numparts; ++i ){
+      vector<string> parts;
+      int num = split_at_first_of( fields[i], parts, "()" );
+      if ( num < 1 )
+	tagResult += fields[i];
+      else {
+	tagResult += parts[0];
+	if ( num > 1 ){
+	  vector<string>fields2;
+	  int size = split_at( parts[1], fields2, "," );
+	  for ( int j = 0; j < size; ++j ){
+	    modsResult += fields2[j];
+	    if ( j < size-1 )
+	      modsResult += '|';
+	  }
+	}
+	if ( i < numparts-1 ){
+	  tagResult += myCFS;
+	  modsResult += '|';
+	}
+      }
+    }
+    return tagResult + myOFS + modsResult;
+  }
+
+  std::ostream& operator<< (std::ostream& os, const ana& a ){
+    os << a.word << myOFS << a.lemma << myOFS 
+       << splitTag(a.tag) << myOFS << a.morphemes;
+    return os;
+  }
 
   bool readsettings( const string& cDir, const string& fname){
     ifstream setfile(fname.c_str(), ios::in);
@@ -86,6 +123,7 @@ namespace mwuChunker {
   }
 
   bool read_mwus( const string& fname) {
+    cerr << "read mwus " + fname << endl;
     ifstream mwufile(fname.c_str(), ios::in);
     if(mwufile.bad()){
       return false;
@@ -114,6 +152,13 @@ namespace mwuChunker {
       exit(1);
     }
     return;
+  }
+
+  ostream &showResults( ostream& os,
+			const vector<mwuChunker::ana>& ana ){
+    for( size_t i = 0; i < ana.size(); ++i )
+      os << i+1 << "\t" << ana[i] << endl;
+    return os;
   }
 
   void Classify(vector<string> &words_in, vector<ana> &cur_ana) {
@@ -168,6 +213,9 @@ namespace mwuChunker {
 	      // mismatch in jth word of current mwu
 	      break;
 	    }
+	    else if (mwuDebug)
+	      cout << " matched " <<  words_in[i+j+1] << endl;
+
 	  }
 	  if (j != max_match)
 	    ++current_match;
@@ -199,10 +247,17 @@ namespace mwuChunker {
 	cout << "mwu found, processing\n";
       size_t how_many = current_match->second.size();
       for ( size_t j = 0; j < how_many; ++j) {
+	if (mwuDebug)
+	  cout << "concat " << words_in[i+j +1] << endl;
 	words_in[i] += myCFS;
 	words_in[i] += words_in[i + 1 + j];
 	// and do the same for cur_ana elems (Word, Tag, Lemma, Morph)
 	cur_ana[i].append( myCFS, cur_ana[i+1+j] );
+	if (mwuDebug){
+	  cout << "concat tag " << cur_ana[i+j+1].getTag() << endl;
+	  cout << "gives : " << cur_ana[i].getTag() << endl;
+	}
+	
       }
       // now erase words_in[i+1 .. i+how_many]
       vector<string>::iterator tmp1 = words_in.begin() + i;
@@ -211,6 +266,10 @@ namespace mwuChunker {
       vector<ana>::iterator anatmp2 = ++anatmp1 + match_found;
       words_in.erase(tmp1, tmp2);
       cur_ana.erase(anatmp1, anatmp2);
+      if (mwuDebug){
+	cout << "tussenstand" << endl;
+	showResults( cout, cur_ana );
+      }      
       Classify(words_in, cur_ana);
     } //if (match_found)
     return;

@@ -603,6 +603,12 @@ string postprocess( const string& wstr, const string& lstr,
 
 }  // postprocess
 
+ostream &showResults( ostream& os,
+		      const vector<mwuChunker::ana>& ana ){
+  for( size_t i = 0; i < ana.size(); ++i )
+    os << i+1 << "\t" << ana[i] << endl;
+  return os;
+}
 
 void Test( const string& infilename ) {
   // init's are done
@@ -697,8 +703,7 @@ void Test( const string& infilename ) {
 	  cout << i <<": " << words[i] << endl;
 	cout << endl;
       }
-      for( size_t i = 0; i < final_ana.size(); ++i )
-	cout << final_ana[i] << endl;
+      showResults( cout, final_ana ); 
       if (num_words>0)
       	cout <<endl;
     } //while getline

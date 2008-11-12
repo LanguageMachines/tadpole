@@ -70,12 +70,6 @@ namespace mwuChunker {
   };
 
 
-  inline std::ostream& operator<< (std::ostream& os, const ana& a ){
-    os << a.word << myOFS << a.tag << myOFS 
-       << a.lemma << myOFS << a.morphemes;
-    return os;
-  }
-
   void init( const std::string&, const std::string& );
   void Classify(std::vector<std::string>&, std::vector<ana> &);
 
