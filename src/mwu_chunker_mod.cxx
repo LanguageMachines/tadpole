@@ -253,7 +253,7 @@ namespace mwuChunker {
 	if (mwuDebug)
 	  cout << "concat " << words_in[i+j] << endl;
 	words_in[i] += myCFS;
-	words_in[i] += words_in[i + 1];
+	words_in[i] += words_in[i + j];
 	// and do the same for cur_ana elems (Word, Tag, Lemma, Morph)
 	cur_ana[i].append( myCFS, cur_ana[i+j] );
 	if (mwuDebug){
