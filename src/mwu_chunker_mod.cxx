@@ -71,11 +71,14 @@ namespace mwuChunker {
 	}
 	if ( i < numparts-1 ){
 	  tagResult += myCFS;
-	  modsResult += '|';
+	  modsResult += myCFS;
 	}
       }
     }
-    return tagResult + myOFS + modsResult;
+    if ( numparts <= 1 )
+      return tagResult + myOFS + tagResult + myOFS + modsResult;
+    else
+      return "MWU" + myOFS + tagResult + myOFS + modsResult;
   }
 
   std::ostream& operator<< (std::ostream& os, const ana& a ){
@@ -164,9 +167,8 @@ namespace mwuChunker {
   void Classify(vector<string> &words_in, vector<ana> &cur_ana) {
     if (mwuDebug)
       cout << "\nStarting mwu Classify\n";
-    mymap2::iterator current_match;
-    size_t match_found = 0;
-    size_t no_matches = 0;
+    mymap2::iterator best_match;
+    size_t matchLength = 0;
     size_t max = words_in.size();
 
     // add all current sequences of SPEC(deeleigen) words to MWUs
@@ -188,13 +190,13 @@ namespace mwuChunker {
     for( i = 0; i < max; i++) {
       if (mwuDebug)
 	cout << "checking word[" << i <<"]: " << words_in[i] << endl;
-      no_matches =  MWUs.count(words_in[i]);
-      if (!no_matches)
+      size_t no_matches =  MWUs.count(words_in[i]);
+      if ( no_matches == 0 )
 	continue;
       pair<mymap2::iterator, mymap2::iterator> matches = MWUs.equal_range(words_in[i]);
       if ( matches.first != MWUs.end() ) {
 	//match
-	current_match = matches.first;
+	mymap2::iterator current_match = matches.first;
 	if ( mwuDebug ) {
 	  cout << "MWU: match found!\t" << current_match->first << endl;
 	}
@@ -214,26 +216,28 @@ namespace mwuChunker {
 	      break;
 	    }
 	    else if (mwuDebug)
-	      cout << " matched " <<  words_in[i+j+1] << endl;
+	      cout << " matched " <<  words_in[i+j+1] << " j=" << j << endl;
 
 	  }
-	  if (j != max_match)
-	    ++current_match;
-	  else { //in case of match break out of while-loop
-	    match_found = j;
-	    break;
+	  if (j == max_match){
+	    // a match. remember this!
+	    if ( j > matchLength ){
+	      best_match = current_match;
+	      matchLength = j;
+	    }
 	  }
+	  ++current_match;
 	} //while(focus1 <= focus2)
 	if(mwuDebug){
-	  if (match_found) {
-	    cout << "MWU: found match starting with " << (*current_match).first << endl;
+	  if (matchLength >0 ) {
+	    cout << "MWU: found match starting with " << (*best_match).first << endl;
 	  } else {
 	    cout <<"MWU: no match\n";
 	  }
 	}
 	// we found a matching mwu, break out of loop thru sentence, 
 	// do useful stuff, and recurse to find more mwus
-	if (match_found)
+	if (matchLength > 0 )
 	  break;
       } //match found
       else { 
@@ -241,29 +245,28 @@ namespace mwuChunker {
 	  cout <<"MWU:check: no match\n";
       }
     } //for (i < max)
-    if (match_found) {
+    if (matchLength > 0 ) {
       //concat
       if (mwuDebug)
 	cout << "mwu found, processing\n";
-      size_t how_many = current_match->second.size();
-      for ( size_t j = 0; j < how_many; ++j) {
+      for ( size_t j = 1; j <= matchLength; ++j) {
 	if (mwuDebug)
-	  cout << "concat " << words_in[i+j +1] << endl;
+	  cout << "concat " << words_in[i+j] << endl;
 	words_in[i] += myCFS;
-	words_in[i] += words_in[i + 1 + j];
+	words_in[i] += words_in[i + 1];
 	// and do the same for cur_ana elems (Word, Tag, Lemma, Morph)
-	cur_ana[i].append( myCFS, cur_ana[i+1+j] );
+	cur_ana[i].append( myCFS, cur_ana[i+j] );
 	if (mwuDebug){
-	  cout << "concat tag " << cur_ana[i+j+1].getTag() << endl;
+	  cout << "concat tag " << cur_ana[i+j].getTag() << endl;
 	  cout << "gives : " << cur_ana[i].getTag() << endl;
 	}
 	
       }
-      // now erase words_in[i+1 .. i+how_many]
+      // now erase words_in[i+1 .. i+matchLenght]
       vector<string>::iterator tmp1 = words_in.begin() + i;
       vector<ana>::iterator anatmp1 = cur_ana.begin() + i;
-      vector<string>::iterator tmp2 = ++tmp1 + match_found;
-      vector<ana>::iterator anatmp2 = ++anatmp1 + match_found;
+      vector<string>::iterator tmp2 = ++tmp1 + matchLength;
+      vector<ana>::iterator anatmp2 = ++anatmp1 + matchLength;
       words_in.erase(tmp1, tmp2);
       cur_ana.erase(anatmp1, anatmp2);
       if (mwuDebug){
@@ -271,7 +274,7 @@ namespace mwuChunker {
 	showResults( cout, cur_ana );
       }      
       Classify(words_in, cur_ana);
-    } //if (match_found)
+    } //if (matchLength)
     return;
   } // //Classify
 
