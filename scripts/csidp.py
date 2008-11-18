@@ -29,7 +29,7 @@ import sys
 from itertools import izip, imap, groupby, ifilter
 from operator import itemgetter, attrgetter
 
-from pylet.data.sentences import sentenceIterator
+from data.sentences import sentenceIterator
 
 import cky
 import csiparse2 as csiparse
@@ -289,5 +289,5 @@ def main(options, args):
 
 
 if __name__ == "__main__":
-	from pylet.util import cmdline
+	from util import cmdline
 	main(*cmdline.parse())
