@@ -618,9 +618,30 @@ ostream &showResults( ostream& os,
   return os;
 }
 
-void Parse( const string& fileName ){
-  string cmd = string("sh scripts/runparser.sh ") + fileName;
+void Parse( ){
+  string cmd = "sh scripts/prepare.sh"; // run some python scripts
+  system( cmd.c_str() ); // to prepare the input.
+  static TimblAPI *pairs = 0;
+  static TimblAPI *dirs = 0;
+  static TimblAPI *rels = 0;
+  if ( !pairs ){
+    system( "rm tadpole.ana.result" );
+    pairs = new TimblAPI( "-a1 +D +vdb+di"  );
+    pairs->GetInstanceBase( "config/mbdp-tadpole-alpino.pairs.sampled.ibase" );
+    dirs = new TimblAPI( "-a1 +D +vdb+di" );
+    dirs->GetInstanceBase( "config/mbdp-tadpole-alpino.dir.ibase" );
+    rels = new TimblAPI( "-a1 +D +vdb+di" );
+    rels->GetInstanceBase( "config/mbdp-tadpole-alpino.rels.ibase" );
+  }
+  else {
+    cerr << "re-using Timbl experiments" << endl;
+  }
+  pairs->Test( "tadpole.ana.inst", "tadpole.ana.inst.out" );
+  dirs->Test( "tadpole.ana.dir.inst", "tadpole.ana.dir.out" );
+  rels->Test( "tadpole.ana.rels.inst", "tadpole.ana.rels.out" );
+  cmd = "sh scripts/csi.sh";
   system( cmd.c_str() );
+  
 }
 
 void Test( const string& infilename ) {
@@ -723,7 +744,7 @@ void Test( const string& infilename ) {
 	ofstream anaFile( "tadpole.ana" );
 	if ( anaFile ){
 	  saveAna( anaFile, final_ana );
-	  Parse( "tadpole.ana" );
+	  Parse();
 	}
       }
     } //while getline
