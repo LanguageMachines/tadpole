@@ -69,6 +69,9 @@ namespace mwuChunker {
 	      modsResult += '|';
 	  }
 	}
+	else {
+	  modsResult += "__";
+	}
 	if ( i < numparts-1 ){
 	  tagResult += myCFS;
 	  modsResult += myCFS;
@@ -85,6 +88,14 @@ namespace mwuChunker {
     os << a.word << myOFS << a.lemma << myOFS 
        << splitTag(a.tag) << myOFS << a.morphemes;
     return os;
+  }
+
+  void saveAna( std::ostream& os, const std::vector<ana> &ana){
+    for( size_t i = 0; i < ana.size(); ++i )
+      os << i+1 << myOFS << ana[i].getWord() << myOFS 
+	 << ana[i].getLemma() << myOFS 
+	 << splitTag( ana[i].getTag() ) << myOFS << "0" << myOFS
+	 << myCFS << myOFS << myCFS << myOFS << myCFS << endl;
   }
 
   bool readsettings( const string& cDir, const string& fname){

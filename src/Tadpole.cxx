@@ -54,6 +54,7 @@ string myOFS = "\t"; // \t
 string skipMods = "";
 bool doTok = true;
 bool doMwu = true;
+bool doParse = true;
 DemoOptions ** ModOpts;
 
 /* assumptions:
@@ -242,6 +243,8 @@ void parse_args( TimblOpts& Opts ) {
       doTok = false;
     if ( skip.find('m') != string::npos )
       doMwu = false;
+    if ( skip.find('p') != string::npos )
+      doParse = false;
     Opts.Delete("skip");
   };
    // TAGGER opts
@@ -292,6 +295,11 @@ void parse_args( TimblOpts& Opts ) {
     {
       if ( doMwu )
 	mwuChunker::init( c_dirName, u_fileName);
+      else {
+	if ( doParse )
+	  cerr << " Parser disabled, because MWU is deselected" << endl;
+	doParse = false;;
+      }
     }
   }
   
@@ -610,9 +618,14 @@ ostream &showResults( ostream& os,
   return os;
 }
 
+void Parse( const string& fileName ){
+  string cmd = string("sh scripts/runparser.sh ") + fileName;
+  system( cmd.c_str() );
+}
+
 void Test( const string& infilename ) {
   // init's are done
-
+  
   if ( doTok ){
     //Tokenize
     TokenizedTestFileName = tokenize(infilename);
@@ -706,6 +719,13 @@ void Test( const string& infilename ) {
       showResults( cout, final_ana ); 
       if (num_words>0)
       	cout <<endl;
+      if ( doParse ){
+	ofstream anaFile( "tadpole.ana" );
+	if ( anaFile ){
+	  saveAna( anaFile, final_ana );
+	  Parse( "tadpole.ana" );
+	}
+      }
     } //while getline
   }
   if ( doTok ){

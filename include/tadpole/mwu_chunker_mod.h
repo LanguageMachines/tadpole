@@ -61,6 +61,12 @@ namespace mwuChunker {
     string getTag() const {
       return tag;
     }
+    string getWord() const {
+      return word;
+    }
+    string getLemma() const {
+      return lemma;
+    }
 
   private:
     string word;
@@ -73,6 +79,7 @@ namespace mwuChunker {
   void init( const std::string&, const std::string& );
   void Classify(std::vector<std::string>&, std::vector<ana> &);
 
+  void saveAna( std::ostream& , const std::vector<ana> &);
 }
 
 #endif
