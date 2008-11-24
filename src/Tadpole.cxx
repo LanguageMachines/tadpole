@@ -38,12 +38,14 @@
 #include "tadpole/mbma_mod.h"
 #include "tadpole/mblem_mod.h"
 #include "tadpole/mwu_chunker_mod.h"
+#include "tadpole/Parser.h"
 
 using namespace std;
 using Mbma::MBMAana;
 
 string TestFileName;
 string ProgName;
+string parserTmpFile = "tadpole.ana";
 string TokenizedTestFileName = "";
 string LineTokenizedTestFileName = "";
 int num_modules = 0;
@@ -224,6 +226,7 @@ void parse_args( TimblOpts& Opts ) {
   string l_fileName = "lconfig";
   string m_fileName = "mconfig";
   string u_fileName = "mwuconfig";
+  string p_fileName = "parserconfig";
   
    // is a config dir specified?
   if ( Opts.Find( 'c',   value, mood ) ) {
@@ -280,6 +283,14 @@ void parse_args( TimblOpts& Opts ) {
   else
     u_fileName = prefix( c_dirName, u_fileName );
   
+  // dependency parser Opts
+  if ( Opts.Find( 'P', value, mood ) ) {
+    p_fileName = prefix( c_dirName, value );
+    Opts.Delete( 'P' );
+  }
+  else
+    p_fileName = prefix( c_dirName, p_fileName );
+  
 #pragma omp parallel sections
   {
 #pragma omp section
@@ -293,8 +304,11 @@ void parse_args( TimblOpts& Opts ) {
     }
 #pragma omp section
     {
-      if ( doMwu )
+      if ( doMwu ){
 	mwuChunker::init( c_dirName, u_fileName);
+	if ( doParse )
+	  Parser::init( c_dirName, p_fileName, parserTmpFile );
+      }
       else {
 	if ( doParse )
 	  cerr << " Parser disabled, because MWU is deselected" << endl;
@@ -618,32 +632,6 @@ ostream &showResults( ostream& os,
   return os;
 }
 
-void Parse( ){
-  string cmd = "sh scripts/prepare.sh"; // run some python scripts
-  system( cmd.c_str() ); // to prepare the input.
-  static TimblAPI *pairs = 0;
-  static TimblAPI *dirs = 0;
-  static TimblAPI *rels = 0;
-  if ( !pairs ){
-    system( "rm tadpole.ana.result" );
-    pairs = new TimblAPI( "-a1 +D +vdb+di"  );
-    pairs->GetInstanceBase( "config/mbdp-tadpole-alpino.pairs.sampled.ibase" );
-    dirs = new TimblAPI( "-a1 +D +vdb+di" );
-    dirs->GetInstanceBase( "config/mbdp-tadpole-alpino.dir.ibase" );
-    rels = new TimblAPI( "-a1 +D +vdb+di" );
-    rels->GetInstanceBase( "config/mbdp-tadpole-alpino.rels.ibase" );
-  }
-  else {
-    cerr << "re-using Timbl experiments" << endl;
-  }
-  pairs->Test( "tadpole.ana.inst", "tadpole.ana.inst.out" );
-  dirs->Test( "tadpole.ana.dir.inst", "tadpole.ana.dir.out" );
-  rels->Test( "tadpole.ana.rels.inst", "tadpole.ana.rels.out" );
-  cmd = "sh scripts/csi.sh";
-  system( cmd.c_str() );
-  
-}
-
 void Test( const string& infilename ) {
   // init's are done
   
@@ -741,10 +729,10 @@ void Test( const string& infilename ) {
       if (num_words>0)
       	cout <<endl;
       if ( doParse ){
-	ofstream anaFile( "tadpole.ana" );
+	ofstream anaFile( parserTmpFile.c_str() );
 	if ( anaFile ){
 	  saveAna( anaFile, final_ana );
-	  Parse();
+	  Parser::Parse( parserTmpFile );
 	}
       }
     } //while getline

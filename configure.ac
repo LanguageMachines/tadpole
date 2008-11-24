@@ -29,7 +29,6 @@ if $cxx_flags_were_set; then
   CXXFLAGS=$CXXFLAGS
 fi
 
-
 # use libtool
 AC_PROG_LIBTOOL
 AC_SUBST([LIBTOOL_DEPS])
@@ -115,6 +114,14 @@ AC_TYPE_SIZE_T
 # Checks for libraries.
 
 # inspired by feh-1.3.4/configure.ac.  Tnx Tom Gilbert and feh hackers.
+AC_ARG_WITH(python,
+       [  --with-python=DIR       use python executable installed in <DIR>],
+       [PYTHON="$withval/python"],
+       [PYTHON="python"])
+
+#we need Python 2.5.x
+AM_PATH_PYTHON([2.5],,[:])
+
 AC_ARG_WITH(timbl,
        [  --with-timbl=DIR       use timbl installed in <DIR>],
        [CXXFLAGS="$CXXFLAGS -I$withval/include"
@@ -273,6 +280,12 @@ AC_OUTPUT([
   src/Makefile
   src/TPtokenize
   config/Makefile
+  scripts/Makefile
+  scripts/pylet/Makefile
+  scripts/pylet/data/Makefile
+  scripts/pylet/util/Makefile
+  scripts/prepareParser.sh
+  scripts/finalizeParser.sh
   include/Makefile
   include/tadpole/Makefile
 ])

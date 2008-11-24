@@ -8,6 +8,6 @@ bin_PROGRAMS = Tadpole
 bin_SCRIPTS = TPtokenize
 
 Tadpole_SOURCES = mbma_mod.cxx mblem_mod.cxx mwu_chunker_mod.cxx \
-	Tadpole.cxx Tadpole-util.cxx 
+	Tadpole.cxx Tadpole-util.cxx Parser.cxx
 
 EXTRA_DIST = TPtokenize.in

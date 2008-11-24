@@ -32,7 +32,7 @@ import fileinput
 from itertools import izip
 from operator import itemgetter
 
-from data.sentences import sentenceIterator, makeWindow
+from sentences import sentenceIterator, makeWindow
 
 import common
 
@@ -167,5 +167,5 @@ def main(options, args):
 
 
 if __name__ == "__main__":
-	import util.cmdline
-	main(*util.cmdline.parse())
+	import cmdline
+	main(*cmdline.parse())

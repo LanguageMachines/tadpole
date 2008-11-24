@@ -1,0 +1,4 @@
+#! /bin/csh -f
+prefix=@prefix@
+python @pythondir@/csidp.py -m20 --dep tadpoleParser.inst.out --mod tadpoleParser.rels.out --dir tadpoleParser.dir.out $1 >> $1.result
+

@@ -1,0 +1,6 @@
+#! /bin/csh -f
+rm -rf tadpole.ana.inst.*
+prefix=@prefix@
+python @pythondir@/pairs.py -m20 --feats-bigram  tadpole.ana > tadpole.ana.pairs.inst
+python @pythondir@/dir.py tadpole.ana > tadpole.ana.dir.inst
+python @pythondir@/rels.py tadpole.ana > tadpole.ana.rels.inst

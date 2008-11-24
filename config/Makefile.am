@@ -17,6 +17,12 @@ config_DATA = lconfig mconfig mwuconfig \
 	cgn-wotan-dcoi.mbt.top500 \
 	cgn-wotan-dcoi.mbt.unknown.chnppdddwFawasss \
 	cgntags.main cgntags.sub \
+	mbdp-tadpole-alpino.pairs.sampled.ibase \
+	mbdp-tadpole-alpino.pairs.sampled.ibase.wgt \
+	mbdp-tadpole-alpino.dir.ibase \
+	mbdp-tadpole-alpino.dir.ibase.wgt \
+	mbdp-tadpole-alpino.rels.ibase \
+	mbdp-tadpole-alpino.rels.ibase.wgt \
 	money vreemd
 configdir = $(prefix)/etc/$(PACKAGE)
 

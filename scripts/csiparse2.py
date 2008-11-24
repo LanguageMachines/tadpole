@@ -16,7 +16,7 @@ import fileinput
 
 from itertools import imap, izip
 
-from data.sentences import sentenceIterator
+from sentences import sentenceIterator
 
 import common
 import deptree

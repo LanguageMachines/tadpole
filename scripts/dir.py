@@ -5,7 +5,7 @@ import fileinput
 from itertools import izip
 from operator import itemgetter
 
-from data.sentences import sentenceIterator, makeWindow
+from sentences import sentenceIterator, makeWindow
 
 from common import *
 

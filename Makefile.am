@@ -1,7 +1,7 @@
 # $Id$
 # $URL: $
 
-SUBDIRS = src include config
+SUBDIRS = src include config scripts
 
 EXTRA_DIST = bootstrap AUTHORS TODO NEWS test.txt
 
