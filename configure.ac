@@ -237,7 +237,7 @@ if test "$pkgconfigpath" != "NONE"; then
        [  --with-timbl=DIR       use timbl installed in <DIR>],
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$withval/lib/pkgconfig"],
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$prefix/lib/pkgconfig"])
-  PKG_CHECK_MODULES([timbl], [timbl >= 6.1.1] )
+  PKG_CHECK_MODULES([timbl], [timbl >= 6.1.3] )
   CXXFLAGS="$CXXFLAGS $timbl_CFLAGS"
   LIBS="$LIBS $timbl_LIBS"
   AC_ARG_WITH(mbt,
