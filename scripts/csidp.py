@@ -216,7 +216,7 @@ def approxNonProjective(sentence, parser):
 						bestDependent = j
 
 		if bestScore > currentScore:
-			sys.stderr.write("+")
+#			sys.stderr.write("+")
 			currentScore = bestScore
 			sentence[bestDependent - 1][HEAD] = bestHead
 			if True: #bestHead > 0:
@@ -236,19 +236,19 @@ def main(options, args):
 	assert options.dep
 	pairsStream = open(options.dep)
 	pairsIterator = csiparse.instanceIterator(pairsStream)
-	print >> sys.stderr, "C_dep constraints enabled"
+#	print >> sys.stderr, "C_dep constraints enabled"
 
 	if options.dir:
 		dirStream = open(options.dir)
 		dirIterator = csiparse.instanceIterator(dirStream)
-		print >> sys.stderr, "C_dir constraints enabled"
+#		print >> sys.stderr, "C_dir constraints enabled"
 	else:
 		dirIterator = None
 
 	if options.mod:
 		relsStream = open(options.mod)
 		relsIterator = csiparse.instanceIterator(relsStream)
-		print >> sys.stderr, "C_mod constraints enabled"
+#		print >> sys.stderr, "C_mod constraints enabled"
 	else:
 		relsIterator = None
 	
@@ -285,7 +285,7 @@ def main(options, args):
 			print " ".join(map(str, token))
 		print
 		
-		sys.stderr.write(".")
+#		sys.stderr.write(".")
 
 
 if __name__ == "__main__":
