@@ -86,16 +86,36 @@ namespace mwuChunker {
 
   std::ostream& operator<< (std::ostream& os, const ana& a ){
     os << a.word << myOFS << a.lemma << myOFS 
-       << splitTag(a.tag) << myOFS << a.morphemes;
+       << splitTag(a.tag) << myOFS << a.parseNum << myOFS 
+       << a.parseTag << myOFS << a.morphemes;
     return os;
   }
 
-  void saveAna( std::ostream& os, const std::vector<ana> &ana){
+  void saveAna( std::ostream& os, const vector<ana> &ana ){
     for( size_t i = 0; i < ana.size(); ++i )
       os << i+1 << myOFS << ana[i].getWord() << myOFS 
 	 << ana[i].getLemma() << myOFS 
 	 << splitTag( ana[i].getTag() ) << myOFS << "0" << myOFS
 	 << myCFS << myOFS << myCFS << myOFS << myCFS << endl;
+  }
+
+  void readAna( std::istream& is, vector<ana> &ana ){
+    string line;
+    int cnt=0;
+    while ( getline( is, line ) ){
+      vector<string> parts;
+      int num = split_at( line, parts, " " );
+      if ( num > 7 ){
+	if ( stringTo<int>( parts[0] ) != cnt+1 ){
+	  cerr << "confused! " << endl;
+	  cerr << "got line '" << line << "'" << endl;
+	  cerr << "expected something like '" << cnt+1 << " " << ana[cnt] << endl;
+	}
+	ana[cnt].setParseNum( parts[6] );
+	ana[cnt].setParseTag( parts[7] );
+      }
+      ++cnt;
+    }
   }
 
   bool readsettings( const string& cDir, const string& fname){

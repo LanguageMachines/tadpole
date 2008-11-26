@@ -28,7 +28,7 @@
 #define PARSER_H
 
 namespace Parser {
-  bool init( const std::string&, const std::string&, const std::string& );
+  bool init( const std::string&, const std::string& );
   void Parse( const std::string& );
 }
 

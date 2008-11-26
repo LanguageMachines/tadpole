@@ -1,7 +1,7 @@
 # $Id$
 # $URL:$
 
-config_DATA = lconfig mconfig mwuconfig \
+config_DATA = lconfig mconfig mwuconfig parserconfig \
 	mblem.transtable  mblem.tree mblem.tree.wgt \
 	mbma.igtree mbma.igtree.wgt \
         mwu.suspects5 \

@@ -307,7 +307,7 @@ void parse_args( TimblOpts& Opts ) {
       if ( doMwu ){
 	mwuChunker::init( c_dirName, u_fileName);
 	if ( doParse )
-	  Parser::init( c_dirName, p_fileName, parserTmpFile );
+	  Parser::init( c_dirName, p_fileName );
       }
       else {
 	if ( doParse )
@@ -725,16 +725,21 @@ void Test( const string& infilename ) {
 	  cout << i <<": " << words[i] << endl;
 	cout << endl;
       }
-      showResults( cout, final_ana ); 
-      if (num_words>0)
-      	cout <<endl;
       if ( doParse ){
+	string resFileName = parserTmpFile + ".result"; 
 	ofstream anaFile( parserTmpFile.c_str() );
 	if ( anaFile ){
 	  saveAna( anaFile, final_ana );
+	  unlink( resFileName.c_str() );
 	  Parser::Parse( parserTmpFile );
+	  ifstream resFile( resFileName.c_str() );
+	  if ( resFile )
+	    readAna( resFile, final_ana );
 	}
       }
+      showResults( cout, final_ana ); 
+      if (num_words>0)
+      	cout <<endl;
     } //while getline
   }
   if ( doTok ){

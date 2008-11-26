@@ -36,6 +36,8 @@ namespace mwuChunker {
       tag = "";
       lemma = "";
       morphemes = "";
+      parseNum = "0";
+      parseTag = "";
     }
 
     ana( const string& in) {
@@ -67,12 +69,27 @@ namespace mwuChunker {
     string getLemma() const {
       return lemma;
     }
+    string getParseNum() const {
+      return parseNum;
+    }
+    string getParseTag( ) const {
+      return parseTag;
+    }
+
+    void setParseNum( const std::string& num) {
+      parseNum = num;
+    }
+    void setParseTag( const std::string& tag ) {
+      parseTag = tag;
+    }
 
   private:
     string word;
     string tag;
     string lemma;
     string morphemes;
+    string parseNum;
+    string parseTag;
   };
 
 
@@ -80,6 +97,7 @@ namespace mwuChunker {
   void Classify(std::vector<std::string>&, std::vector<ana> &);
 
   void saveAna( std::ostream& , const std::vector<ana> &);
+  void readAna( std::istream& , std::vector<ana> &);
 }
 
 #endif
