@@ -38,6 +38,7 @@ namespace mwuChunker {
       morphemes = "";
       parseNum = "0";
       parseTag = "";
+      isMWU = false;
     }
 
     ana( const string& in) {
@@ -49,6 +50,7 @@ namespace mwuChunker {
 	lemma = elems[2];
 	morphemes = elems[3];
       }
+      isMWU = false;
     }
     
     ~ana() {};
@@ -58,6 +60,7 @@ namespace mwuChunker {
       tag += s + add.tag;
       lemma += s + add.lemma;
       morphemes += s + add.morphemes;
+      isMWU = true;
     }
 
     string getTag() const {
@@ -83,6 +86,8 @@ namespace mwuChunker {
       parseTag = tag;
     }
 
+    const std::string formatMWU() const;
+
   private:
     string word;
     string tag;
@@ -90,6 +95,7 @@ namespace mwuChunker {
     string morphemes;
     string parseNum;
     string parseTag;
+    bool isMWU;
   };
 
 

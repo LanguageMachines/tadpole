@@ -84,10 +84,33 @@ namespace mwuChunker {
       return "MWU" + myOFS + tagResult + myOFS + modsResult;
   }
 
+  bool isProper( const string& tag, string& pTag ){
+    vector<string> parts;
+    pTag = "ERROR";
+    int num = split_at( tag, parts, "_" );
+    if ( num > 1 ){
+      pTag = parts[0];
+      return pTag == "SPEC(deeleigen)";
+    }
+    return false;
+  }
+
+  const string ana::formatMWU() const{
+    if ( isMWU ){
+      string properTag;
+      if ( isProper( tag, properTag ) )
+	return properTag;
+      else
+	return "MWU()";
+    }
+    else
+      return tag;
+  }
+
   std::ostream& operator<< (std::ostream& os, const ana& a ){
-    os << a.word << myOFS << a.lemma << myOFS 
-       << splitTag(a.tag) << myOFS << a.parseNum << myOFS 
-       << a.parseTag << myOFS << a.morphemes;
+    os << a.word << myOFS << a.lemma << myOFS << a.morphemes << myOFS
+       << a.formatMWU()
+       << myOFS << a.parseNum << myOFS << a.parseTag;
     return os;
   }
 
