@@ -25,6 +25,8 @@
 */
 
 #include <cstdlib>
+#include <sys/time.h>
+#include <ctime>
 #include <string>
 #include <cstring>
 #include <iostream>
@@ -632,14 +634,42 @@ ostream &showResults( ostream& os,
   return os;
 }
 
+void showProgress( ostream& os, const string& line, 
+		   struct timeval& timeBefore ){
+  struct timeval timeAfter;
+  gettimeofday(&timeAfter, 0 );
+  os << line << " took:" << timeAfter.tv_sec - timeBefore.tv_sec
+     << " seconds and " << timeAfter.tv_usec - timeBefore.tv_usec 
+     << " microseconds" << endl;
+}
+  
+void showTimeSpan( ostream& os, const string& line, 
+		   struct timeval& timeBefore ){
+  os << line << " took:" << timeBefore.tv_sec
+     << " seconds and " << timeBefore.tv_usec 
+     << " microseconds" << endl;
+}
+  
+void addTimeDiff( struct timeval& time, 
+		  struct timeval& start, 
+		  struct timeval& end ){
+  long usecs = (time.tv_sec + end.tv_sec - start.tv_sec) * 1000000 
+    + time.tv_usec + end.tv_usec - start.tv_usec;
+  ldiv_t div = ldiv( usecs, 1000000 );
+  time.tv_sec = div.quot;
+  time.tv_usec = div.rem;
+}
+
 void Test( const string& infilename ) {
   // init's are done
   
   if ( doTok ){
     //Tokenize
+    struct timeval startTime;
+    gettimeofday(&startTime, 0 );
     TokenizedTestFileName = tokenize(infilename);
     LineTokenizedTestFileName = linetokenize(TokenizedTestFileName);
-    
+    showProgress( cerr, "tokenizing ", startTime );
     // remove tokenized file
     string syscommand = "rm -f " + infilename + ".tok\n";
     if ( system(syscommand.c_str()) != 0 ){
@@ -650,14 +680,35 @@ void Test( const string& infilename ) {
     LineTokenizedTestFileName = infilename;
 
   ifstream IN( LineTokenizedTestFileName.c_str() );
-  
+
+  timeval parseTime;
+  parseTime.tv_sec=0;
+  parseTime.tv_usec=0;
+  timeval mwuTime;
+  mwuTime.tv_sec=0;
+  mwuTime.tv_usec=0;
+  timeval mblemTime;
+  mblemTime.tv_sec=0;
+  mblemTime.tv_usec=0;
+  timeval mbaTime;
+  mbaTime.tv_sec=0;
+  mbaTime.tv_usec=0;
+  timeval tagTime;
+  tagTime.tv_sec=0;
+  tagTime.tv_usec=0;
+
   string line;
   while( getline(IN, line) ) {
     if (line.length()>1) {
 
       if (tpDebug) 
 	cout << "in: " << line << endl;
+      timeval tagStartTime;
+      timeval tagEndTime;
+      gettimeofday(&tagStartTime,0);
       string tagged = tagger->Tag(line);
+      gettimeofday(&tagEndTime,0);
+      addTimeDiff( tagTime, tagStartTime, tagEndTime );
       if (tpDebug) {
 	cout << "line: " << line
 	     <<"\ntagged: "<< tagged
@@ -685,9 +736,19 @@ void Test( const string& infilename ) {
 	  //process each word and dump every ana for now
 	  string analysis;
 	  vector<MBMAana> res;
+	  timeval mbaStartTime;
+	  timeval mbaEndTime;
+	  gettimeofday(&mbaStartTime,0);
 	  Mbma::Classify(tagged_words[i], res);
+	  gettimeofday(&mbaEndTime,0);
+	  addTimeDiff( mbaTime, mbaStartTime, mbaEndTime );
 
+	  timeval mblemStartTime;
+	  timeval mblemEndTime;
+	  gettimeofday(&mblemStartTime,0);
 	  string lemma = myMblem::Classify(tagged_words[i]);
+	  gettimeofday(&mblemEndTime,0);
+	  addTimeDiff( mblemTime, mblemStartTime, mblemEndTime );
 
 	  if (tpDebug) 
 	    {
@@ -717,7 +778,12 @@ void Test( const string& infilename ) {
 	//mwu chunker goes here, otherwise we get a mess when 
 	if (tpDebug)
 	  cout << "starting mwu Chunking ... \n";
+	timeval mwuStartTime;
+	timeval mwuEndTime;
+	gettimeofday(&mwuStartTime,0);
 	mwuChunker::Classify(words, final_ana);
+	gettimeofday(&mwuEndTime,0);
+	addTimeDiff( mwuTime, mwuStartTime, mwuEndTime );
       }
       if (tpDebug) {
 	cout << "\n\nfinished mwu chunking!\n";
@@ -729,12 +795,17 @@ void Test( const string& infilename ) {
 	string resFileName = parserTmpFile + ".result"; 
 	ofstream anaFile( parserTmpFile.c_str() );
 	if ( anaFile ){
+	  timeval parseStartTime;
+	  timeval parseEndTime;
+	  gettimeofday(&parseStartTime,0);
 	  saveAna( anaFile, final_ana );
 	  unlink( resFileName.c_str() );
 	  Parser::Parse( parserTmpFile );
 	  ifstream resFile( resFileName.c_str() );
 	  if ( resFile )
 	    readAna( resFile, final_ana );
+	  gettimeofday(&parseEndTime,0);
+	  addTimeDiff( parseTime, parseStartTime, parseEndTime );
 	}
       }
       showResults( cout, final_ana ); 
@@ -742,6 +813,11 @@ void Test( const string& infilename ) {
       	cout <<endl;
     } //while getline
   }
+  showTimeSpan( cerr, "tagging ", tagTime );
+  showTimeSpan( cerr, "MBA ", mbaTime );
+  showTimeSpan( cerr, "Mblem ", mwuTime );
+  showTimeSpan( cerr, "MWU resolving ", mwuTime );
+  showTimeSpan( cerr, "Parsing ", parseTime );
   if ( doTok ){
     // remove linetokenized file
     string syscommand = "rm -f " + infilename + ".tok.lin\n";
