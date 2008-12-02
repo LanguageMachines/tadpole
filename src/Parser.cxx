@@ -154,9 +154,15 @@ namespace Parser {
       cerr << "Parser is not initialized!" << endl;
       exit(1);
     }
-    pairs->Test( fileName + ".pairs.inst", "tadpoleParser.inst.out" );
-    dir->Test( fileName +".dir.inst", "tadpoleParser.dir.out" );
-    rels->Test( fileName + ".rels.inst", "tadpoleParser.rels.out" );
+#pragma omp parallel sections
+    {
+#pragma omp section
+      pairs->Test( fileName + ".pairs.inst", "tadpoleParser.inst.out" );
+#pragma omp section
+      dir->Test( fileName +".dir.inst", "tadpoleParser.dir.out" );
+#pragma omp section
+      rels->Test( fileName + ".rels.inst", "tadpoleParser.rels.out" );
+    }
     cmd = string("sh ") + BIN_PATH + "/finalizeParser.sh " + fileName;
     system( cmd.c_str() );  
   }
