@@ -30,6 +30,13 @@
 namespace Parser {
   bool init( const std::string&, const std::string& );
   void Parse( const std::string& );
+  extern timeval initTime;
+  extern timeval prepareTime;
+  extern timeval pairsTime;
+  extern timeval relsTime;
+  extern timeval dirTime;
+  extern timeval csiTime;
+
 }
 
 #endif

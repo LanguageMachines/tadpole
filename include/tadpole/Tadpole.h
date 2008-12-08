@@ -27,12 +27,18 @@
 
 #define MAX_NAMELEN 2048 
 
+#include <ctime>
+#include <sys/time.h>
+
 using namespace std;
 
 string prefix( const std::string&, const std::string& );
 string tokenize( const string& );
 string linetokenize( const string& );
 void decap( string &, const string &);
+
+void showTimeSpan( ostream&, const string&, struct timeval& );
+void addTimeDiff( struct timeval&, struct timeval&, struct timeval& );
 
 extern string myOFS;
 extern int tpDebug;

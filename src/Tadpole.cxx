@@ -318,7 +318,9 @@ void parse_args( TimblOpts& Opts ) {
       }
     }
   }
-  
+  if ( doParse )
+    showTimeSpan( cerr, "init Parse", Parser::initTime );
+
   if ( Opts.Find ('t', value, mood)) {
     TestFileName = value;
     Opts.Delete('t');
@@ -643,23 +645,6 @@ void showProgress( ostream& os, const string& line,
      << " microseconds" << endl;
 }
   
-void showTimeSpan( ostream& os, const string& line, 
-		   struct timeval& timeBefore ){
-  os << line << " took:" << timeBefore.tv_sec
-     << " seconds and " << timeBefore.tv_usec 
-     << " microseconds" << endl;
-}
-  
-void addTimeDiff( struct timeval& time, 
-		  struct timeval& start, 
-		  struct timeval& end ){
-  long usecs = (time.tv_sec + end.tv_sec - start.tv_sec) * 1000000 
-    + time.tv_usec + end.tv_usec - start.tv_usec;
-  ldiv_t div = ldiv( usecs, 1000000 );
-  time.tv_sec = div.quot;
-  time.tv_usec = div.rem;
-}
-
 void Test( const string& infilename ) {
   // init's are done
   
@@ -675,7 +660,7 @@ void Test( const string& infilename ) {
     LineTokenizedTestFileName = linetokenize(TokenizedTestFileName);
     gettimeofday(&endTime,0);
     addTimeDiff( tokTime, startTime, endTime );
-    showTimeSpan( cerr, "tokenizing ", tokTime );
+    showTimeSpan( cerr, "tokenizing", tokTime );
     // remove tokenized file
     string syscommand = "rm -f " + infilename + ".tok\n";
     if ( system(syscommand.c_str()) != 0 ){
@@ -819,11 +804,16 @@ void Test( const string& infilename ) {
       	cout <<endl;
     } //while getline
   }
-  showTimeSpan( cerr, "tagging ", tagTime );
-  showTimeSpan( cerr, "MBA ", mbaTime );
-  showTimeSpan( cerr, "Mblem ", mblemTime );
-  showTimeSpan( cerr, "MWU resolving ", mwuTime );
-  showTimeSpan( cerr, "Parsing ", parseTime );
+  showTimeSpan( cerr, "tagging          ", tagTime );
+  showTimeSpan( cerr, "MBA              ", mbaTime );
+  showTimeSpan( cerr, "Mblem            ", mblemTime );
+  showTimeSpan( cerr, "MWU resolving    ", mwuTime );
+  showTimeSpan( cerr, "Parsing (prepare)", Parser::prepareTime );
+  showTimeSpan( cerr, "Parsing (pairs)  ", Parser::pairsTime );
+  showTimeSpan( cerr, "Parsing (rels)   ", Parser::relsTime );
+  showTimeSpan( cerr, "Parsing (dir)    ", Parser::dirTime );
+  showTimeSpan( cerr, "Parsing (csi)    ", Parser::csiTime );
+  showTimeSpan( cerr, "Parsing (total)  ", parseTime );
   if ( doTok ){
     // remove linetokenized file
     string syscommand = "rm -f " + infilename + ".tok.lin\n";

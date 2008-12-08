@@ -50,6 +50,13 @@ namespace Parser {
   static TimblAPI *rels = 0;
   static bool isInit = false;
 
+  timeval initTime;
+  timeval prepareTime;
+  timeval pairsTime;
+  timeval relsTime;
+  timeval dirTime;
+  timeval csiTime;
+
   bool readsettings( const string& cDir, const string& fname ){
     ifstream setfile(fname.c_str(), ios::in);
     if( !setfile.good()){
@@ -118,6 +125,21 @@ namespace Parser {
   bool init( const string& cDir, const string& fname ){
     bool happy = false;
     cerr << "initiating parser ... " << endl;
+    prepareTime.tv_sec=0;
+    prepareTime.tv_usec=0;
+    pairsTime.tv_sec=0;
+    pairsTime.tv_usec=0;
+    relsTime.tv_sec=0;
+    relsTime.tv_usec=0;
+    dirTime.tv_sec=0;
+    dirTime.tv_usec=0;
+    csiTime.tv_sec=0;
+    csiTime.tv_usec=0;
+    initTime.tv_sec=0;
+    initTime.tv_usec=0;
+    timeval startTime;
+    timeval endTime;
+    gettimeofday(&startTime,0);
     if ( !readsettings( cDir, fname)) {
       cerr << "Cannot read parser settingsfile " << fname << endl;
     }
@@ -143,10 +165,15 @@ namespace Parser {
       }
     }
     isInit = happy;
+    gettimeofday(&endTime,0);
+    addTimeDiff( initTime, startTime, endTime );
     return happy;
   }
   
   void Parse( const string& fileName ){
+    timeval startTime;
+    timeval endTime;
+    gettimeofday(&startTime,0);    
     string cmd = string("sh ") + BIN_PATH + "/prepareParser.sh " + fileName;
     // run some python scripts to prepare the input.
     system( cmd.c_str() ); 
@@ -154,16 +181,42 @@ namespace Parser {
       cerr << "Parser is not initialized!" << endl;
       exit(1);
     }
+    gettimeofday(&endTime,0);
+    addTimeDiff( prepareTime, startTime, endTime );    
 #pragma omp parallel sections
     {
 #pragma omp section
-      pairs->Test( fileName + ".pairs.inst", "tadpoleParser.inst.out" );
+      {
+	timeval startTime;
+	timeval endTime;
+	gettimeofday(&startTime,0);
+	pairs->Test( fileName + ".pairs.inst", "tadpoleParser.inst.out" );
+	gettimeofday(&endTime,0);
+	addTimeDiff( pairsTime, startTime, endTime );
+      }
 #pragma omp section
-      dir->Test( fileName +".dir.inst", "tadpoleParser.dir.out" );
+      {
+	timeval startTime;
+	timeval endTime;
+	gettimeofday(&startTime,0);
+	dir->Test( fileName +".dir.inst", "tadpoleParser.dir.out" );
+	gettimeofday(&endTime,0);
+	addTimeDiff( dirTime, startTime, endTime );
+      }
 #pragma omp section
-      rels->Test( fileName + ".rels.inst", "tadpoleParser.rels.out" );
+      {
+	timeval startTime;
+	timeval endTime;
+	gettimeofday(&startTime,0);
+	rels->Test( fileName + ".rels.inst", "tadpoleParser.rels.out" );
+	gettimeofday(&endTime,0);
+	addTimeDiff( relsTime, startTime, endTime );
+      }
     }
+    gettimeofday(&startTime,0);    
     cmd = string("sh ") + BIN_PATH + "/finalizeParser.sh " + fileName;
     system( cmd.c_str() );  
+    gettimeofday(&endTime,0);
+    addTimeDiff( csiTime, startTime, endTime );    
   }
 }
