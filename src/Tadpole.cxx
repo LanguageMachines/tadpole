@@ -665,11 +665,17 @@ void Test( const string& infilename ) {
   
   if ( doTok ){
     //Tokenize
+    struct timeval tokTime;
+    tokTime.tv_sec=0;
+    tokTime.tv_usec=0;
     struct timeval startTime;
+    struct timeval endTime;
     gettimeofday(&startTime, 0 );
     TokenizedTestFileName = tokenize(infilename);
     LineTokenizedTestFileName = linetokenize(TokenizedTestFileName);
-    showProgress( cerr, "tokenizing ", startTime );
+    gettimeofday(&endTime,0);
+    addTimeDiff( tokTime, startTime, endTime );
+    showTimeSpan( cerr, "tokenizing ", tokTime );
     // remove tokenized file
     string syscommand = "rm -f " + infilename + ".tok\n";
     if ( system(syscommand.c_str()) != 0 ){
@@ -815,7 +821,7 @@ void Test( const string& infilename ) {
   }
   showTimeSpan( cerr, "tagging ", tagTime );
   showTimeSpan( cerr, "MBA ", mbaTime );
-  showTimeSpan( cerr, "Mblem ", mwuTime );
+  showTimeSpan( cerr, "Mblem ", mblemTime );
   showTimeSpan( cerr, "MWU resolving ", mwuTime );
   showTimeSpan( cerr, "Parsing ", parseTime );
   if ( doTok ){
