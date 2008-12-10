@@ -783,21 +783,12 @@ void Test( const string& infilename ) {
 	cout << endl;
       }
       if ( doParse ){
-	string resFileName = parserTmpFile + ".result"; 
-	ofstream anaFile( parserTmpFile.c_str() );
-	if ( anaFile ){
-	  timeval parseStartTime;
-	  timeval parseEndTime;
-	  gettimeofday(&parseStartTime,0);
-	  saveAna( anaFile, final_ana );
-	  unlink( resFileName.c_str() );
-	  Parser::Parse( parserTmpFile );
-	  ifstream resFile( resFileName.c_str() );
-	  if ( resFile )
-	    readAna( resFile, final_ana );
-	  gettimeofday(&parseEndTime,0);
-	  addTimeDiff( parseTime, parseStartTime, parseEndTime );
-	}
+	timeval parseStartTime;
+	timeval parseEndTime;
+	gettimeofday(&parseStartTime,0);
+	Parser::Parse( final_ana, parserTmpFile );
+	gettimeofday(&parseEndTime,0);
+	addTimeDiff( parseTime, parseStartTime, parseEndTime );
       }
       showResults( cout, final_ana ); 
       if (num_words>0)

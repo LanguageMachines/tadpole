@@ -66,6 +66,10 @@ namespace mwuChunker {
     string getTag() const {
       return tag;
     }
+
+    string getTagHead() const;
+    string getTagMods() const;
+
     string getWord() const {
       return word;
     }

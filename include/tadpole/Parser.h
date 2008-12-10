@@ -29,7 +29,7 @@
 
 namespace Parser {
   bool init( const std::string&, const std::string& );
-  void Parse( const std::string& );
+  void Parse( std::vector<mwuChunker::ana>&, const std::string& );
   extern timeval initTime;
   extern timeval prepareTime;
   extern timeval pairsTime;

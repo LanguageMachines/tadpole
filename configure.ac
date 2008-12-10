@@ -120,7 +120,10 @@ AC_ARG_WITH(python,
        [PYTHON="python"])
 
 #we need Python 2.5.x
-AM_PATH_PYTHON([2.5],,[:])
+AM_PATH_PYTHON([2.5],
+	       [CXXFLAGS="$CXXFLAGS -I/usr/include/python2.5"
+	       LIBS="-lpython2.5 $LIBS"],
+	       [:])
 
 AC_ARG_WITH(timbl,
        [  --with-timbl=DIR       use timbl installed in <DIR>],
@@ -135,6 +138,14 @@ AC_ARG_WITH(mbt,
        LIBS="-L$withval/lib $LIBS"],
        [CXXFLAGS="$CXXFLAGS -I$prefix/include"
        LIBS="-L$prefix/lib $LIBS"] )
+
+#doBoost=0
+#AC_SEARCH_LIBS( exec_file, [boost_python], doBoost=1 )
+#if test "$doBoost" = "0"; then
+#    AC_MSG_FAILURE( [libboost_python not found, please see usage of --with-boost] )
+#else
+  LIBS="-lboost_python $LIBS"
+#fi
 
 dnl
 dnl ----- Sockets

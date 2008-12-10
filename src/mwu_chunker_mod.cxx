@@ -48,10 +48,8 @@ namespace mwuChunker {
   string myCFS = "_";
   int mwuDebug = 0;
 
-  string splitTag( const string& tag ){
+  int splitTag( const string& tag, string& tagResult, string& modsResult ){
     vector<string> fields;
-    string tagResult;
-    string modsResult;
     int numparts = split_at_first_of( tag, fields, string(myCFS) );
     for( int i=0; i < numparts; ++i ){
       vector<string> parts;
@@ -78,10 +76,31 @@ namespace mwuChunker {
 	}
       }
     }
-    if ( numparts <= 1 )
+    return numparts;
+  }
+
+  string splitTag( const string& tag ){
+    string tagResult;
+    string modsResult;
+    int num = splitTag( tag, tagResult, modsResult );
+    if ( num <= 1 )
       return tagResult + myOFS + tagResult + myOFS + modsResult;
     else
       return "MWU" + myOFS + tagResult + myOFS + modsResult;
+  }
+
+  string ana::getTagHead() const {
+    string head;
+    string tail;
+    splitTag( tag, head, tail );
+    return head;
+  }
+
+  string ana::getTagMods() const {
+    string head;
+    string tail;
+    splitTag( tag, head, tail );
+    return tail;
   }
 
   bool isProper( const string& tag, string& pTag ){
