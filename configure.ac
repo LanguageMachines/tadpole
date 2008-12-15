@@ -295,7 +295,6 @@ AC_OUTPUT([
   scripts/pylet/Makefile
   scripts/pylet/data/Makefile
   scripts/pylet/util/Makefile
-  scripts/prepareParser.sh
   scripts/finalizeParser.sh
   include/Makefile
   include/tadpole/Makefile
