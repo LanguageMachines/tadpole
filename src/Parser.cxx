@@ -51,6 +51,8 @@ namespace Parser {
   string relsFileName;
   string relsOptions = "-a1 +D +vdb+di";
 
+  size_t groupLen = 20;
+
   static TimblAPI *pairs = 0;
   static TimblAPI *dir = 0;
   static TimblAPI *rels = 0;
@@ -181,7 +183,7 @@ namespace Parser {
 
   void createPairs( const vector<mwuChunker::ana>& ana,
 		    const string& fileName ){
-    string pFile = fileName + ".pairs.inst.1";
+    string pFile = fileName + ".pairs.inst";
     ofstream os( pFile.c_str() );
     if ( os ){
       os << "__ " << ana[0].getWord() << " " << ana[1].getWord()
@@ -206,59 +208,85 @@ namespace Parser {
 	 << ana[ana.size()-1].getTagHead() << "^ROOT ROOT ROOT ROOT^__" 
 	 << " _" << endl;
       // 
-      for ( size_t j=0 ; j < ana.size() ; ++j ){
-	for ( size_t i=0 ; i < ana.size() ; ++i ){
-	  if ( j == ana.size()-1 && i == 0 )
-	    ++i;
-	  if ( j == 0 && i == ana.size() - 1 )
+      for ( size_t wPos=0 ; wPos < ana.size(); ++wPos ){
+	for ( size_t i=groupLen; i < (ana.size() + groupLen); ++i ){
+	  size_t pos = i-groupLen;
+	  //	  os << wPos << "-" << pos << " ";
+	  if ( pos > wPos + groupLen )
+	    break;
+	  if ( wPos == pos )
 	    continue;
-	  if ( i == j )
+	  if ( wPos > groupLen + pos )
 	    continue;
-	  //	  os << j << "-" << i << " ";
-	  if ( j == 0 )
+	  if ( wPos >=ana.size() ){
+	    os << ana[wPos-1].getWord();
+	    os << "  __ __";
+	  }
+	  else if ( wPos >= ana.size()-1 ) {
+	    os << ana[wPos-1].getWord();
+	    os << " " << ana[wPos].getWord();
+	    os << " __";
+	  }
+	  else if ( wPos == 0 ){
 	    os << "__";
-	  else
-	    os << ana[j-1].getWord();
-	  os << " " << ana[j].getWord();
-	  if ( j >= ana.size() - 1 )
+	    os << " " << ana[wPos].getWord();
+	    os << " " << ana[wPos+1].getWord();
+	  }
+	  else {
+	    os << ana[wPos-1].getWord();
+	    os << " " << ana[wPos].getWord();
+	    os << " " << ana[wPos+1].getWord();
+	  }
+	  if ( pos == 0 )
 	    os << " __";
 	  else
-	    os << " " << ana[j+1].getWord();
-	  if ( i == 0 )
-	    os << " __";
+	    os << " " << ana[pos-1].getWord();
+	  if ( pos < ana.size() )
+	    os << " " << ana[pos].getWord();
 	  else
-	    os << " " << ana[i-1].getWord();
-	  os << " " << ana[i].getWord();
-	  if ( i >= ana.size() -1 )
 	    os << " __";
+	  if ( pos < ana.size()-1 )
+	    os << " " << ana[pos+1].getWord();
 	  else
-	    os << " " << ana[i+1].getWord();
-	  os << " ";
-	  if ( j == 0 )
-	    os << "__";
+	    os << " __";
+	  if ( wPos == 0 )
+	    os << " __";
 	  else 
-	    os << ana[j-1].getTagHead() ;
-	  os << " " << ana[j].getTagHead();
-	  if ( j >= ana.size() -1 )
+	    os << " " << ana[wPos-1].getTagHead() ;
+	  os << " " << ana[wPos].getTagHead();
+	  if ( wPos < ana.size() - 1 )
+	    os << " " << ana[wPos+1].getTagHead();
+	  else 
+	    os << " __";
+	  if ( pos == 0 )
 	    os << " __";
 	  else
-	    os << " " << ana[j+1].getTagHead();
-	  if ( i == 0 )
+	    os << " " << ana[pos-1].getTagHead();
+	  if ( pos < ana.size() )
+	    os << " " << ana[pos].getTagHead();
+	  else
+	    os << " __";
+	  if ( pos < ana.size()-1 )
+	    os << " " << ana[pos+1].getTagHead();
+	  else
+	    os << " __";
+	  
+	  os << " " << ana[wPos].getTagHead() << "^";
+	  if ( pos < ana.size() )
+	    os << ana[pos].getTagHead();
+	  else
+	    os << "__";
+
+	  if ( wPos > pos )
+	    os << " LEFT " << wPos - pos;
+	  else
+	    os << " RIGHT " << pos - wPos;
+	  if ( pos >= ana.size() )
 	    os << " __";
 	  else
-	    os << " " << ana[i-1].getTagHead();
-	  os << " " << ana[i].getTagHead();
-	  if ( i >= ana.size()-1 )
-	    os << " __";
-	  else
-	    os << " " << ana[i+1].getTagHead();
-	  os << " " << ana[j].getTagHead() << "^" << ana[i].getTagHead();
-	  if ( j > i )
-	    os << " LEFT " << j - i;
-	  else
-	    os << " RIGHT " << i - j;
-	  os << " " << ana[i].getTagMods() << "^" << ana[j].getTagMods()
-	     << " __" << endl;
+	    os << " " << ana[pos].getTagMods();
+	  os << "^" << ana[wPos].getTagMods();
+	  os << " __" << endl;
 	}
       }
     }
@@ -266,7 +294,7 @@ namespace Parser {
 
   void createDir( const vector<mwuChunker::ana>& ana,
 		    const string& fileName ){
-    string pFile = fileName + ".dir.inst.1";
+    string pFile = fileName + ".dir.inst";
     ofstream os( pFile.c_str() );
     if ( os ){
       os << "__ __";
@@ -333,7 +361,7 @@ namespace Parser {
       }
       size_t pos;
       if ( ana.size() > 3 ){
-	size_t pos = ana.size() - 2;
+	pos = ana.size() - 2;
 	os << ana[pos-2].getWord();
 	os << " " << ana[pos-1].getWord();
 	os << " " << ana[pos].getWord();
@@ -378,7 +406,98 @@ namespace Parser {
       os << " " << ana[pos].getTagMods();
       os << " __";
       os << " ROOT" << endl;
+    }
+    os << endl;
+  }
 
+  void createRels( const vector<mwuChunker::ana>& ana,
+		   const string& fileName ){
+    string pFile = fileName + ".rels.inst";
+    ofstream os( pFile.c_str() );
+    if ( os ){
+      os << "__ __";
+      os << " " << ana[0].getWord();
+      os << " " << ana[1].getWord();
+      os << " " << ana[2].getWord();
+      os << " " << ana[0].getTagMods();
+      os << " __ __";
+      os << " " << ana[0].getTagHead();
+      os << " " << ana[1].getTagHead();
+      os << " " << ana[2].getTagHead();
+      os << " __^" << ana[0].getTagHead();
+      os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+      os << " __^__^" << ana[0].getTagHead();
+      os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead() << "^" << ana[2].getTagHead();
+      os << " __" << endl;
+      os << "__";
+      os << " " << ana[0].getWord();
+      os << " " << ana[1].getWord();
+      os << " " << ana[2].getWord();
+      os << " " << ana[3].getWord();
+      os << " " << ana[1].getTagMods();
+      os << " __";
+      os << " " << ana[0].getTagHead();
+      os << " " << ana[1].getTagHead();
+      os << " " << ana[2].getTagHead();
+      os << " " << ana[3].getTagHead();
+      os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+      os << " " << ana[1].getTagHead() << "^" << ana[2].getTagHead();
+      os << " __^" << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+      os << " " << ana[1].getTagHead() << "^" << ana[2].getTagHead() << "^" << ana[3].getTagHead();
+      os << " __" << endl;
+      for ( size_t i=2 ; i < ana.size() - 2 ; ++i ){
+	os << ana[i-2].getWord();
+	os << " " << ana[i-1].getWord();
+	os << " " << ana[i].getWord();
+	os << " " << ana[i+1].getWord();
+	os << " " << ana[i+2].getWord();
+	os << " " << ana[i].getTagMods();
+	os << " " << ana[i-2].getTagHead();
+	os << " " << ana[i-1].getTagHead();
+	os << " " << ana[i].getTagHead();
+	os << " " << ana[i+1].getTagHead();
+	os << " " << ana[i+2].getTagHead();
+	os << " " << ana[i-1].getTagHead() << "^" << ana[i].getTagHead();
+	os << " " << ana[i].getTagHead() << "^" << ana[i+1].getTagHead();
+	os << " " << ana[i-2].getTagHead() << "^" << ana[i-1].getTagHead() << "^" << ana[i].getTagHead();
+	os << " " << ana[i].getTagHead() << "^" << ana[i+1].getTagHead() << "^" << ana[i+2].getTagHead();
+	os << " __" << endl;
+      }
+      if ( ana.size() > 3 ){
+	size_t pos = ana.size() - 2;
+	os << ana[pos-2].getWord();
+	os << " " << ana[pos-1].getWord();
+	os << " " << ana[pos].getWord();
+	os << " " << ana[pos+1].getWord();
+	os << " __";
+	os << " " << ana[pos].getTagMods();
+	os << " " << ana[pos-2].getTagHead();
+	os << " " << ana[pos-1].getTagHead();
+	os << " " << ana[pos].getTagHead();
+	os << " " << ana[pos+1].getTagHead();
+	os << " __";
+	os << " " << ana[pos-1].getTagHead() << "^" << ana[pos].getTagHead();
+	os << " " << ana[pos].getTagHead() << "^" << ana[pos+1].getTagHead();
+	os << " " << ana[pos-2].getTagHead() << "^" << ana[pos-1].getTagHead() << "^" << ana[pos].getTagHead();
+	os << " " << ana[pos].getTagHead() << "^" << ana[pos+1].getTagHead() << "^__";
+	os << " __" << endl;
+	pos = ana.size() - 1;
+	os << ana[pos-2].getWord();
+	os << " " << ana[pos-1].getWord();
+	os << " " << ana[pos].getWord();
+	os << " __ __";
+	os << " " << ana[pos].getTagMods();
+	os << " " << ana[pos-2].getTagHead();
+	os << " " << ana[pos-1].getTagHead();
+	os << " " << ana[pos].getTagHead();
+	os << " __ __";
+	os << " " << ana[pos-1].getTagHead() << "^" << ana[pos].getTagHead();
+	os << " " << ana[pos].getTagHead() << "^__";
+	os << " " << ana[pos-2].getTagHead() << "^" << ana[pos-1].getTagHead() << "^" << ana[pos].getTagHead();
+	os << " " << ana[pos].getTagHead() << "^__^__";
+	os << " __" << endl;
+      }
+      os << endl;
     }
   }
 
@@ -389,17 +508,15 @@ namespace Parser {
     }
     timeval startTime;
     timeval endTime;
-    createPairs( final_ana, fileName );
-    createDir( final_ana, fileName );
     string resFileName = fileName + ".result"; 
     ofstream anaFile( fileName.c_str() );
     if ( anaFile ){
       saveAna( anaFile, final_ana );
       unlink( resFileName.c_str() );
       gettimeofday(&startTime,0);    
-      string cmd = string("sh ") + BIN_PATH + "/prepareParser.sh " + fileName;
-      // run some python scripts to prepare the input.
-      system( cmd.c_str() ); 
+      createPairs( final_ana, fileName );
+      createDir( final_ana, fileName );
+      createRels( final_ana, fileName );
       if ( !isInit ){
 	cerr << "Parser is not initialized!" << endl;
 	exit(1);
@@ -447,7 +564,7 @@ namespace Parser {
 	PyErr_Print();
       }
 #else
-      cmd = string("sh ") + BIN_PATH + "/finalizeParser.sh " + fileName;
+      string cmd = string("sh ") + BIN_PATH + "/finalizeParser.sh " + fileName;
       system( cmd.c_str() );  
 #endif
       gettimeofday(&endTime,0);
