@@ -186,107 +186,118 @@ namespace Parser {
     string pFile = fileName + ".pairs.inst";
     ofstream os( pFile.c_str() );
     if ( os ){
-      os << "__ " << ana[0].getWord() << " " << ana[1].getWord()
-	 << " ROOT ROOT ROOT __ " << ana[0].getTagHead() 
-	 << " " << ana[1].getTagHead() << " ROOT ROOT ROOT "
-	 << ana[0].getTagHead() << "^ROOT ROOT ROOT ROOT^" 
-	 << ana[0].getTagMods() 
-	 << " _" << endl;
-      for ( size_t i=1 ; i < ana.size() -1 ; ++i ){
-	os << ana[i-1].getWord() << " " << ana[i].getWord()
-	   << " " << ana[i+1].getWord()
-	   << " ROOT ROOT ROOT " << ana[i-1].getTagHead() 
-	   << " " << ana[i].getTagHead()
-	   << " " << ana[i+1].getTagHead() << " ROOT ROOT ROOT "
-	   << ana[i].getTagHead() << "^ROOT ROOT ROOT ROOT^" 
-	   << ana[i].getTagMods() 
+      if ( ana.size() == 1 ){
+	os << "__ " << ana[0].getWord() << " __"
+	   << " ROOT ROOT ROOT __ " << ana[0].getTagHead() 
+	   << " __ ROOT ROOT ROOT "
+	   << ana[0].getTagHead() << "^ROOT ROOT ROOT ROOT^" 
+	   << ana[0].getTagMods() 
 	   << " _" << endl;
       }
-      os << ana[ana.size()-2].getWord() << " " << ana[ana.size()-1].getWord()
-	 << " __ ROOT ROOT ROOT " << ana[ana.size()-2].getTagHead() 
-	 << " " << ana[ana.size()-1].getTagHead() << " __ ROOT ROOT ROOT "
-	 << ana[ana.size()-1].getTagHead() << "^ROOT ROOT ROOT ROOT^__" 
-	 << " _" << endl;
-      // 
-      for ( size_t wPos=0 ; wPos < ana.size(); ++wPos ){
-	for ( size_t i=groupLen; i < (ana.size() + groupLen); ++i ){
-	  size_t pos = i-groupLen;
-	  //	  os << wPos << "-" << pos << " ";
-	  if ( pos > wPos + groupLen )
-	    break;
-	  if ( wPos == pos )
-	    continue;
-	  if ( wPos > groupLen + pos )
-	    continue;
-	  if ( wPos >=ana.size() ){
-	    os << ana[wPos-1].getWord();
-	    os << "  __ __";
+      else {
+	os << "__ " << ana[0].getWord() << " " << ana[1].getWord()
+	   << " ROOT ROOT ROOT __ " << ana[0].getTagHead() 
+	   << " " << ana[1].getTagHead() << " ROOT ROOT ROOT "
+	   << ana[0].getTagHead() << "^ROOT ROOT ROOT ROOT^" 
+	   << ana[0].getTagMods() 
+	   << " _" << endl;
+	for ( size_t i=1 ; i < ana.size() -1 ; ++i ){
+	  os << ana[i-1].getWord() << " " << ana[i].getWord()
+	     << " " << ana[i+1].getWord()
+	     << " ROOT ROOT ROOT " << ana[i-1].getTagHead() 
+	     << " " << ana[i].getTagHead()
+	     << " " << ana[i+1].getTagHead() << " ROOT ROOT ROOT "
+	     << ana[i].getTagHead() << "^ROOT ROOT ROOT ROOT^" 
+	     << ana[i].getTagMods() 
+	     << " _" << endl;
+	}
+	os << ana[ana.size()-2].getWord() << " " << ana[ana.size()-1].getWord()
+	   << " __ ROOT ROOT ROOT " << ana[ana.size()-2].getTagHead() 
+	   << " " << ana[ana.size()-1].getTagHead() << " __ ROOT ROOT ROOT "
+	   << ana[ana.size()-1].getTagHead() << "^ROOT ROOT ROOT ROOT^" 
+	   << ana[ana.size()-1].getTagMods()
+	   << " _" << endl;
+	// 
+	for ( size_t wPos=0 ; wPos < ana.size(); ++wPos ){
+	  for ( size_t i=groupLen; i < (ana.size() + groupLen); ++i ){
+	    size_t pos = i-groupLen;
+	    //	  os << wPos << "-" << pos << " ";
+	    if ( pos > wPos + groupLen )
+	      break;
+	    if ( wPos == pos )
+	      continue;
+	    if ( wPos > groupLen + pos )
+	      continue;
+	    if ( wPos >=ana.size() ){
+	      os << ana[wPos-1].getWord();
+	      os << "  __ __";
+	    }
+	    else if ( wPos >= ana.size()-1 ) {
+	      os << ana[wPos-1].getWord();
+	      os << " " << ana[wPos].getWord();
+	      os << " __";
+	    }
+	    else if ( wPos == 0 ){
+	      os << "__";
+	      os << " " << ana[wPos].getWord();
+	      os << " " << ana[wPos+1].getWord();
+	    }
+	    else {
+	      os << ana[wPos-1].getWord();
+	      os << " " << ana[wPos].getWord();
+	      os << " " << ana[wPos+1].getWord();
+	    }
+	    if ( pos == 0 )
+	      os << " __";
+	    else
+	      os << " " << ana[pos-1].getWord();
+	    if ( pos < ana.size() )
+	      os << " " << ana[pos].getWord();
+	    else
+	      os << " __";
+	    if ( pos < ana.size()-1 )
+	      os << " " << ana[pos+1].getWord();
+	    else
+	      os << " __";
+	    if ( wPos == 0 )
+	      os << " __";
+	    else 
+	      os << " " << ana[wPos-1].getTagHead() ;
+	    os << " " << ana[wPos].getTagHead();
+	    if ( wPos < ana.size() - 1 )
+	      os << " " << ana[wPos+1].getTagHead();
+	    else 
+	      os << " __";
+	    if ( pos == 0 )
+	      os << " __";
+	    else
+	      os << " " << ana[pos-1].getTagHead();
+	    if ( pos < ana.size() )
+	      os << " " << ana[pos].getTagHead();
+	    else
+	      os << " __";
+	    if ( pos < ana.size()-1 )
+	      os << " " << ana[pos+1].getTagHead();
+	    else
+	      os << " __";
+	    
+	    os << " " << ana[wPos].getTagHead() << "^";
+	    if ( pos < ana.size() )
+	      os << ana[pos].getTagHead();
+	    else
+	      os << "__";
+	    
+	    if ( wPos > pos )
+	      os << " LEFT " << wPos - pos;
+	    else
+	      os << " RIGHT " << pos - wPos;
+	    if ( pos >= ana.size() )
+	      os << " __";
+	    else
+	      os << " " << ana[pos].getTagMods();
+	    os << "^" << ana[wPos].getTagMods();
+	    os << " __" << endl;
 	  }
-	  else if ( wPos >= ana.size()-1 ) {
-	    os << ana[wPos-1].getWord();
-	    os << " " << ana[wPos].getWord();
-	    os << " __";
-	  }
-	  else if ( wPos == 0 ){
-	    os << "__";
-	    os << " " << ana[wPos].getWord();
-	    os << " " << ana[wPos+1].getWord();
-	  }
-	  else {
-	    os << ana[wPos-1].getWord();
-	    os << " " << ana[wPos].getWord();
-	    os << " " << ana[wPos+1].getWord();
-	  }
-	  if ( pos == 0 )
-	    os << " __";
-	  else
-	    os << " " << ana[pos-1].getWord();
-	  if ( pos < ana.size() )
-	    os << " " << ana[pos].getWord();
-	  else
-	    os << " __";
-	  if ( pos < ana.size()-1 )
-	    os << " " << ana[pos+1].getWord();
-	  else
-	    os << " __";
-	  if ( wPos == 0 )
-	    os << " __";
-	  else 
-	    os << " " << ana[wPos-1].getTagHead() ;
-	  os << " " << ana[wPos].getTagHead();
-	  if ( wPos < ana.size() - 1 )
-	    os << " " << ana[wPos+1].getTagHead();
-	  else 
-	    os << " __";
-	  if ( pos == 0 )
-	    os << " __";
-	  else
-	    os << " " << ana[pos-1].getTagHead();
-	  if ( pos < ana.size() )
-	    os << " " << ana[pos].getTagHead();
-	  else
-	    os << " __";
-	  if ( pos < ana.size()-1 )
-	    os << " " << ana[pos+1].getTagHead();
-	  else
-	    os << " __";
-	  
-	  os << " " << ana[wPos].getTagHead() << "^";
-	  if ( pos < ana.size() )
-	    os << ana[pos].getTagHead();
-	  else
-	    os << "__";
-
-	  if ( wPos > pos )
-	    os << " LEFT " << wPos - pos;
-	  else
-	    os << " RIGHT " << pos - wPos;
-	  if ( pos >= ana.size() )
-	    os << " __";
-	  else
-	    os << " " << ana[pos].getTagMods();
-	  os << "^" << ana[wPos].getTagMods();
-	  os << " __" << endl;
 	}
       }
     }
@@ -297,71 +308,173 @@ namespace Parser {
     string pFile = fileName + ".dir.inst";
     ofstream os( pFile.c_str() );
     if ( os ){
-      os << "__ __";
-      os << " " << ana[0].getWord();
-      os << " " << ana[1].getWord();
-      os << " " << ana[2].getWord();
-      os << " __ __";
-      os << " " << ana[0].getTagHead();
-      os << " " << ana[1].getTagHead();
-      os << " " << ana[2].getTagHead();
-      os << " __ __";
-      os << " " << ana[0].getWord() << "^" << ana[0].getTagHead();
-      os << " " << ana[1].getWord() << "^" << ana[1].getTagHead();
-      os << " " << ana[2].getWord() << "^" << ana[2].getTagHead();
-      os << " __^" << ana[0].getTagHead();
-      os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
-      os << " __";
-      os << " " << ana[0].getTagMods();
-      os << " " << ana[1].getTagMods();
-      os << " ROOT" << endl;
-      os << "__";
-      os << " " << ana[0].getWord();
-      os << " " << ana[1].getWord();
-      os << " " << ana[2].getWord();
-      os << " " << ana[3].getWord();
-      os << " __";
-      os << " " << ana[0].getTagHead();
-      os << " " << ana[1].getTagHead();
-      os << " " << ana[2].getTagHead();
-      os << " " << ana[3].getTagHead();
-      os << " __";
-      os << " " << ana[0].getWord() << "^" << ana[0].getTagHead();
-      os << " " << ana[1].getWord() << "^" << ana[1].getTagHead();
-      os << " " << ana[2].getWord() << "^" << ana[2].getTagHead();
-      os << " " << ana[3].getWord() << "^" << ana[3].getTagHead();
-      os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
-      os << " " << ana[1].getTagHead() << "^" << ana[2].getTagHead();
-      os << " " << ana[0].getTagMods();
-      os << " " << ana[1].getTagMods();
-      os << " " << ana[2].getTagMods();
-      os << " ROOT" << endl;
-      for ( size_t i=2 ; i < ana.size() - 2 ; ++i ){
-	os << ana[i-2].getWord();
-	os << " " << ana[i-1].getWord();
-	os << " " << ana[i].getWord();
-	os << " " << ana[i+1].getWord();
-	os << " " << ana[i+2].getWord();
-	os << " " << ana[i-2].getTagHead();
-	os << " " << ana[i-1].getTagHead();
-	os << " " << ana[i].getTagHead();
-	os << " " << ana[i+1].getTagHead();
-	os << " " << ana[i+2].getTagHead();
-	os << " " << ana[i-2].getWord() << "^" << ana[i-2].getTagHead();
-	os << " " << ana[i-1].getWord() << "^" << ana[i-1].getTagHead();
-	os << " " << ana[i].getWord() << "^" << ana[i].getTagHead();
-	os << " " << ana[i+1].getWord() << "^" << ana[i+1].getTagHead();
-	os << " " << ana[i+2].getWord() << "^" << ana[i+2].getTagHead();
-	os << " " << ana[i-1].getTagHead() << "^" << ana[i].getTagHead();
-	os << " " << ana[i].getTagHead() << "^" << ana[i+1].getTagHead();
-	os << " " << ana[i-1].getTagMods();
-	os << " " << ana[i].getTagMods();
-	os << " " << ana[i+1].getTagMods();
+      if ( ana.size() == 1 ){
+	os << "__ __";
+	os << " " << ana[0].getWord();
+	os << " __ __ __ __";
+	os << " " << ana[0].getTagHead();
+	os << " __ __ __ __";
+	os << " " << ana[0].getWord() << "^" << ana[0].getTagHead();
+	os << " __ __ __^" << ana[0].getTagHead();
+	os << " " << ana[0].getTagHead() << "^__";
+	os << " __";
+	os << " " << ana[0].getTagMods();
+	os << " __ ROOT" << endl;
+      }
+      else if ( ana.size() == 2 ){
+	os << "__ __";
+	os << " " << ana[0].getWord();
+	os << " " << ana[1].getWord();
+	os << " __ __ __";
+	os << " " << ana[0].getTagHead();
+	os << " " << ana[1].getTagHead();
+	os << " __ __ __";
+	os << " " << ana[0].getWord() << "^" << ana[0].getTagHead();
+	os << " " << ana[1].getWord() << "^" << ana[1].getTagHead();
+	os << " __ __^" << ana[0].getTagHead();
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " __";
+	os << " " << ana[0].getTagMods();
+	os << " " << ana[1].getTagMods();
+	os << " ROOT" << endl;
+	os << "__";
+	os << " " << ana[0].getWord();
+	os << " " << ana[1].getWord();
+	os << " __ __ __";
+	os << " " << ana[0].getTagHead();
+	os << " " << ana[1].getTagHead();
+	os << " __ __ __";
+	os << " " << ana[0].getWord() << "^" << ana[0].getTagHead();
+	os << " " << ana[1].getWord() << "^" << ana[1].getTagHead();
+	os << " __ __";
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " " << ana[1].getTagHead() << "^__";
+	os << " " << ana[0].getTagMods();
+	os << " " << ana[1].getTagMods();
+	os << " __";
 	os << " ROOT" << endl;
       }
-      size_t pos;
-      if ( ana.size() > 3 ){
-	pos = ana.size() - 2;
+      else if ( ana.size() == 3 ) {
+	os << "__ __";
+	os << " " << ana[0].getWord();
+	os << " " << ana[1].getWord();
+	os << " " << ana[2].getWord();
+	os << " __ __";
+	os << " " << ana[0].getTagHead();
+	os << " " << ana[1].getTagHead();
+	os << " " << ana[2].getTagHead();
+	os << " __ __";
+	os << " " << ana[0].getWord() << "^" << ana[0].getTagHead();
+	os << " " << ana[1].getWord() << "^" << ana[1].getTagHead();
+	os << " " << ana[2].getWord() << "^" << ana[2].getTagHead();
+	os << " __^" << ana[0].getTagHead();
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " __";
+	os << " " << ana[0].getTagMods();
+	os << " " << ana[1].getTagMods();
+	os << " ROOT" << endl;
+	os << "__";
+	os << " " << ana[0].getWord();
+	os << " " << ana[1].getWord();
+	os << " " << ana[2].getWord();
+	os << " __ __";
+	os << " " << ana[0].getTagHead();
+	os << " " << ana[1].getTagHead();
+	os << " " << ana[2].getTagHead();
+	os << " __ __";
+	os << " " << ana[0].getWord() << "^" << ana[0].getTagHead();
+	os << " " << ana[1].getWord() << "^" << ana[1].getTagHead();
+	os << " " << ana[2].getWord() << "^" << ana[2].getTagHead();
+	os << " __";
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " " << ana[1].getTagHead() << "^" << ana[2].getTagHead();
+	os << " " << ana[0].getTagMods();
+	os << " " << ana[1].getTagMods();
+	os << " " << ana[2].getTagMods();
+	os << " ROOT" << endl;
+	os << ana[0].getWord();
+	os << " " << ana[1].getWord();
+	os << " " << ana[2].getWord();
+	os << " __ __";
+	os << " " << ana[0].getTagHead();
+	os << " " << ana[1].getTagHead();
+	os << " " << ana[2].getTagHead();
+	os << " __ __";
+	os << " " << ana[0].getWord() << "^" << ana[0].getTagHead();
+	os << " " << ana[1].getWord() << "^" << ana[1].getTagHead();
+	os << " " << ana[2].getWord() << "^" << ana[2].getTagHead();
+	os << " __ __";
+	os << " " << ana[1].getTagHead() << "^" << ana[2].getTagHead();
+	os << " " << ana[2].getTagHead() << "^__";
+	os << " " << ana[1].getTagMods();
+	os << " " << ana[2].getTagMods();
+	os << " __";
+	os << " ROOT" << endl;
+      }
+      else {
+	os << "__ __";
+	os << " " << ana[0].getWord();
+	os << " " << ana[1].getWord();
+	os << " " << ana[2].getWord();
+	os << " __ __";
+	os << " " << ana[0].getTagHead();
+	os << " " << ana[1].getTagHead();
+	os << " " << ana[2].getTagHead();
+	os << " __ __";
+	os << " " << ana[0].getWord() << "^" << ana[0].getTagHead();
+	os << " " << ana[1].getWord() << "^" << ana[1].getTagHead();
+	os << " " << ana[2].getWord() << "^" << ana[2].getTagHead();
+	os << " __^" << ana[0].getTagHead();
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " __";
+	os << " " << ana[0].getTagMods();
+	os << " " << ana[1].getTagMods();
+	os << " ROOT" << endl;
+	os << "__";
+	os << " " << ana[0].getWord();
+	os << " " << ana[1].getWord();
+	os << " " << ana[2].getWord();
+	os << " " << ana[3].getWord();
+	os << " __";
+	os << " " << ana[0].getTagHead();
+	os << " " << ana[1].getTagHead();
+	os << " " << ana[2].getTagHead();
+	os << " " << ana[3].getTagHead();
+	os << " __";
+	os << " " << ana[0].getWord() << "^" << ana[0].getTagHead();
+	os << " " << ana[1].getWord() << "^" << ana[1].getTagHead();
+	os << " " << ana[2].getWord() << "^" << ana[2].getTagHead();
+	os << " " << ana[3].getWord() << "^" << ana[3].getTagHead();
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " " << ana[1].getTagHead() << "^" << ana[2].getTagHead();
+	os << " " << ana[0].getTagMods();
+	os << " " << ana[1].getTagMods();
+	os << " " << ana[2].getTagMods();
+	os << " ROOT" << endl;
+	for ( size_t i=2 ; i < ana.size() - 2 ; ++i ){
+	  os << ana[i-2].getWord();
+	  os << " " << ana[i-1].getWord();
+	  os << " " << ana[i].getWord();
+	  os << " " << ana[i+1].getWord();
+	  os << " " << ana[i+2].getWord();
+	  os << " " << ana[i-2].getTagHead();
+	  os << " " << ana[i-1].getTagHead();
+	  os << " " << ana[i].getTagHead();
+	  os << " " << ana[i+1].getTagHead();
+	  os << " " << ana[i+2].getTagHead();
+	  os << " " << ana[i-2].getWord() << "^" << ana[i-2].getTagHead();
+	  os << " " << ana[i-1].getWord() << "^" << ana[i-1].getTagHead();
+	  os << " " << ana[i].getWord() << "^" << ana[i].getTagHead();
+	  os << " " << ana[i+1].getWord() << "^" << ana[i+1].getTagHead();
+	  os << " " << ana[i+2].getWord() << "^" << ana[i+2].getTagHead();
+	  os << " " << ana[i-1].getTagHead() << "^" << ana[i].getTagHead();
+	  os << " " << ana[i].getTagHead() << "^" << ana[i+1].getTagHead();
+	  os << " " << ana[i-1].getTagMods();
+	  os << " " << ana[i].getTagMods();
+	  os << " " << ana[i+1].getTagMods();
+	  os << " ROOT" << endl;
+	}
+	size_t pos = ana.size() - 2;
 	os << ana[pos-2].getWord();
 	os << " " << ana[pos-1].getWord();
 	os << " " << ana[pos].getWord();
@@ -383,87 +496,177 @@ namespace Parser {
 	os << " " << ana[pos].getTagMods();
 	os << " " << ana[pos+1].getTagMods();
 	os << " ROOT" << endl;
+	pos = ana.size() - 1;
+	os << ana[pos-2].getWord();
+	os << " " << ana[pos-1].getWord();
+	os << " " << ana[pos].getWord();
+	os << " __";
+	os << " __";
+	os << " " << ana[pos-2].getTagHead();
+	os << " " << ana[pos-1].getTagHead();
+	os << " " << ana[pos].getTagHead();
+	os << " __";
+	os << " __";
+	os << " " << ana[pos-2].getWord() << "^" << ana[pos-2].getTagHead();
+	os << " " << ana[pos-1].getWord() << "^" << ana[pos-1].getTagHead();
+	os << " " << ana[pos].getWord() << "^" << ana[pos].getTagHead();
+	os << " __";
+	os << " __";
+	os << " " << ana[pos-1].getTagHead() << "^" << ana[pos].getTagHead();
+	os << " " << ana[pos].getTagHead() << "^__";
+	os << " " << ana[pos-1].getTagMods();
+	os << " " << ana[pos].getTagMods();
+	os << " __";
+	os << " ROOT" << endl;
       }
-      pos = ana.size() - 1;
-      os << ana[pos-2].getWord();
-      os << " " << ana[pos-1].getWord();
-      os << " " << ana[pos].getWord();
-      os << " __";
-      os << " __";
-      os << " " << ana[pos-2].getTagHead();
-      os << " " << ana[pos-1].getTagHead();
-      os << " " << ana[pos].getTagHead();
-      os << " __";
-      os << " __";
-      os << " " << ana[pos-2].getWord() << "^" << ana[pos-2].getTagHead();
-      os << " " << ana[pos-1].getWord() << "^" << ana[pos-1].getTagHead();
-      os << " " << ana[pos].getWord() << "^" << ana[pos].getTagHead();
-      os << " __";
-      os << " __";
-      os << " " << ana[pos-1].getTagHead() << "^" << ana[pos].getTagHead();
-      os << " " << ana[pos].getTagHead() << "^__";
-      os << " " << ana[pos-1].getTagMods();
-      os << " " << ana[pos].getTagMods();
-      os << " __";
-      os << " ROOT" << endl;
     }
     os << endl;
   }
-
+  
   void createRels( const vector<mwuChunker::ana>& ana,
 		   const string& fileName ){
     string pFile = fileName + ".rels.inst";
     ofstream os( pFile.c_str() );
     if ( os ){
-      os << "__ __";
-      os << " " << ana[0].getWord();
-      os << " " << ana[1].getWord();
-      os << " " << ana[2].getWord();
-      os << " " << ana[0].getTagMods();
-      os << " __ __";
-      os << " " << ana[0].getTagHead();
-      os << " " << ana[1].getTagHead();
-      os << " " << ana[2].getTagHead();
-      os << " __^" << ana[0].getTagHead();
-      os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
-      os << " __^__^" << ana[0].getTagHead();
-      os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead() << "^" << ana[2].getTagHead();
-      os << " __" << endl;
-      os << "__";
-      os << " " << ana[0].getWord();
-      os << " " << ana[1].getWord();
-      os << " " << ana[2].getWord();
-      os << " " << ana[3].getWord();
-      os << " " << ana[1].getTagMods();
-      os << " __";
-      os << " " << ana[0].getTagHead();
-      os << " " << ana[1].getTagHead();
-      os << " " << ana[2].getTagHead();
-      os << " " << ana[3].getTagHead();
-      os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
-      os << " " << ana[1].getTagHead() << "^" << ana[2].getTagHead();
-      os << " __^" << ana[0].getTagHead() << "^" << ana[1].getTagHead();
-      os << " " << ana[1].getTagHead() << "^" << ana[2].getTagHead() << "^" << ana[3].getTagHead();
-      os << " __" << endl;
-      for ( size_t i=2 ; i < ana.size() - 2 ; ++i ){
-	os << ana[i-2].getWord();
-	os << " " << ana[i-1].getWord();
-	os << " " << ana[i].getWord();
-	os << " " << ana[i+1].getWord();
-	os << " " << ana[i+2].getWord();
-	os << " " << ana[i].getTagMods();
-	os << " " << ana[i-2].getTagHead();
-	os << " " << ana[i-1].getTagHead();
-	os << " " << ana[i].getTagHead();
-	os << " " << ana[i+1].getTagHead();
-	os << " " << ana[i+2].getTagHead();
-	os << " " << ana[i-1].getTagHead() << "^" << ana[i].getTagHead();
-	os << " " << ana[i].getTagHead() << "^" << ana[i+1].getTagHead();
-	os << " " << ana[i-2].getTagHead() << "^" << ana[i-1].getTagHead() << "^" << ana[i].getTagHead();
-	os << " " << ana[i].getTagHead() << "^" << ana[i+1].getTagHead() << "^" << ana[i+2].getTagHead();
+      if ( ana.size() == 1 ){
+	os << "__ __";
+	os << " " << ana[0].getWord();
+	os << " __ __";
+	os << " " << ana[0].getTagMods();
+	os << " __ __";
+	os << " " << ana[0].getTagHead();
+	os << " __ __";
+	os << " __^" << ana[0].getTagHead();
+	os << " " << ana[0].getTagHead() << "^__";
+	os << " __^__^" << ana[0].getTagHead();
+	os << " " << ana[0].getTagHead() << "^__^__";
 	os << " __" << endl;
       }
-      if ( ana.size() > 3 ){
+      else if ( ana.size() == 2 ){
+	os << "__ __";
+	os << " " << ana[0].getWord();
+	os << " " << ana[1].getWord();
+	os << " __";
+	os << " " << ana[0].getTagMods();
+	os << " __ __";
+	os << " " << ana[0].getTagHead();
+	os << " " << ana[1].getTagHead();
+	os << " __";
+	os << " __^" << ana[0].getTagHead();
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " __^__^" << ana[0].getTagHead();
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead() << "^__";
+	os << " __" << endl;
+	os << "__";
+	os << " " << ana[0].getWord();
+	os << " " << ana[1].getWord();
+	os << " __ __";
+	os << " " << ana[1].getTagMods();
+	os << " __";
+	os << " " << ana[0].getTagHead();
+	os << " " << ana[1].getTagHead();
+	os << " __ __";
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " " << ana[1].getTagHead() << "^__";
+	os << " __^" << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " " << ana[1].getTagHead() << "^__^__";
+	os << " __" << endl;
+      }
+      else if ( ana.size() == 3 ){
+	os << "__ __";
+	os << " " << ana[0].getWord();
+	os << " " << ana[1].getWord();
+	os << " " << ana[2].getWord();
+	os << " " << ana[0].getTagMods();
+	os << " __ __";
+	os << " " << ana[0].getTagHead();
+	os << " " << ana[1].getTagHead();
+	os << " " << ana[2].getTagHead();
+	os << " __^" << ana[0].getTagHead();
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " __^__^" << ana[0].getTagHead();
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead() << "^" << ana[2].getTagHead();
+	os << " __" << endl;
+	os << "__";
+	os << " " << ana[0].getWord();
+	os << " " << ana[1].getWord();
+	os << " " << ana[2].getWord();
+	os << " __";
+	os << " " << ana[1].getTagMods();
+	os << " __";
+	os << " " << ana[0].getTagHead();
+	os << " " << ana[1].getTagHead();
+	os << " " << ana[2].getTagHead();
+	os << " __";
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " " << ana[1].getTagHead() << "^" << ana[2].getTagHead();
+	os << " __^" << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " " << ana[1].getTagHead() << "^" << ana[2].getTagHead() << "^__";
+	os << " __" << endl;
+	os << ana[0].getWord();
+	os << " " << ana[1].getWord();
+	os << " " << ana[2].getWord();
+	os << " __ __";
+	os << " " << ana[2].getTagMods();
+	os << " " << ana[0].getTagHead();
+	os << " " << ana[1].getTagHead();
+	os << " " << ana[2].getTagHead();
+	os << " __ __";
+	os << " " << ana[1].getTagHead() << "^" << ana[2].getTagHead();
+	os << " " << ana[2].getTagHead() << "^__";
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead() << "^" << ana[2].getTagHead();
+	os << " " << ana[2].getTagHead() << "^__^__";
+	os << " __" << endl;
+      }
+      else {
+	os << "__ __";
+	os << " " << ana[0].getWord();
+	os << " " << ana[1].getWord();
+	os << " " << ana[2].getWord();
+	os << " " << ana[0].getTagMods();
+	os << " __ __";
+	os << " " << ana[0].getTagHead();
+	os << " " << ana[1].getTagHead();
+	os << " " << ana[2].getTagHead();
+	os << " __^" << ana[0].getTagHead();
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " __^__^" << ana[0].getTagHead();
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead() << "^" << ana[2].getTagHead();
+	os << " __" << endl;
+	os << "__";
+	os << " " << ana[0].getWord();
+	os << " " << ana[1].getWord();
+	os << " " << ana[2].getWord();
+	os << " " << ana[3].getWord();
+	os << " " << ana[1].getTagMods();
+	os << " __";
+	os << " " << ana[0].getTagHead();
+	os << " " << ana[1].getTagHead();
+	os << " " << ana[2].getTagHead();
+	os << " " << ana[3].getTagHead();
+	os << " " << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " " << ana[1].getTagHead() << "^" << ana[2].getTagHead();
+	os << " __^" << ana[0].getTagHead() << "^" << ana[1].getTagHead();
+	os << " " << ana[1].getTagHead() << "^" << ana[2].getTagHead() << "^" << ana[3].getTagHead();
+	os << " __" << endl;
+	for ( size_t i=2 ; i < ana.size() - 2 ; ++i ){
+	  os << ana[i-2].getWord();
+	  os << " " << ana[i-1].getWord();
+	  os << " " << ana[i].getWord();
+	  os << " " << ana[i+1].getWord();
+	  os << " " << ana[i+2].getWord();
+	  os << " " << ana[i].getTagMods();
+	  os << " " << ana[i-2].getTagHead();
+	  os << " " << ana[i-1].getTagHead();
+	  os << " " << ana[i].getTagHead();
+	  os << " " << ana[i+1].getTagHead();
+	  os << " " << ana[i+2].getTagHead();
+	  os << " " << ana[i-1].getTagHead() << "^" << ana[i].getTagHead();
+	  os << " " << ana[i].getTagHead() << "^" << ana[i+1].getTagHead();
+	  os << " " << ana[i-2].getTagHead() << "^" << ana[i-1].getTagHead() << "^" << ana[i].getTagHead();
+	  os << " " << ana[i].getTagHead() << "^" << ana[i+1].getTagHead() << "^" << ana[i+2].getTagHead();
+	  os << " __" << endl;
+	}
 	size_t pos = ana.size() - 2;
 	os << ana[pos-2].getWord();
 	os << " " << ana[pos-1].getWord();
@@ -502,8 +705,12 @@ namespace Parser {
   }
 
   void Parse( vector<mwuChunker::ana>& final_ana, const string& fileName ){
-    if ( final_ana.size() < 3 ){
-      cerr << "unable to parse an analisis with < 3 words" << endl;
+    if ( !isInit ){
+      cerr << "Parser is not initialized!" << endl;
+      exit(1);
+    }
+    if ( final_ana.size() < 1 ){
+      cerr << "unable to parse an analisis without words" << endl;
       return;
     }
     timeval startTime;
@@ -514,13 +721,12 @@ namespace Parser {
       saveAna( anaFile, final_ana );
       unlink( resFileName.c_str() );
       gettimeofday(&startTime,0);    
-      createPairs( final_ana, fileName );
+//       string cmd = string("sh ") + BIN_PATH + "/prepareParser.sh " + fileName;
+//       // run some python scripts to prepare the input.
+//       system( cmd.c_str() ); 
       createDir( final_ana, fileName );
       createRels( final_ana, fileName );
-      if ( !isInit ){
-	cerr << "Parser is not initialized!" << endl;
-	exit(1);
-      }
+      createPairs( final_ana, fileName );
       gettimeofday(&endTime,0);
       addTimeDiff( prepareTime, startTime, endTime );    
 #pragma omp parallel sections
@@ -564,8 +770,8 @@ namespace Parser {
 	PyErr_Print();
       }
 #else
-      string cmd = string("sh ") + BIN_PATH + "/finalizeParser.sh " + fileName;
-      system( cmd.c_str() );  
+      string cmd1 = string("sh ") + BIN_PATH + "/finalizeParser.sh " + fileName;
+      system( cmd1.c_str() );  
 #endif
       gettimeofday(&endTime,0);
       addTimeDiff( csiTime, startTime, endTime );
