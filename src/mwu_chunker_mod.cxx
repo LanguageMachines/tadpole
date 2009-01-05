@@ -48,68 +48,21 @@ namespace mwuChunker {
   string myCFS = "_";
   int mwuDebug = 0;
 
-  int splitTag( const string& tag, string& tagResult, string& modsResult ){
-    vector<string> fields;
-    int numparts = split_at_first_of( tag, fields, string(myCFS) );
-    for( int i=0; i < numparts; ++i ){
-      vector<string> parts;
-      int num = split_at_first_of( fields[i], parts, "()" );
-      if ( num < 1 )
-	tagResult += fields[i];
-      else {
-	tagResult += parts[0];
-	if ( num > 1 ){
-	  vector<string>fields2;
-	  int size = split_at( parts[1], fields2, "," );
-	  for ( int j = 0; j < size; ++j ){
-	    modsResult += fields2[j];
-	    if ( j < size-1 )
-	      modsResult += '|';
-	  }
-	}
-	else {
-	  modsResult += "__";
-	}
-	if ( i < numparts-1 ){
-	  tagResult += myCFS;
-	  modsResult += myCFS;
-	}
-      }
-    }
-    return numparts;
-  }
-
-  string splitTag( const string& tag ){
-    string tagResult;
-    string modsResult;
-    int num = splitTag( tag, tagResult, modsResult );
-    if ( num <= 1 )
-      return tagResult + myOFS + tagResult + myOFS + modsResult;
+  string displayTag( const ana& a ){
+    if ( a.isMwu() )
+      return "MWU" + myOFS + a.getTagHead() + myOFS + a.getTagMods();
     else
-      return "MWU" + myOFS + tagResult + myOFS + modsResult;
+      return a.getTagHead() + myOFS + a.getTagHead() + myOFS + a.getTagMods();
   }
 
-  string ana::getTagHead() const {
-    string head;
-    string tail;
-    splitTag( tag, head, tail );
-    return head;
-  }
-
-  string ana::getTagMods() const {
-    string head;
-    string tail;
-    splitTag( tag, head, tail );
-    return tail;
-  }
-
-  bool isProper( const string& tag, string& pTag ){
+  bool isProper( const string& head, const string& mods ){
     vector<string> parts;
-    pTag = "ERROR";
-    int num = split_at( tag, parts, "_" );
-    if ( num > 1 ){
-      pTag = parts[0];
-      return pTag == "SPEC(deeleigen)";
+    int num = split_at( head, parts, "_" );
+    if ( num > 1 && parts[0] == "SPEC" ){
+      num = split_at( mods, parts, "_" );
+      if ( num > 1 && parts[0] == "deeleigen" ){
+	return true;
+      }
     }
     return false;
   }
@@ -117,8 +70,8 @@ namespace mwuChunker {
   const string ana::formatMWU() const{
     if ( isMWU ){
       string properTag;
-      if ( isProper( tag, properTag ) )
-	return properTag;
+      if ( isProper( tagHead, tagMods ) )
+	return "SPEC(deeleigen)";
       else
 	return "MWU()";
     }
@@ -137,7 +90,7 @@ namespace mwuChunker {
     for( size_t i = 0; i < ana.size(); ++i )
       os << i+1 << myOFS << ana[i].getWord() << myOFS 
 	 << ana[i].getLemma() << myOFS 
-	 << splitTag( ana[i].getTag() ) << myOFS << "0" << myOFS
+	 << displayTag( ana[i] ) << myOFS << "0" << myOFS
 	 << myCFS << myOFS << myCFS << myOFS << myCFS << endl;
   }
 
@@ -246,11 +199,14 @@ namespace mwuChunker {
 
     // add all current sequences of SPEC(deeleigen) words to MWUs
     for( size_t i=0; i < max-1; ++i ) {
-      if ( cur_ana[i].getTag() == "SPEC(deeleigen)" &&
-	   cur_ana[i+1].getTag() == "SPEC(deeleigen)" ) {
+      if ( cur_ana[i].getTagHead() == "SPEC" &&
+	   cur_ana[i].getTagMods() == "deeleigen" &&
+	   cur_ana[i+1].getTagHead() == "SPEC" &&
+	   cur_ana[i+1].getTagMods() == "deeleigen" ) {
 	vector<string> newmwu;
 	while ( i < max &&
-		cur_ana[i].getTag() == "SPEC(deeleigen)" ) {
+		cur_ana[i].getTagHead() == "SPEC" &&
+		cur_ana[i].getTagMods() == "deeleigen" ) {
 	  newmwu.push_back(words_in[i]);
 	  i++;
 	}
@@ -330,8 +286,10 @@ namespace mwuChunker {
 	// and do the same for cur_ana elems (Word, Tag, Lemma, Morph)
 	cur_ana[i].append( myCFS, cur_ana[i+j] );
 	if (mwuDebug){
-	  cout << "concat tag " << cur_ana[i+j].getTag() << endl;
-	  cout << "gives : " << cur_ana[i].getTag() << endl;
+	  cout << "concat tag " << cur_ana[i+j].getTagHead()
+	       << "(" << cur_ana[i+j].getTagMods() << ")" << endl;
+	  cout << "gives : " << cur_ana[i].getTagHead() 
+	       << "(" << cur_ana[i].getTagMods() << ")" << endl;
 	}
 	
       }

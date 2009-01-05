@@ -34,6 +34,8 @@ namespace mwuChunker {
     ana() {
       word = "";
       tag = "";
+      tagHead = "";
+      tagMods = "";
       lemma = "";
       morphemes = "";
       parseNum = "0";
@@ -47,6 +49,24 @@ namespace mwuChunker {
       if ( i > 3) {
 	word = elems[0];
 	tag = elems[1];
+	vector<string> parts;
+	int num = Timbl::split_at_first_of( elems[1], parts, "()" );
+	if ( num < 1 )
+	  throw "dead";
+	else {
+	  tagHead = parts[0];
+	  if ( num > 1 ){
+	    vector<string> fields;
+	    int size = Timbl::split_at( parts[1], fields, "," );
+	    for ( int j = 0; j < size; ++j ){
+	      tagMods += fields[j];
+	      if ( j < size-1 )
+		tagMods += '|';
+	    }
+	  }
+	  else
+	    tagMods = "__";
+	}
 	lemma = elems[2];
 	morphemes = elems[3];
       }
@@ -58,6 +78,8 @@ namespace mwuChunker {
     void append( const string& s, const ana& add ){
       word += s + add.word;
       tag += s + add.tag;
+      tagHead += s + add.tagHead;
+      tagMods += s + add.tagMods;
       lemma += s + add.lemma;
       morphemes += s + add.morphemes;
       isMWU = true;
@@ -67,8 +89,13 @@ namespace mwuChunker {
       return tag;
     }
 
-    string getTagHead() const;
-    string getTagMods() const;
+    string getTagHead() const {
+      return tagHead;
+    }
+
+    string getTagMods() const {
+      return tagMods;
+    }
 
     string getWord() const {
       return word;
@@ -92,9 +119,12 @@ namespace mwuChunker {
 
     const std::string formatMWU() const;
 
+    bool isMwu() const { return isMWU; }
   private:
     string word;
     string tag;
+    string tagHead;
+    string tagMods;
     string lemma;
     string morphemes;
     string parseNum;
