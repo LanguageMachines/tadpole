@@ -33,7 +33,6 @@ namespace mwuChunker {
   public:
     ana() {
       word = "";
-      tag = "";
       tagHead = "";
       tagMods = "";
       lemma = "";
@@ -48,7 +47,6 @@ namespace mwuChunker {
       size_t i = Timbl::split_at(in, elems, myOFS);
       if ( i > 3) {
 	word = elems[0];
-	tag = elems[1];
 	vector<string> parts;
 	int num = Timbl::split_at_first_of( elems[1], parts, "()" );
 	if ( num < 1 )
@@ -64,8 +62,6 @@ namespace mwuChunker {
 		tagMods += '|';
 	    }
 	  }
-	  else
-	    tagMods = "__";
 	}
 	lemma = elems[2];
 	morphemes = elems[3];
@@ -77,7 +73,6 @@ namespace mwuChunker {
     
     void append( const string& s, const ana& add ){
       word += s + add.word;
-      tag += s + add.tag;
       tagHead += s + add.tagHead;
       tagMods += s + add.tagMods;
       lemma += s + add.lemma;
@@ -85,16 +80,15 @@ namespace mwuChunker {
       isMWU = true;
     }
 
-    string getTag() const {
-      return tag;
-    }
-
     string getTagHead() const {
       return tagHead;
     }
 
     string getTagMods() const {
-      return tagMods;
+      if ( tagMods.empty() )
+	return "__";
+      else
+	return tagMods;
     }
 
     string getWord() const {
@@ -122,7 +116,6 @@ namespace mwuChunker {
     bool isMwu() const { return isMWU; }
   private:
     string word;
-    string tag;
     string tagHead;
     string tagMods;
     string lemma;

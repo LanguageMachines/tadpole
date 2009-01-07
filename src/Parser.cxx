@@ -219,8 +219,7 @@ namespace Parser {
 	   << " _" << endl;
 	// 
 	for ( size_t wPos=0 ; wPos < ana.size(); ++wPos ){
-	  for ( size_t i=groupLen; i < (ana.size() + groupLen); ++i ){
-	    size_t pos = i-groupLen;
+	  for ( size_t pos=0; pos < ana.size(); ++pos ){
 	    //	  os << wPos << "-" << pos << " ";
 	    if ( pos > wPos + groupLen )
 	      break;
@@ -228,11 +227,7 @@ namespace Parser {
 	      continue;
 	    if ( wPos > groupLen + pos )
 	      continue;
-	    if ( wPos >=ana.size() ){
-	      os << ana[wPos-1].getWord();
-	      os << "  __ __";
-	    }
-	    else if ( wPos >= ana.size()-1 ) {
+	    if ( wPos >= ana.size()-1 ) {
 	      os << ana[wPos-1].getWord();
 	      os << " " << ana[wPos].getWord();
 	      os << " __";
@@ -723,7 +718,11 @@ namespace Parser {
       gettimeofday(&startTime,0);    
 //       string cmd = string("sh ") + BIN_PATH + "/prepareParser.sh " + fileName;
 //       // run some python scripts to prepare the input.
-//       system( cmd.c_str() ); 
+//       int result = system( cmd.c_str() ); 
+//       if ( result != 0 ){
+// 	cerr << "initializing parse failed" << endl;
+// 	return;
+//       }
       createDir( final_ana, fileName );
       createRels( final_ana, fileName );
       createPairs( final_ana, fileName );
@@ -771,7 +770,11 @@ namespace Parser {
       }
 #else
       string cmd1 = string("sh ") + BIN_PATH + "/finalizeParser.sh " + fileName;
-      system( cmd1.c_str() );  
+      result = system( cmd1.c_str() );  
+      if ( result != 0 ){
+	cerr << "finalizing parse failed" << endl;
+	return;
+      }
 #endif
       gettimeofday(&endTime,0);
       addTimeDiff( csiTime, startTime, endTime );

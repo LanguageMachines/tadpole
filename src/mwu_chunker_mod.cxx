@@ -75,8 +75,18 @@ namespace mwuChunker {
       else
 	return "MWU()";
     }
-    else
-      return tag;
+    else {
+      vector<string> parts;
+      int num = split_at( tagMods, parts, "|" );
+      string result = tagHead + "(";
+      for ( int i=0; i < num; ++i ){
+	result += parts[i];
+	if ( i < num-1 )
+	  result += ",";
+      }
+      result += ")";
+      return result;
+    }
   }
 
   std::ostream& operator<< (std::ostream& os, const ana& a ){
