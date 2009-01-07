@@ -770,8 +770,8 @@ namespace Parser {
       }
 #else
       string cmd1 = string("sh ") + BIN_PATH + "/finalizeParser.sh " + fileName;
-      result = system( cmd1.c_str() );  
-      if ( result != 0 ){
+      int result1 = system( cmd1.c_str() );  
+      if ( result1 != 0 ){
 	cerr << "finalizing parse failed" << endl;
 	return;
       }
