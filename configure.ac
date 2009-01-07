@@ -125,12 +125,13 @@ AM_PATH_PYTHON([2.5],
 	       LIBS="-lpython2.5 $LIBS"],
 	       [:])
 
-useBoost=1
+useBoost=0
 AC_ARG_WITH(boost,
        [  --with-boost=DIR       use boost installed in <DIR>],
        [if test "$with_boost" != "no"; then
           CXXFLAGS="$CXXFLAGS -I$withval/include"
           LIBS="-L$withval/lib $LIBS"
+	  useBoost=1
 	else
 	  useBoost=0
         fi],
