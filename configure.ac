@@ -121,8 +121,7 @@ AC_ARG_WITH(python,
 
 #we need Python 2.5.x
 AM_PATH_PYTHON([2.5],
-	       [CXXFLAGS="$CXXFLAGS -I/usr/include/python2.5"
-	       LIBS="-lpython2.5 $LIBS"],
+	       [CXXFLAGS="$CXXFLAGS -I/usr/include/python2.5"],
 	       [:])
 
 useBoost=0
