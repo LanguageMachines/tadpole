@@ -121,21 +121,10 @@ AC_ARG_WITH(python,
 
 #we need Python 2.5.x
 AM_PATH_PYTHON([2.5],
-	       [CXXFLAGS="$CXXFLAGS -I/usr/include/python2.5"],
+	       [CXXFLAGS="$CXXFLAGS -I/usr/include/python2.5"
+	        LIBS="-L/usr/lib/python2.5 -lpython2.5 $LIBS"
+		AC_DEFINE_UNQUOTED(PYTHONDIR,$pythondir, PYTHONDIR )],
 	       [:])
-
-useBoost=0
-AC_ARG_WITH(boost,
-       [  --with-boost=DIR       use boost installed in <DIR>],
-       [if test "$with_boost" != "no"; then
-          CXXFLAGS="$CXXFLAGS -I$withval/include"
-          LIBS="-L$withval/lib $LIBS"
-	  useBoost=1
-	else
-	  useBoost=0
-        fi],
-       [CXXFLAGS="$CXXFLAGS -I$prefix/include"
-       LIBS="-L$prefix/lib $LIBS"] )
 
 AC_ARG_WITH(timbl,
        [  --with-timbl=DIR       use timbl installed in <DIR>],
@@ -150,28 +139,6 @@ AC_ARG_WITH(mbt,
        LIBS="-L$withval/lib $LIBS"],
        [CXXFLAGS="$CXXFLAGS -I$prefix/include"
        LIBS="-L$prefix/lib $LIBS"] )
-
-if test "$useBoost" = "1"; then
-   boostP=0
-   AC_MSG_CHECKING([for boost python])
-   AC_TRY_COMPILE([
-   #include "boost/python.hpp"
-   extern boost::python::object boost::python::exec_file( boost::python::str, boost::python::object, boost::python::object );],
-    [],
-    AC_MSG_RESULT(yes)
-    boostP=1,
-    AC_MSG_RESULT(no)
-    )
-
-    if test "$boostP" = "0"; then
-       AC_MSG_FAILURE( [libboost_python not found, please see usage of --with-boost] )
-    else
-       AC_DEFINE_UNQUOTED(BOOST_PYTHON, 1 , Boost Python )
-       LIBS="-lboost_python $LIBS"
-    fi
-else
-  AC_MSG_NOTICE([do not use boost python])
-fi
 
 dnl
 dnl ----- Sockets

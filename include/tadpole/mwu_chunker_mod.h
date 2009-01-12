@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2006 - 2008
+  Copyright (c) 2006 - 2009
   Tilburg University
   
   This file is part of Tadpole.

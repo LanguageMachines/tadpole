@@ -1,5 +1,5 @@
-# $Id $
-# $URL $
+# $Id: $
+# $URL: $
 
 bin_SCRIPTS = finalizeParser.sh
 

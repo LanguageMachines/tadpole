@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2006 - 2008
+  Copyright (c) 2006 - 2009
   Tilburg University
 
   A Tagger-Lemmatizer-Morphological-Analyzer-Dependency-Parser for Dutch
@@ -24,6 +24,7 @@
       http://ilk.uvt.nl/tadpole
 */
 
+#include "Python.h"
 #include <cstdlib>
 #include <string>
 #include <iostream>
@@ -37,11 +38,6 @@
 
 using namespace std;
 using namespace Timbl;
-
-#ifdef BOOST_PYTHON
-#include "boost/python.hpp"
-using namespace boost::python;
-#endif
 
 namespace Parser {
   string pairsFileName;
@@ -131,9 +127,7 @@ namespace Parser {
 
 
   bool init( const string& cDir, const string& fname ){
-#ifdef BOOST_PYTHON
     Py_Initialize();
-#endif
     bool happy = false;
     cerr << "initiating parser ... " << endl;
     prepareTime.tv_sec=0;
@@ -759,23 +753,28 @@ namespace Parser {
 	}
       }
       gettimeofday(&startTime,0);
-#ifdef BOOST_PYTHON
-      string script = "/home/sloot/usr/local/lib/python2.5/site-packages/csidp.py"; 
+      char *args[] = { "csidp.py",
+		       "-m20",
+		       "--dep", "tadpoleParser.inst.out",
+		       "--mod", "tadpoleParser.rels.out",
+		       "--dir", "tadpoleParser.dir.out"
+		       "" };
+      args[8] = strdup( fileName.c_str() );
+      const char script[] = "/home/sloot/usr/local/lib/python2.5/site-packages/csidp.py"; 
+      FILE *fp = fopen( script, "r" );
       try {
-	object global = import("__main__").attr("__dict__");
-	object o = exec_file( script.c_str(), global, global );
+	PySys_SetArgv( 9, args );
+	PyRun_SimpleFile( fp, script );
       }
-      catch( error_already_set const & ){
+      catch( exception const & ){
 	PyErr_Print();
       }
-#else
-      string cmd1 = string("sh ") + BIN_PATH + "/finalizeParser.sh " + fileName;
-      int result1 = system( cmd1.c_str() );  
-      if ( result1 != 0 ){
-	cerr << "finalizing parse failed" << endl;
-	return;
-      }
-#endif
+//       string cmd1 = string("sh ") + BIN_PATH + "/finalizeParser.sh " + fileName;
+//       int result1 = system( cmd1.c_str() );  
+//       if ( result1 != 0 ){
+// 	cerr << "finalizing parse failed" << endl;
+// 	return;
+//       }
       gettimeofday(&endTime,0);
       addTimeDiff( csiTime, startTime, endTime );
       ifstream resFile( resFileName.c_str() );

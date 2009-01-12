@@ -1,5 +1,5 @@
-# $Id $
-# $URL $
+# $Id: $
+# $URL: $
 
 SUBDIRS = data util
 
