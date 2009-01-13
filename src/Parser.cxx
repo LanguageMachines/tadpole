@@ -757,11 +757,11 @@ namespace Parser {
       }
       gettimeofday(&startTime,0);
       const char *args[] = { "csidp.py",
-		       "-m20",
-		       "--dep", "tadpoleParser.inst.out",
-		       "--mod", "tadpoleParser.rels.out",
-		       "--dir", "tadpoleParser.dir.out"
-		       "" };
+			     "-m20",
+			     "--dep", "tadpoleParser.inst.out",
+			     "--mod", "tadpoleParser.rels.out",
+			     "--dir", "tadpoleParser.dir.out",
+			     "raar" };
       args[8] = strdup( fileName.c_str() );
       const char script[] = "/home/sloot/usr/local/lib/python2.5/site-packages/csidp.py"; 
       FILE *fp = fopen( script, "r" );
