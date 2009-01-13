@@ -763,7 +763,7 @@ namespace Parser {
 			     "--dir", "tadpoleParser.dir.out",
 			     "raar" };
       args[8] = strdup( fileName.c_str() );
-      const char script[] = "/home/sloot/usr/local/lib/python2.5/site-packages/csidp.py"; 
+      const char script[] = PYTHONDIR"/csidp.py"; 
       FILE *fp = fopen( script, "r" );
       try {
 	PySys_SetArgv( 9, (char **)args );
