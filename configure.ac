@@ -123,7 +123,7 @@ AC_ARG_WITH(python,
 AM_PATH_PYTHON([2.5],
 	       [CXXFLAGS="$CXXFLAGS -I/usr/include/python2.5"
 	        LIBS="-L/usr/lib/python2.5 -lpython2.5 $LIBS"
-		AC_DEFINE_UNQUOTED(PYTHONDIR,$pythondir, PYTHONDIR )],
+		AC_DEFINE_DIR([PYTHONDIR],pythondir, PYTHONDIR )],
 	       [:])
 
 AC_ARG_WITH(timbl,

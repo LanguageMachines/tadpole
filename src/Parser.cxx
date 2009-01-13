@@ -128,6 +128,9 @@ namespace Parser {
 
   bool init( const string& cDir, const string& fname ){
     Py_Initialize();
+    string newpath = Py_GetPath();
+    newpath += string(":") + PYTHONDIR;
+    PySys_SetPath( (char *)newpath.c_str() );
     bool happy = false;
     cerr << "initiating parser ... " << endl;
     prepareTime.tv_sec=0;
@@ -753,7 +756,7 @@ namespace Parser {
 	}
       }
       gettimeofday(&startTime,0);
-      char *args[] = { "csidp.py",
+      const char *args[] = { "csidp.py",
 		       "-m20",
 		       "--dep", "tadpoleParser.inst.out",
 		       "--mod", "tadpoleParser.rels.out",
@@ -763,7 +766,7 @@ namespace Parser {
       const char script[] = "/home/sloot/usr/local/lib/python2.5/site-packages/csidp.py"; 
       FILE *fp = fopen( script, "r" );
       try {
-	PySys_SetArgv( 9, args );
+	PySys_SetArgv( 9, (char **)args );
 	PyRun_SimpleFile( fp, script );
       }
       catch( exception const & ){
