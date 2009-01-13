@@ -140,6 +140,19 @@ AC_ARG_WITH(mbt,
        [CXXFLAGS="$CXXFLAGS -I$prefix/include"
        LIBS="-L$prefix/lib $LIBS"] )
 
+HAVE_PYTHON_H=0
+AC_MSG_CHECKING([for Python.h])
+        AC_TRY_COMPILE([
+#include <Python.h>
+extern PyAPI_FUNC(void) Py_Initialize(void);
+],
+ [],
+ AC_MSG_RESULT(yes)
+ HAVE_PYTHON_H=1
+ ,
+ AC_MSG_RESULT(no)
+)
+
 dnl
 dnl ----- Sockets
 checkBoth=0
