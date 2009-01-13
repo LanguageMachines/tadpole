@@ -767,7 +767,7 @@ namespace Parser {
       FILE *fp = fopen( script, "r" );
       try {
 	PySys_SetArgv( 9, (char **)args );
-	PyRun_SimpleFile( fp, script );
+	PyRun_SimpleFileEx( fp, script, 1 );
       }
       catch( exception const & ){
 	PyErr_Print();
