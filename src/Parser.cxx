@@ -81,7 +81,7 @@ namespace Parser {
   };  
 
   PythonInterface::PythonInterface( ) {
-    //    Py_OptimizeFlag = 1; // enable optimisation (-O) mode
+    Py_OptimizeFlag = 1; // enable optimisation (-O) mode
     Py_Initialize();
     string newpath = Py_GetPath();
     newpath += string(":") + PYTHONDIR;
@@ -120,12 +120,13 @@ namespace Parser {
 			      const std::string& outputFile) {
 
     PyObjectRef tmp = PyObject_CallFunction(mainFunction,
-					    "[s, s, s, s, s, s, s, s, s]",
+					    "[s, s, s, s, s, s, s, s, s, s, s]",
 					    "--dep", depFile.c_str(),
 					    "--mod", modFile.c_str(),
 					    "--dir", dirFile.c_str(),
 					    "-m", maxDist.c_str(),
-					    inputFile.c_str());
+					    "--out", outputFile.c_str(),
+					    inputFile.c_str() );
   }
   
   string pairsFileName;

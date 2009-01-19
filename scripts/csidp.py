@@ -14,6 +14,8 @@ Constraints:
 --dir=FILENAME: classifier output for the C_dir constraint
 --mod=FILENAME: classifier output for the C_mod constraint
 
+--out=FILENAME: output file name
+
 Parsing algorithm:
 --non-projective: approximate non-projective parsing
 
@@ -239,6 +241,7 @@ def main(args):
 
 def main_(options, args):
 	assert options.dep
+	assert options.out
 	pairsStream = open(options.dep)
 	pairsIterator = csiparse.instanceIterator(pairsStream)
 #	print >> sys.stderr, "C_dep constraints enabled"
@@ -259,7 +262,7 @@ def main_(options, args):
 	
 	
 	for sentence in sentenceIterator(fileinput.input(args)):
-		outfile = open(fileinput.filename()+".result", "w" )
+		outfile = open(options.out, "w" )
 
 		domains, constraints = csiparse.formulateWCSP(sentence,
 													  dirIterator,
