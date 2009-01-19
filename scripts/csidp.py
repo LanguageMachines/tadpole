@@ -232,9 +232,13 @@ def approxNonProjective(sentence, parser):
 			return
 
 
-def main(options, args):
-	assert options.dep
+def main(args):
+	import cmdline
+	main_(*cmdline.parse(__doc__, args))
 
+
+def main_(options, args):
+	assert options.dep
 	pairsStream = open(options.dep)
 	pairsIterator = csiparse.instanceIterator(pairsStream)
 #	print >> sys.stderr, "C_dep constraints enabled"
@@ -253,9 +257,9 @@ def main(options, args):
 	else:
 		relsIterator = None
 	
-
+	
 	for sentence in sentenceIterator(fileinput.input(args)):
-		outfile = open(fileinput.filename()+".result", "w")
+		outfile = open(fileinput.filename()+".result", "w" )
 
 		domains, constraints = csiparse.formulateWCSP(sentence,
 													  dirIterator,
@@ -284,13 +288,10 @@ def main(options, args):
 		if options.non_projective:
 			approxNonProjective(sentence, parser)
 
-#		for token in sentence:
-#			print " ".join(map(str, token))
-#		print
-		
 		for token in sentence:
 			outfile.write( " ".join(map(str, token)) )
 			outfile.write("\n")
+		print
 		
 #		sys.stderr.write(".")
 

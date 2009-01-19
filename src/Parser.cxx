@@ -40,6 +40,94 @@ using namespace std;
 using namespace Timbl;
 
 namespace Parser {
+  class PyObjectRef {
+  private:
+    PyObject* ref;
+    
+  public:
+    PyObjectRef() : ref(0) {}
+    
+    PyObjectRef(PyObject* obj) : ref(obj) {}
+    
+    void assign(PyObject* obj) {
+      // assume ref == 0, otherwhise call Py_DECREF
+      ref = obj;
+    }
+    
+    operator PyObject* () {
+      return ref;
+    }
+    
+    ~PyObjectRef() {
+      Py_DECREF(ref);
+    }
+  };
+
+  class PythonInterface {
+  private:
+    PyObjectRef module;
+    PyObjectRef mainFunction;
+    
+  public:
+    PythonInterface();
+    ~PythonInterface();
+    
+    void parse(const std::string& depFile,
+	       const std::string& modFile,
+	       const std::string& dirFile,
+	       const std::string& maxDist,
+	       const std::string& inputFile,
+	       const std::string& outputFile);
+  };  
+
+  PythonInterface::PythonInterface( ) {
+    //    Py_OptimizeFlag = 1; // enable optimisation (-O) mode
+    Py_Initialize();
+    string newpath = Py_GetPath();
+    newpath += string(":") + PYTHONDIR;
+    try {
+      PyObject *im = PyImport_ImportModule( "csidp" );
+      if ( im ){
+	module.assign( im );
+	PyObject *mf = PyObject_GetAttrString(module, "main");
+	if ( mf )
+	  mainFunction.assign( mf );
+	else {
+	  PyErr_Print();
+	  exit(1);
+	}
+      }
+      else {
+	PyErr_Print();
+	exit(1);
+      }
+    }
+    catch( exception const & ){
+      PyErr_Print();
+      exit(1);
+    }
+  }
+
+  PythonInterface::~PythonInterface() {
+    Py_Finalize();
+  }
+  
+  void PythonInterface::parse(const std::string& depFile,
+			      const std::string& modFile,
+			      const std::string& dirFile,
+			      const std::string& maxDist,
+			      const std::string& inputFile,
+			      const std::string& outputFile) {
+
+    PyObjectRef tmp = PyObject_CallFunction(mainFunction,
+					    "[s, s, s, s, s, s, s, s, s]",
+					    "--dep", depFile.c_str(),
+					    "--mod", modFile.c_str(),
+					    "--dir", dirFile.c_str(),
+					    "-m", maxDist.c_str(),
+					    inputFile.c_str());
+  }
+  
   string pairsFileName;
   string pairsOptions = "-a1 +D +vdb+di";
   string dirFileName;
@@ -52,6 +140,7 @@ namespace Parser {
   static TimblAPI *pairs = 0;
   static TimblAPI *dir = 0;
   static TimblAPI *rels = 0;
+  PythonInterface *PI;
   static bool isInit = false;
 
   timeval initTime;
@@ -125,12 +214,8 @@ namespace Parser {
     return true;
   }
 
-
   bool init( const string& cDir, const string& fname ){
-    Py_Initialize();
-    string newpath = Py_GetPath();
-    newpath += string(":") + PYTHONDIR;
-    PySys_SetPath( (char *)newpath.c_str() );
+    PI = new PythonInterface();
     bool happy = false;
     cerr << "initiating parser ... " << endl;
     prepareTime.tv_sec=0;
@@ -756,18 +841,15 @@ namespace Parser {
 	}
       }
       gettimeofday(&startTime,0);
-      const char *args[] = { "csidp.py",
-			     "-m20",
-			     "--dep", "tadpoleParser.inst.out",
-			     "--mod", "tadpoleParser.rels.out",
-			     "--dir", "tadpoleParser.dir.out",
-			     "raar" };
-      args[8] = strdup( fileName.c_str() );
-      const char script[] = PYTHONDIR"/csidp.py"; 
-      FILE *fp = fopen( script, "r" );
       try {
-	PySys_SetArgv( 9, (char **)args );
-	PyRun_SimpleFileEx( fp, script, 1 );
+	PI->parse( "tadpoleParser.inst.out",
+		   "tadpoleParser.rels.out",
+		   "tadpoleParser.dir.out",
+		   "20",
+		   fileName,
+		   resFileName );
+	if ( PyErr_Occurred() )
+	  PyErr_Print();
       }
       catch( exception const & ){
 	PyErr_Print();
@@ -781,8 +863,11 @@ namespace Parser {
       gettimeofday(&endTime,0);
       addTimeDiff( csiTime, startTime, endTime );
       ifstream resFile( resFileName.c_str() );
-      if ( resFile )
+      if ( resFile ){
 	readAna( resFile, final_ana );
+      }
+      else
+	cerr << "couldn't open results file: " << resFileName << endl;
     }
   }
 }
