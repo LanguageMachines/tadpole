@@ -85,6 +85,7 @@ namespace Parser {
     Py_Initialize();
     string newpath = Py_GetPath();
     newpath += string(":") + PYTHONDIR;
+    PySys_SetPath( (char*)newpath.c_str() );
     try {
       PyObject *im = PyImport_ImportModule( "csidp" );
       if ( im ){
