@@ -279,30 +279,60 @@ namespace Parser {
 	   << " _" << endl;
       }
       else {
-	ps << "__ " << ana[0].getWord() << " " << ana[1].getWord()
-	   << " ROOT ROOT ROOT __ " << ana[0].getTagHead() 
-	   << " " << ana[1].getTagHead() << " ROOT ROOT ROOT "
-	   << ana[0].getTagHead() << "^ROOT ROOT ROOT ROOT^" 
-	   << ana[0].getTagMods() 
-	   << " _" << endl;
-	for ( size_t i=1 ; i < ana.size() -1 ; ++i ){
-	  ps << ana[i-1].getWord() << " " << ana[i].getWord()
-	     << " " << ana[i+1].getWord()
-	     << " ROOT ROOT ROOT " << ana[i-1].getTagHead() 
-	     << " " << ana[i].getTagHead()
-	     << " " << ana[i+1].getTagHead() << " ROOT ROOT ROOT "
-	     << ana[i].getTagHead() << "^ROOT ROOT ROOT ROOT^" 
-	     << ana[i].getTagMods() 
+	for ( size_t i=0 ; i < ana.size(); ++i ){
+	  string word_1, word0, word1;
+	  string tag_1, tag0, tag1;
+	  string mods0;
+	  if ( i == 0 ){
+	    word_1 = "__";
+	    tag_1 = "__";
+	  }
+	  else {
+	    word_1 = ana[i-1].getWord();
+	    tag_1 = ana[i-1].getTagHead();
+	  }
+	  word0 = ana[i].getWord();
+	  tag0 = ana[i].getTagHead();
+	  mods0 = ana[i].getTagMods();
+	  if ( i == ana.size() - 1 ){
+	    word1 = "__";
+	    tag1 = "__";
+	  }
+	  else {
+	    word1 = ana[i+1].getWord();
+	    tag1 = ana[i+1].getTagHead();
+	  }
+	  ps << word_1 << " " << word0 << " " << word1
+	     << " ROOT ROOT ROOT "
+	     << tag_1 << " " << tag0 << " " << tag1 
+	     << " ROOT ROOT ROOT "
+	     << tag0 << "^ROOT ROOT ROOT ROOT^" << mods0
 	     << " _" << endl;
 	}
-	ps << ana[ana.size()-2].getWord() << " " << ana[ana.size()-1].getWord()
-	   << " __ ROOT ROOT ROOT " << ana[ana.size()-2].getTagHead() 
-	   << " " << ana[ana.size()-1].getTagHead() << " __ ROOT ROOT ROOT "
-	   << ana[ana.size()-1].getTagHead() << "^ROOT ROOT ROOT ROOT^" 
-	   << ana[ana.size()-1].getTagMods()
-	   << " _" << endl;
 	// 
-	for ( size_t wPos=0 ; wPos < ana.size(); ++wPos ){
+	for ( size_t wPos=0; wPos < ana.size(); ++wPos ){
+	  string w_word_1, w_word0, w_word1;
+	  string w_tag_1, w_tag0, w_tag1;
+	  string w_mods0;
+	  if ( wPos == 0 ){
+	    w_word_1 = "__";
+	    w_tag_1 = "__";
+	  }
+	  else {
+	    w_word_1 = ana[wPos-1].getWord();
+	    w_tag_1 = ana[wPos-1].getTagHead();
+	  }
+	  w_word0 = ana[wPos].getWord();
+	  w_tag0 = ana[wPos].getTagHead();
+	  w_mods0 = ana[wPos].getTagMods();
+	  if ( wPos == ana.size()-1 ){
+	    w_word1 = "__";
+	    w_tag1 = "__";
+	  }
+	  else {
+	    w_word1 = ana[wPos+1].getWord();
+	    w_tag1 = ana[wPos+1].getTagHead();
+	  }
 	  for ( size_t pos=0; pos < ana.size(); ++pos ){
 	    //	  os << wPos << "-" << pos << " ";
 	    if ( pos > wPos + groupLen )
@@ -311,21 +341,11 @@ namespace Parser {
 	      continue;
 	    if ( wPos > groupLen + pos )
 	      continue;
-	    if ( wPos >= ana.size()-1 ) {
-	      ps << ana[wPos-1].getWord();
-	      ps << " " << ana[wPos].getWord();
-	      ps << " __";
-	    }
-	    else if ( wPos == 0 ){
-	      ps << "__";
-	      ps << " " << ana[wPos].getWord();
-	      ps << " " << ana[wPos+1].getWord();
-	    }
-	    else {
-	      ps << ana[wPos-1].getWord();
-	      ps << " " << ana[wPos].getWord();
-	      ps << " " << ana[wPos+1].getWord();
-	    }
+
+	    ps << w_word_1;
+	    ps << " " << w_word0;
+	    ps << " " << w_word1;
+
 	    if ( pos == 0 )
 	      ps << " __";
 	    else
@@ -338,15 +358,9 @@ namespace Parser {
 	      ps << " " << ana[pos+1].getWord();
 	    else
 	      ps << " __";
-	    if ( wPos == 0 )
-	      ps << " __";
-	    else 
-	      ps << " " << ana[wPos-1].getTagHead() ;
-	    ps << " " << ana[wPos].getTagHead();
-	    if ( wPos < ana.size() - 1 )
-	      ps << " " << ana[wPos+1].getTagHead();
-	    else 
-	      ps << " __";
+	    ps << " " << w_tag_1;
+	    ps << " " << w_tag0;
+	    ps << " " << w_tag1;
 	    if ( pos == 0 )
 	      ps << " __";
 	    else
@@ -360,7 +374,7 @@ namespace Parser {
 	    else
 	      ps << " __";
 	    
-	    ps << " " << ana[wPos].getTagHead() << "^";
+	    ps << " " << w_tag0 << "^";
 	    if ( pos < ana.size() )
 	      ps << ana[pos].getTagHead();
 	    else
@@ -374,7 +388,7 @@ namespace Parser {
 	      ps << " __";
 	    else
 	      ps << " " << ana[pos].getTagMods();
-	    ps << "^" << ana[wPos].getTagMods();
+	    ps << "^" << w_mods0;
 	    ps << " __" << endl;
 	  }
 	}
@@ -382,204 +396,17 @@ namespace Parser {
     }
   };
 
-  void createRels( const vector<mwuChunker::ana>& ana,
-		   const string& fileName ){
-    string word_2, word_1, word0, word1, word2;
-    string tag_2, tag_1, tag0, tag1, tag2;
-    string mod_2, mod_1, mod0, mod1, mod2;
-    string rFile = fileName + ".rels.inst";
-    ofstream rs( rFile.c_str() );
-    if ( rs ){
-      if ( ana.size() == 1 ){
-	word0 = ana[0].getWord();
-	tag0 = ana[0].getTagHead();
-	mod0 = ana[0].getTagMods();
-	rs << "__ __";
-	rs << " " << word0;
-	rs << " __ __";
-	rs << " " << mod0;
-	rs << " __ __";
-	rs << " " << tag0;
-	rs << " __ __";
-	rs << " __^" << tag0;
-	rs << " " << tag0 << "^__";
-	rs << " __^__^" << tag0;
-	rs << " " << tag0 << "^__^__";
-	rs << " __" << endl;
-      }
-      else if ( ana.size() == 2 ){
-	word0 = ana[0].getWord();
-	tag0 = ana[0].getTagHead();
-	mod0 = ana[0].getTagMods();
-	word1 = ana[1].getWord();
-	tag1 = ana[1].getTagHead();
-	mod1 = ana[1].getTagMods();
-	rs << "__ __";
-	rs << " " << word0;
-	rs << " " << word1;
-	rs << " __";
-	rs << " " << mod0;
-	rs << " __ __";
-	rs << " " << tag0;
-	rs << " " << tag1;
-	rs << " __";
-	rs << " __^" << tag0;
-	rs << " " << tag0 << "^" << tag1;
-	rs << " __^__^" << tag0;
-	rs << " " << tag0 << "^" << tag1 << "^__";
-	rs << " __" << endl;
-	rs << "__";
-	rs << " " << word0;
-	rs << " " << word1;
-	rs << " __ __";
-	rs << " " << mod1;
-	rs << " __";
-	rs << " " << tag0;
-	rs << " " << tag1;
-	rs << " __ __";
-	rs << " " << tag0 << "^" << tag1;
-	rs << " " << tag1 << "^__";
-	rs << " __^" << tag0 << "^" << tag1;
-	rs << " " << tag1 << "^__^__";
-	rs << " __" << endl;
-      }
-      else if ( ana.size() == 3 ){
-	word0 = ana[0].getWord();
-	tag0 = ana[0].getTagHead();
-	mod0 = ana[0].getTagMods();
-	word1 = ana[1].getWord();
-	tag1 = ana[1].getTagHead();
-	mod1 = ana[1].getTagMods();
-	word2 = ana[2].getWord();
-	tag2 = ana[2].getTagHead();
-	mod2 = ana[2].getTagMods();
-	rs << "__ __";
-	rs << " " << word0;
-	rs << " " << word1;
-	rs << " " << word2;
-	rs << " " << mod0;
-	rs << " __ __";
-	rs << " " << tag0;
-	rs << " " << tag1;
-	rs << " " << ana[2].getTagHead();
-	rs << " __^" << tag0;
-	rs << " " << tag0 << "^" << tag1;
-	rs << " __^__^" << tag0;
-	rs << " " << tag0 << "^" << tag1 << "^" << tag2;
-	rs << " __" << endl;
-	rs << "__";
-	rs << " " << word0;
-	rs << " " << word1;
-	rs << " " << word2;
-	rs << " __";
-	rs << " " << mod1;
-	rs << " __";
-	rs << " " << tag0;
-	rs << " " << tag1;
-	rs << " " << tag2;
-	rs << " __";
-	rs << " " << tag0 << "^" << tag1;
-	rs << " " << tag1 << "^" << tag2;
-	rs << " __^" << tag0 << "^" << tag1;
-	rs << " " << tag1 << "^" << tag2 << "^__";
-	rs << " __" << endl;
-	rs << word0;
-	rs << " " << word1;
-	rs << " " << word2;
-	rs << " __ __";
-	rs << " " << mod2;
-	rs << " " << tag0;
-	rs << " " << tag1;
-	rs << " " << tag2;
-	rs << " __ __";
-	rs << " " << tag1 << "^" << tag2;
-	rs << " " << tag2 << "^__";
-	rs << " " << tag0 << "^" << tag1 << "^" << tag2;
-	rs << " " << tag2 << "^__^__";
-	rs << " __" << endl;
-      }
-      else {
-	for ( size_t i=0 ; i < ana.size() ; ++i ){
-	  if ( i == 0 ){
-	    word_2 = "__";
-	    tag_2 = "__";
-	    mod_2 = "__";
-	    word_1 = "__";
-	    tag_1 = "__";
-	    mod_1 = "__";
-	  }
-	  else if ( i == 1 ){
-	    word_2 = "__";
-	    tag_2 = "__";
-	    mod_2 = "__";
-	    word_1 = ana[i-1].getWord();
-	    tag_1 = ana[i-1].getTagHead();
-	    mod_1 = ana[i-1].getTagMods();
-	  }
-	  else {
-	    word_2 = ana[i-2].getWord();
-	    tag_2 = ana[i-2].getTagHead();
-	    mod_2 = ana[i-2].getTagMods();
-	    word_1 = ana[i-1].getWord();
-	    tag_1 = ana[i-1].getTagHead();
-	    mod_1 = ana[i-1].getTagMods();
-	  }
-	  word0 = ana[i].getWord();
-	  tag0 = ana[i].getTagHead();
-	  mod0 = ana[i].getTagMods();
-	  if ( i < ana.size() - 2 ){
-	    word1 = ana[i+1].getWord();
-	    tag1 = ana[i+1].getTagHead();
-	    mod1 = ana[i+1].getTagMods();
-	    word2 = ana[i+2].getWord();
-	    tag2 = ana[i+2].getTagHead();
-	    mod2 = ana[i+2].getTagMods();
-	  }
-	  else if ( i == ana.size() - 2 ){
-	    word1 = ana[i+1].getWord();
-	    tag1 = ana[i+1].getTagHead();
-	    mod1 = ana[i+1].getTagMods();
-	    word2 = "__";
-	    tag2 = "__";
-	    mod2 = "__";
-	  }
-	  else {
-	    word1 = "__";
-	    tag1 = "__";
-	    mod1 = "__";
-	    word2 = "__";
-	    tag2 = "__";
-	    mod2 = "__";
-	  }
-	  rs << word_2;
-	  rs << " " << word_1;
-	  rs << " " << word0;
-	  rs << " " << word1;
-	  rs << " " << word2;
-	  rs << " " << mod0;
-	  rs << " " << tag_2;
-	  rs << " " << tag_1;
-	  rs << " " << tag0;
-	  rs << " " << tag1;
-	  rs << " " << tag2;
-	  rs << " " << tag_1 << "^" << tag0;
-	  rs << " " << tag0 << "^" << tag1;
-	  rs << " " << tag_2 << "^" << tag_1 << "^" << tag0;
-	  rs << " " << tag0 << "^" << tag1 << "^" << tag2;
-	  rs << " __" << endl;
-	}
-      }
-    }
-  }
-
   void prepare( const vector<mwuChunker::ana>& ana,
 		const string& fileName ){
+    createPairs( ana, fileName );
     string word_2, word_1, word0, word1, word2;
     string tag_2, tag_1, tag0, tag1, tag2;
     string mod_2, mod_1, mod0, mod1, mod2;
     string dFile = fileName + ".dir.inst";
     ofstream ds( dFile.c_str() );
-    if ( ds ){
+    string rFile = fileName + ".rels.inst";
+    ofstream rs( rFile.c_str() );
+    if ( ds && rs ){
       if ( ana.size() == 1 ){
 	word0 = ana[0].getWord();
 	tag0 = ana[0].getTagHead();
@@ -595,6 +422,19 @@ namespace Parser {
 	ds << " __";
 	ds << " " << mod0;
 	ds << " __ ROOT" << endl;
+	//
+	rs << "__ __";
+	rs << " " << word0;
+	rs << " __ __";
+	rs << " " << mod0;
+	rs << " __ __";
+	rs << " " << tag0;
+	rs << " __ __";
+	rs << " __^" << tag0;
+	rs << " " << tag0 << "^__";
+	rs << " __^__^" << tag0;
+	rs << " " << tag0 << "^__^__";
+	rs << " __" << endl;
       }
       else if ( ana.size() == 2 ){
 	word0 = ana[0].getWord();
@@ -634,6 +474,35 @@ namespace Parser {
 	ds << " " << mod1;
 	ds << " __";
 	ds << " ROOT" << endl;
+	//
+	rs << "__ __";
+	rs << " " << word0;
+	rs << " " << word1;
+	rs << " __";
+	rs << " " << mod0;
+	rs << " __ __";
+	rs << " " << tag0;
+	rs << " " << tag1;
+	rs << " __";
+	rs << " __^" << tag0;
+	rs << " " << tag0 << "^" << tag1;
+	rs << " __^__^" << tag0;
+	rs << " " << tag0 << "^" << tag1 << "^__";
+	rs << " __" << endl;
+	rs << "__";
+	rs << " " << word0;
+	rs << " " << word1;
+	rs << " __ __";
+	rs << " " << mod1;
+	rs << " __";
+	rs << " " << tag0;
+	rs << " " << tag1;
+	rs << " __ __";
+	rs << " " << tag0 << "^" << tag1;
+	rs << " " << tag1 << "^__";
+	rs << " __^" << tag0 << "^" << tag1;
+	rs << " " << tag1 << "^__^__";
+	rs << " __" << endl;
       }
       else if ( ana.size() == 3 ) {
 	word0 = ana[0].getWord();
@@ -700,6 +569,51 @@ namespace Parser {
 	ds << " " << mod2;
 	ds << " __";
 	ds << " ROOT" << endl;
+	//
+	rs << "__ __";
+	rs << " " << word0;
+	rs << " " << word1;
+	rs << " " << word2;
+	rs << " " << mod0;
+	rs << " __ __";
+	rs << " " << tag0;
+	rs << " " << tag1;
+	rs << " " << ana[2].getTagHead();
+	rs << " __^" << tag0;
+	rs << " " << tag0 << "^" << tag1;
+	rs << " __^__^" << tag0;
+	rs << " " << tag0 << "^" << tag1 << "^" << tag2;
+	rs << " __" << endl;
+	rs << "__";
+	rs << " " << word0;
+	rs << " " << word1;
+	rs << " " << word2;
+	rs << " __";
+	rs << " " << mod1;
+	rs << " __";
+	rs << " " << tag0;
+	rs << " " << tag1;
+	rs << " " << tag2;
+	rs << " __";
+	rs << " " << tag0 << "^" << tag1;
+	rs << " " << tag1 << "^" << tag2;
+	rs << " __^" << tag0 << "^" << tag1;
+	rs << " " << tag1 << "^" << tag2 << "^__";
+	rs << " __" << endl;
+	rs << word0;
+	rs << " " << word1;
+	rs << " " << word2;
+	rs << " __ __";
+	rs << " " << mod2;
+	rs << " " << tag0;
+	rs << " " << tag1;
+	rs << " " << tag2;
+	rs << " __ __";
+	rs << " " << tag1 << "^" << tag2;
+	rs << " " << tag2 << "^__";
+	rs << " " << tag0 << "^" << tag1 << "^" << tag2;
+	rs << " " << tag2 << "^__^__";
+	rs << " __" << endl;
       }
       else {
 	for ( size_t i=0 ; i < ana.size(); ++i ){
@@ -775,11 +689,26 @@ namespace Parser {
 	  ds << " " << mod0;
 	  ds << " " << mod1;
 	  ds << " ROOT" << endl;
+	  //
+	  rs << word_2;
+	  rs << " " << word_1;
+	  rs << " " << word0;
+	  rs << " " << word1;
+	  rs << " " << word2;
+	  rs << " " << mod0;
+	  rs << " " << tag_2;
+	  rs << " " << tag_1;
+	  rs << " " << tag0;
+	  rs << " " << tag1;
+	  rs << " " << tag2;
+	  rs << " " << tag_1 << "^" << tag0;
+	  rs << " " << tag0 << "^" << tag1;
+	  rs << " " << tag_2 << "^" << tag_1 << "^" << tag0;
+	  rs << " " << tag0 << "^" << tag1 << "^" << tag2;
+	  rs << " __" << endl;
 	}
       }
     }
-    createRels( ana, fileName );
-    createPairs( ana, fileName );
   }
   
   void Parse( vector<mwuChunker::ana>& final_ana, const string& fileName ){
