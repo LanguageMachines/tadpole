@@ -294,7 +294,6 @@ def main_(options, args):
 		for token in sentence:
 			outfile.write( " ".join(map(str, token)) )
 			outfile.write("\n")
-		print
 		
 #		sys.stderr.write(".")
 
