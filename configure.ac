@@ -7,6 +7,7 @@ AC_PREREQ(2.59)
 AC_INIT([Tadpole], [0.3], [timbl@uvt.nl])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([configure.ac])
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADER([config.h])
 
 # AC_DEFINE_DIR is defined in acinclude.m4

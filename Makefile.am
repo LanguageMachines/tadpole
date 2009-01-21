@@ -1,6 +1,8 @@
 # $Id$
 # $URL: $
 
+ACLOCAL_AMFLAGS = -I m4
+
 SUBDIRS = src include config scripts
 
 EXTRA_DIST = bootstrap AUTHORS TODO NEWS test.txt
