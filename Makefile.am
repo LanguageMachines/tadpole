@@ -5,7 +5,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = src include config scripts
 
-EXTRA_DIST = bootstrap AUTHORS TODO NEWS test.txt
+EXTRA_DIST = bootstrap AUTHORS TODO NEWS test.txt m4
 
 docdir = $(datadir)/doc/$(PACKAGE)
 doc_DATA = ChangeLog
