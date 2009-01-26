@@ -137,7 +137,8 @@ namespace Parser {
   string relsFileName;
   string relsOptions = "-a1 +D +vdb+di";
 
-  size_t groupLen = 20;
+  string groupSizeS = "20";
+  size_t groupSize = 20;
 
   static TimblAPI *pairs = 0;
   static TimblAPI *dir = 0;
@@ -166,6 +167,22 @@ namespace Parser {
       size_t num = split_at( SetBuffer, parts, " " );
       if ( num >= 2 ){
 	switch ( parts[0][0] ) {
+	case 'g':
+	  if ( parts[0] == "groupSize" ){
+	    size_t gs;
+	    if ( stringTo<size_t>( parts[1], gs, 0, 50 ) ){
+	      groupSizeS = parts[1];
+	      groupSize = gs;
+	    }
+	    else {
+	      cerr << "invalid groupSize value in config file" << endl;
+	      cerr << "keeping default " << groupSizeS << endl;
+	      problem = true;
+	    }
+	  }
+	  else
+	    problem = true;
+	  break;
 	case 'p':
 	  if ( parts[0] == "pairsFile" )
 	    pairsFileName = prefix( cDir, parts[1] );
@@ -268,6 +285,7 @@ namespace Parser {
   void createPairs( const vector<mwuChunker::ana>& ana,
 		    const string& fileName ){
     string pFile = fileName + ".pairs.inst";
+    unlink( pFile.c_str() );
     ofstream ps( pFile.c_str() );
     if ( ps ){
       if ( ana.size() == 1 ){
@@ -335,11 +353,11 @@ namespace Parser {
 	  }
 	  for ( size_t pos=0; pos < ana.size(); ++pos ){
 	    //	  os << wPos << "-" << pos << " ";
-	    if ( pos > wPos + groupLen )
+	    if ( pos > wPos + groupSize )
 	      break;
 	    if ( wPos == pos )
 	      continue;
-	    if ( wPos > groupLen + pos )
+	    if ( wPos > groupSize + pos )
 	      continue;
 
 	    ps << w_word_1;
@@ -403,8 +421,10 @@ namespace Parser {
     string tag_2, tag_1, tag0, tag1, tag2;
     string mod_2, mod_1, mod0, mod1, mod2;
     string dFile = fileName + ".dir.inst";
+    unlink( dFile.c_str() );
     ofstream ds( dFile.c_str() );
     string rFile = fileName + ".rels.inst";
+    unlink( rFile.c_str() );
     ofstream rs( rFile.c_str() );
     if ( ds && rs ){
       if ( ana.size() == 1 ){
@@ -712,6 +732,9 @@ namespace Parser {
   }
   
   void Parse( vector<mwuChunker::ana>& final_ana, const string& fileName ){
+    static const char *instOutName ="tadpoleParser.inst.out";
+    static const char *dirOutName ="tadpoleParser.dir.out";
+    static const char *relOutName ="tadpoleParser.rels.out";
     if ( !isInit ){
       cerr << "Parser is not initialized!" << endl;
       exit(1);
@@ -745,7 +768,8 @@ namespace Parser {
 	  timeval startTime;
 	  timeval endTime;
 	  gettimeofday(&startTime,0);
-	  pairs->Test( fileName + ".pairs.inst", "tadpoleParser.inst.out" );
+	  unlink( instOutName );
+	  pairs->Test( fileName + ".pairs.inst", instOutName );
 	  gettimeofday(&endTime,0);
 	  addTimeDiff( pairsTime, startTime, endTime );
 	}
@@ -754,7 +778,8 @@ namespace Parser {
 	  timeval startTime;
 	  timeval endTime;
 	  gettimeofday(&startTime,0);
-	  dir->Test( fileName +".dir.inst", "tadpoleParser.dir.out" );
+	  unlink( dirOutName );
+	  dir->Test( fileName +".dir.inst", dirOutName );
 	  gettimeofday(&endTime,0);
 	  addTimeDiff( dirTime, startTime, endTime );
 	}
@@ -763,17 +788,18 @@ namespace Parser {
 	  timeval startTime;
 	  timeval endTime;
 	  gettimeofday(&startTime,0);
-	  rels->Test( fileName + ".rels.inst", "tadpoleParser.rels.out" );
+	  unlink( relOutName );
+	  rels->Test( fileName + ".rels.inst", relOutName );
 	  gettimeofday(&endTime,0);
 	  addTimeDiff( relsTime, startTime, endTime );
 	}
       }
       gettimeofday(&startTime,0);
       try {
-	PI->parse( "tadpoleParser.inst.out",
-		   "tadpoleParser.rels.out",
-		   "tadpoleParser.dir.out",
-		   "20",
+	PI->parse( instOutName,
+		   relOutName,
+		   dirOutName,
+		   groupSizeS,
 		   fileName,
 		   resFileName );
 	if ( PyErr_Occurred() )
