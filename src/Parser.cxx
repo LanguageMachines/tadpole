@@ -414,9 +414,8 @@ namespace Parser {
     }
   };
 
-  void prepare( const vector<mwuChunker::ana>& ana,
-		const string& fileName ){
-    createPairs( ana, fileName );
+  void createRelDir( const vector<mwuChunker::ana>& ana,
+		     const string& fileName ){
     string word_2, word_1, word0, word1, word2;
     string tag_2, tag_1, tag0, tag1, tag2;
     string mod_2, mod_1, mod0, mod1, mod2;
@@ -729,6 +728,21 @@ namespace Parser {
 	}
       }
     }
+  }
+
+  void prepare( const vector<mwuChunker::ana>& ana,
+		const string& fileName ){
+#pragma omp parallel sections
+      {
+#pragma omp section
+	{
+	  createPairs( ana, fileName );
+	}
+#pragma omp section
+	{
+	  createRelDir( ana, fileName );
+	}
+      }
   }
   
   void Parse( vector<mwuChunker::ana>& final_ana, const string& fileName ){
