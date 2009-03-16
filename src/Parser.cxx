@@ -757,6 +757,18 @@ namespace Parser {
       cerr << "unable to parse an analisis without words" << endl;
       return;
     }
+    prepareTime.tv_sec=0;
+    prepareTime.tv_usec=0;
+    pairsTime.tv_sec=0;
+    pairsTime.tv_usec=0;
+    relsTime.tv_sec=0;
+    relsTime.tv_usec=0;
+    dirTime.tv_sec=0;
+    dirTime.tv_usec=0;
+    csiTime.tv_sec=0;
+    csiTime.tv_usec=0;
+    initTime.tv_sec=0;
+    initTime.tv_usec=0;
     timeval startTime;
     timeval endTime;
     string resFileName = fileName + ".result"; 

@@ -29,18 +29,19 @@
 
 #include <ctime>
 #include <sys/time.h>
+#include <set>
 
-using namespace std;
+std::string prefix( const std::string&, const std::string& );
+std::string tokenize( const std::string& );
+std::string linetokenize( const std::string& );
+void decap( std::string &, const std::string &);
 
-string prefix( const std::string&, const std::string& );
-string tokenize( const string& );
-string linetokenize( const string& );
-void decap( string &, const string &);
+void getFileNames( const std::string&, std::set<std::string>& );
 
-void showTimeSpan( ostream&, const string&, struct timeval& );
+void showTimeSpan( std::ostream&, const std::string&, struct timeval& );
 void addTimeDiff( struct timeval&, struct timeval&, struct timeval& );
 
-extern string myOFS;
+extern std::string myOFS;
 extern int tpDebug;
 
 class DemoOptions {
@@ -55,40 +56,40 @@ class DemoOptions {
   ~DemoOptions(){};
 
   //methods
-  string getName(void) {
+  std::string getName(void) {
     return Name;
   }
-  void setName( const string& n) {
+  void setName( const std::string& n) {
     Name = n;
   };
 
-  string getTrainFile(void) {
+  std::string getTrainFile(void) {
     return TrainFile;
   };
-  void setTrainFile( const string& n ) {
+  void setTrainFile( const std::string& n ) {
     TrainFile = n;
   };
 
-  string getTreeFile(void) {
+  std::string getTreeFile(void) {
     return TreeFile;
   };
 
-  void setTreeFile( const string& n ) {
+  void setTreeFile( const std::string& n ) {
     TreeFile = n;
   };
 
-  string getOptStr(void) {
+  std::string getOptStr(void) {
     return OptStr;
   };
-  void setOptStr( const string& n ) {
+  void setOptStr( const std::string& n ) {
     OptStr = n;
   };
 
  private:
-  string Name;
-  string TrainFile;
-  string TreeFile;
-  string OptStr;
+  std::string Name;
+  std::string TrainFile;
+  std::string TreeFile;
+  std::string OptStr;
 
 };
 

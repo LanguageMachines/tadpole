@@ -46,6 +46,7 @@ using namespace std;
 using Mbma::MBMAana;
 
 string TestFileName;
+set<string> fileNames;
 string ProgName;
 string parserTmpFile = "tadpole.ana";
 string TokenizedTestFileName = "";
@@ -59,6 +60,7 @@ string skipMods = "";
 bool doTok = true;
 bool doMwu = true;
 bool doParse = true;
+bool doDirTest = false;
 DemoOptions ** ModOpts;
 
 /* assumptions:
@@ -144,76 +146,6 @@ void usage( const string& progname ) {
 
 //**** stuff to process commandline options *********************************
 
-// used to convert relative paths to absolute paths
-
-/**
- * If you do 'Mbt -s some-path/xxx.settingsfile' Timbl can not find the 
- * tree files.
- *
- * Because the settings file can contain relative paths for files these 
- * paths are converted to absolute paths. 
- * The relative paths are taken relative to the pos ition of the settings
- * file, so the path of the settings file is prefixed to the realtive path.
- *
- * Paths that do not begin with '/' and do not have as second character ':'
- *      (C: or X: in windows cygwin) are considered to be relative paths
- */
-
-string prefixWithAbsolutePath( const string& fileName, const string& path ) {
-  string result;
-  cout << "in:" << fileName << endl;
-  if (fileName[0] != '/' && fileName[1] != ':') {
-    result = path + fileName;
-  }
-  else
-    result = fileName;
-  cout << "uit:" << result << endl;
-  return result;
-}
-
-// BJ: one possibility for parsing modoptions is passing 
-//a class with the config data to the module init
-bool readsettings( const string& fname, const string& path, DemoOptions *DOpts ) {
-  ifstream setFile( fname.c_str() , ios::in);
-  if( !setFile )
-    return false;
-
-  string inputLine;
-  char tmp[MAX_NAMELEN];
-  while( getline( setFile, inputLine )) {
-    if ( inputLine.empty() )
-      continue;
-    switch ( inputLine[0]) {
-    case 'n':
-      sscanf( inputLine.c_str(), "n %s", tmp);
-      //      cout << "name supplied: " << tmp << endl;
-      DOpts->setName(tmp);
-      //      cout << "name stored: " << DOpts->getName();
-      break;
-    case 't': {
-      sscanf( inputLine.c_str(), "t %s", tmp);
-      string fn = prefixWithAbsolutePath( tmp, path );
-      DOpts->setTrainFile(fn);
-    }
-      break;
-    case 'u': {
-      sscanf( inputLine.c_str(), "u %s", tmp);
-      string fn = prefixWithAbsolutePath( tmp, path );
-      DOpts->setTreeFile(fn);
-    }
-      break;
-    case 'o':  // Option string for Timbl
-      DOpts->setOptStr( inputLine.c_str()+1 );
-      break;
-    default:
-      cerr << "Unknown option in settingsfile, (ignored)\n"
-	   << inputLine << " ignored." <<endl;
-      break;
-    }
-  }
-  return true;
-}
-
 static MbtAPI *tagger;
 
 void parse_args( TimblOpts& Opts ) {
@@ -275,7 +207,6 @@ void parse_args( TimblOpts& Opts ) {
   }
   else
     m_fileName = prefix( c_dirName, m_fileName );
-  init_cgn( c_dirName );
   
   // mwuChunker Opts
   if ( Opts.Find( 'U',   value, mood ) ) {
@@ -293,8 +224,39 @@ void parse_args( TimblOpts& Opts ) {
   else
     p_fileName = prefix( c_dirName, p_fileName );
   
+  if ( Opts.Find ( "testdir", value, mood)) {
+    doDirTest = true;
+    if ( !value.empty() ) {
+      getFileNames( value, fileNames );
+      if ( fileNames.empty() ){
+	cerr << "error: couln't find any files in directory: " 
+	     << value << endl;
+	exit(1);
+      }
+    }
+    TestFileName = value;
+    Opts.Delete("testdir");
+  }
+  else if ( Opts.Find ('t', value, mood)) {
+    TestFileName = value;
+    Opts.Delete('t');
+  };
+  if ( Opts.Find ('m', value, mood)) {
+    mode = atoi(value.c_str());
+    Opts.Delete('m');
+  };
+  if ( Opts.Find ('s', value, mood)) {
+    myOFS = value;
+    if (tpDebug)
+      cout << "Output Field Separator = >" << myOFS << "<" <<endl;
+    Opts.Delete('s');
+  };
+  if ( Opts.Find ('h', value, mood)) {
+    usage(ProgName);
+  };
 #pragma omp parallel sections
   {
+    init_cgn( c_dirName );
 #pragma omp section
     myMblem::init( c_dirName, l_fileName );
 #pragma omp section
@@ -319,26 +281,7 @@ void parse_args( TimblOpts& Opts ) {
     }
   }
   if ( doParse )
-    showTimeSpan( cerr, "init Parse", Parser::initTime );
-
-  if ( Opts.Find ('t', value, mood)) {
-    TestFileName = value;
-    Opts.Delete('t');
-  };
-  if ( Opts.Find ('m', value, mood)) {
-    mode = atoi(value.c_str());
-    Opts.Delete('m');
-  };
-  if ( Opts.Find ('s', value, mood)) {
-    myOFS = value;
-    if (tpDebug)
-      cout << "Output Field Separator = >" << myOFS << "<" <<endl;
-    Opts.Delete('s');
-  };
-  if ( Opts.Find ('h', value, mood)) {
-    usage(ProgName);
-  };
-  
+    showTimeSpan( cerr, "init Parse", Parser::initTime );  
   cerr << "Initialization done." << endl;
   
 }
@@ -647,7 +590,7 @@ void showProgress( ostream& os, const string& line,
   
 void Test( const string& infilename ) {
   // init's are done
-  
+  cerr << "testing file " << infilename << endl;
   if ( doTok ){
     //Tokenize
     struct timeval tokTime;
@@ -822,18 +765,21 @@ int main(int argc, char *argv[]) {
     exit(0);
   }
   ProgName = argv[0];
-  cerr << ProgName << " v." << VERSION << endl << endl;
 
   try {
-    TestFileName = "";
     TimblOpts Opts(argc, argv);
-    
     parse_args(Opts); //gets a settingsfile for each component, 
     //and starts init for that mod
 
-    if ( !TestFileName.empty() ) {
-      Test(TestFileName);
+    if ( !fileNames.empty() ) {
+      set<string>::const_iterator it = fileNames.begin();
+      while ( it != fileNames.end() ){
+	Test( *it );
+	++it;
+      }
     }
+    else
+      Test(TestFileName);
   }
   catch ( const exception& e ){
     cerr << "fatal error: " << e.what() << endl;

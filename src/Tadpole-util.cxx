@@ -36,6 +36,10 @@ contains help-functions for Tadpole, such as
 #include "config.h"
 #include "tadpole/Tadpole.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+
 using namespace std;
 
 string prefix( const string& path, const string& fn ){
@@ -113,3 +117,20 @@ void addTimeDiff( struct timeval& time,
   time.tv_usec = div.rem;
 }
 
+void getFileNames( const string& dirName, set<string>& fileNames ){
+  DIR *dir = opendir( dirName.c_str() );
+  if ( !dir )
+    return;
+  else {
+    struct stat sb;
+    struct dirent *entry = readdir( dir );
+    while ( entry ){
+      string fullName = dirName + "/" + entry->d_name;
+      if ( stat( fullName.c_str(), &sb ) >= 0 ){
+	if ( (sb.st_mode & S_IFMT) == S_IFREG )
+	  fileNames.insert( fullName );
+      }
+      entry = readdir( dir );
+    }
+  }
+}

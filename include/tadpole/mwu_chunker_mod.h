@@ -42,19 +42,19 @@ namespace mwuChunker {
       isMWU = false;
     }
 
-    ana( const string& in) {
-      vector<string> elems;
+    ana( const std::string& in) {
+      std::vector<std::string> elems;
       size_t i = Timbl::split_at(in, elems, myOFS);
       if ( i > 3) {
 	word = elems[0];
-	vector<string> parts;
+	std::vector<std::string> parts;
 	int num = Timbl::split_at_first_of( elems[1], parts, "()" );
 	if ( num < 1 )
 	  throw "dead";
 	else {
 	  tagHead = parts[0];
 	  if ( num > 1 ){
-	    vector<string> fields;
+	    std::vector<std::string> fields;
 	    int size = Timbl::split_at( parts[1], fields, "," );
 	    for ( int j = 0; j < size; ++j ){
 	      tagMods += fields[j];
@@ -71,7 +71,7 @@ namespace mwuChunker {
     
     ~ana() {};
     
-    void append( const string& s, const ana& add ){
+    void append( const std::string& s, const ana& add ){
       word += s + add.word;
       tagHead += s + add.tagHead;
       tagMods += s + add.tagMods;
@@ -80,27 +80,27 @@ namespace mwuChunker {
       isMWU = true;
     }
 
-    string getTagHead() const {
+    std::string getTagHead() const {
       return tagHead;
     }
 
-    string getTagMods() const {
+    std::string getTagMods() const {
       if ( tagMods.empty() )
 	return "__";
       else
 	return tagMods;
     }
 
-    string getWord() const {
+    std::string getWord() const {
       return word;
     }
-    string getLemma() const {
+    std::string getLemma() const {
       return lemma;
     }
-    string getParseNum() const {
+    std::string getParseNum() const {
       return parseNum;
     }
-    string getParseTag( ) const {
+    std::string getParseTag( ) const {
       return parseTag;
     }
 
@@ -115,13 +115,13 @@ namespace mwuChunker {
 
     bool isMwu() const { return isMWU; }
   private:
-    string word;
-    string tagHead;
-    string tagMods;
-    string lemma;
-    string morphemes;
-    string parseNum;
-    string parseTag;
+    std::string word;
+    std::string tagHead;
+    std::string tagMods;
+    std::string lemma;
+    std::string morphemes;
+    std::string parseNum;
+    std::string parseTag;
     bool isMWU;
   };
 
