@@ -46,7 +46,6 @@ contains help-functions for Tadpole, such as
 #endif
 
 using namespace std;
-namespace fs =  boost::filesystem;
 
 string prefix( const string& path, const string& fn ){
   if ( fn.find( "/" ) == string::npos ){
@@ -57,6 +56,8 @@ string prefix( const string& path, const string& fn ){
 }
 
 #ifdef HAVE_BOOST_FILESYSTEM
+namespace fs =  boost::filesystem;
+
 bool existsDir( const string& dirName ){
   return fs::exists( fs::path(dirName) );
 }
