@@ -38,9 +38,15 @@ contains help-functions for Tadpole, such as
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef HAVE_BOOST_FILESYSTEM
+#include "boost/filesystem/operations.hpp"
+#include "boost/filesystem/path.hpp"
+#else
 #include <dirent.h>
+#endif
 
 using namespace std;
+namespace fs =  boost::filesystem;
 
 string prefix( const string& path, const string& fn ){
   if ( fn.find( "/" ) == string::npos ){
@@ -49,6 +55,52 @@ string prefix( const string& path, const string& fn ){
   }
   return fn;
 }
+
+#ifdef HAVE_BOOST_FILESYSTEM
+bool existsDir( const string& dirName ){
+  return fs::exists( fs::path(dirName) );
+}
+void getFileNames( const string& dirName, set<string>& fileNames ){
+  fs::directory_iterator end_itr; // default construction yields past-the-end
+  for ( fs::directory_iterator itr( dirName );
+        itr != end_itr;
+        ++itr ) {
+    if ( is_regular( itr->status() ) )
+      fileNames.insert( itr->leaf() );
+    
+  }
+  
+}
+
+#else
+bool existsDir( const string& dirName ){
+  bool result = false;
+  DIR *dir = opendir( dirName.c_str() );
+  if ( dir ){
+    result = closedir( dir );
+  }
+  return result;
+}
+
+void getFileNames( const string& dirName, set<string>& fileNames ){
+  DIR *dir = opendir( dirName.c_str() );
+  if ( !dir )
+    return;
+  else {
+    struct stat sb;
+    struct dirent *entry = readdir( dir );
+    while ( entry ){
+      string fullName = dirName + "/" + entry->d_name;
+      if ( stat( fullName.c_str(), &sb ) >= 0 ){
+	if ( (sb.st_mode & S_IFMT) == S_IFREG )
+	  fileNames.insert( entry->d_name );
+      }
+      entry = readdir( dir );
+    }
+  }
+}
+
+#endif
 
 //BJ: to decapitalize 1st letter
 void decap( string &w, const string &t) {
@@ -117,20 +169,3 @@ void addTimeDiff( struct timeval& time,
   time.tv_usec = div.rem;
 }
 
-void getFileNames( const string& dirName, set<string>& fileNames ){
-  DIR *dir = opendir( dirName.c_str() );
-  if ( !dir )
-    return;
-  else {
-    struct stat sb;
-    struct dirent *entry = readdir( dir );
-    while ( entry ){
-      string fullName = dirName + "/" + entry->d_name;
-      if ( stat( fullName.c_str(), &sb ) >= 0 ){
-	if ( (sb.st_mode & S_IFMT) == S_IFREG )
-	  fileNames.insert( entry->d_name );
-      }
-      entry = readdir( dir );
-    }
-  }
-}

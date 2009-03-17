@@ -26,7 +26,7 @@
 
 #include <cstdlib>
 #include <sys/time.h>
-#include <dirent.h>
+#include <iostream>
 #include <ctime>
 #include <string>
 #include <cstring>
@@ -234,8 +234,7 @@ bool parse_args( TimblOpts& Opts ) {
     doDirTest = true;
     testDirName = value;
     if ( !testDirName.empty() ){
-      DIR *dir = opendir( testDirName.c_str() );
-      if ( !dir ){
+      if ( !existsDir( testDirName ) ){
 	cerr << "input dir " << testDirName << " not readable" << endl;
 	return false;
       }
@@ -259,8 +258,7 @@ bool parse_args( TimblOpts& Opts ) {
   if ( Opts.Find( "outputdir", value, mood)) {
     outputDirName = value;
     if ( !outputDirName.empty() ){
-      DIR *dir = opendir( outputDirName.c_str() );
-      if ( !dir ){
+      if ( !existsDir( outputDirName ) ){
 	cerr << "output dir " << outputDirName << " not readable" << endl;
 	return false;
       }
