@@ -128,7 +128,7 @@ void getFileNames( const string& dirName, set<string>& fileNames ){
       string fullName = dirName + "/" + entry->d_name;
       if ( stat( fullName.c_str(), &sb ) >= 0 ){
 	if ( (sb.st_mode & S_IFMT) == S_IFREG )
-	  fileNames.insert( fullName );
+	  fileNames.insert( entry->d_name );
       }
       entry = readdir( dir );
     }

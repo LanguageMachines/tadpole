@@ -26,6 +26,7 @@
 
 #include <cstdlib>
 #include <sys/time.h>
+#include <dirent.h>
 #include <ctime>
 #include <string>
 #include <cstring>
@@ -46,6 +47,9 @@ using namespace std;
 using Mbma::MBMAana;
 
 string TestFileName;
+string testDirName;
+string outputFileName;
+string outputDirName;
 set<string> fileNames;
 string ProgName;
 string parserTmpFile = "tadpole.ana";
@@ -138,7 +142,9 @@ void usage( const string& progname ) {
        <<"\t\tt <mwu unit file>\n"
        <<"\t\tc <connect_char> (char between tokens in a mwu)\n"
        << "\t-t <testfile>\n"
-//       << "\t-m <mode> (default and only option = 0)\n"
+       << "\t-testdir=<directory> (all files in this dir will be tested\n"
+       << "\t-o <outputfile> (default stdout)\n"
+       << "\t-outputdir=<outputfile> (default stdout)\n"
        << "\t-s <output field separator> (default tab)\n"
        << "\t-d <debug level> (for more verbosity)\n";
 
@@ -148,7 +154,7 @@ void usage( const string& progname ) {
 
 static MbtAPI *tagger;
 
-void parse_args( TimblOpts& Opts ) {
+bool parse_args( TimblOpts& Opts ) {
   string value;
   bool mood;
   // We expect a config file for each module
@@ -226,20 +232,44 @@ void parse_args( TimblOpts& Opts ) {
   
   if ( Opts.Find ( "testdir", value, mood)) {
     doDirTest = true;
-    if ( !value.empty() ) {
-      getFileNames( value, fileNames );
+    testDirName = value;
+    if ( !testDirName.empty() ){
+      DIR *dir = opendir( testDirName.c_str() );
+      if ( !dir ){
+	cerr << "input dir " << testDirName << " not readable" << endl;
+	return false;
+      }
+      getFileNames( testDirName, fileNames );
       if ( fileNames.empty() ){
 	cerr << "error: couln't find any files in directory: " 
-	     << value << endl;
-	exit(1);
+	     << testDirName << endl;
+	return false;
       }
     }
-    TestFileName = value;
+    else {
+      cerr << "empty testdir name!" << endl;
+      return false;
+    }
     Opts.Delete("testdir");
   }
-  else if ( Opts.Find ('t', value, mood)) {
+  else if ( Opts.Find( 't', value, mood )) {
     TestFileName = value;
     Opts.Delete('t');
+  };
+  if ( Opts.Find( "outputdir", value, mood)) {
+    outputDirName = value;
+    if ( !outputDirName.empty() ){
+      DIR *dir = opendir( outputDirName.c_str() );
+      if ( !dir ){
+	cerr << "output dir " << outputDirName << " not readable" << endl;
+	return false;
+      }
+    }
+    Opts.Delete( "outputdir");
+  }
+  else if ( Opts.Find ('o', value, mood)) {
+    outputFileName = value;
+    Opts.Delete('o');
   };
   if ( Opts.Find ('m', value, mood)) {
     mode = atoi(value.c_str());
@@ -254,6 +284,11 @@ void parse_args( TimblOpts& Opts ) {
   if ( Opts.Find ('h', value, mood)) {
     usage(ProgName);
   };
+  if ( !outputDirName.empty() && testDirName.empty() ){
+    cerr << "useless -outputdir option" << endl;
+    return false;
+  }
+
 #pragma omp parallel sections
   {
     init_cgn( c_dirName );
@@ -283,7 +318,7 @@ void parse_args( TimblOpts& Opts ) {
   if ( doParse )
     showTimeSpan( cerr, "init Parse", Parser::initTime );  
   cerr << "Initialization done." << endl;
-  
+  return true;
 }
 
 bool similar( const string& tag, const string& lookuptag,
@@ -576,6 +611,8 @@ ostream &showResults( ostream& os,
 		      const vector<mwuChunker::ana>& ana ){
   for( size_t i = 0; i < ana.size(); ++i )
     os << i+1 << "\t" << ana[i] << endl;
+  if ( ana.size() )
+    os << endl;
   return os;
 }
 
@@ -588,9 +625,16 @@ void showProgress( ostream& os, const string& line,
      << " microseconds" << endl;
 }
   
-void Test( const string& infilename ) {
+void Test( const string& infilename, const string& outFileName ) {
   // init's are done
   cerr << "testing file " << infilename << endl;
+  ofstream outStream;
+  if ( !outFileName.empty() ){
+    if ( outStream.open( outFileName.c_str() ), outStream.bad() ){
+      cerr << "unable to open outputfile: " << outFileName << endl;
+      exit(1);
+    }
+  }
   if ( doTok ){
     //Tokenize
     struct timeval tokTime;
@@ -733,9 +777,10 @@ void Test( const string& infilename ) {
 	gettimeofday(&parseEndTime,0);
 	addTimeDiff( parseTime, parseStartTime, parseEndTime );
       }
-      showResults( cout, final_ana ); 
-      if (num_words>0)
-      	cout <<endl;
+      if ( outFileName.empty() )
+	showResults( cout, final_ana ); 
+      else
+	showResults( outStream, final_ana ); 
     } //while getline
   }
   showTimeSpan( cerr, "tagging          ", tagTime );
@@ -748,6 +793,8 @@ void Test( const string& infilename ) {
   showTimeSpan( cerr, "Parsing (dir)    ", Parser::dirTime );
   showTimeSpan( cerr, "Parsing (csi)    ", Parser::csiTime );
   showTimeSpan( cerr, "Parsing (total)  ", parseTime );
+  if ( !outFileName.empty() )
+    cerr << "results stored in " << outFileName << endl;
   if ( doTok ){
     // remove linetokenized file
     string syscommand = "rm -f " + infilename + ".tok.lin\n";
@@ -768,18 +815,23 @@ int main(int argc, char *argv[]) {
 
   try {
     TimblOpts Opts(argc, argv);
-    parse_args(Opts); //gets a settingsfile for each component, 
-    //and starts init for that mod
-
-    if ( !fileNames.empty() ) {
-      set<string>::const_iterator it = fileNames.begin();
-      while ( it != fileNames.end() ){
-	Test( *it );
-	++it;
+    if ( parse_args(Opts) ){
+      //gets a settingsfile for each component, 
+      //and starts init for that mod
+      
+      if ( !fileNames.empty() ) {
+	string outPath;
+	if ( !outputDirName.empty() )
+	  outPath = outputDirName + "/";
+	set<string>::const_iterator it = fileNames.begin();
+	while ( it != fileNames.end() ){
+	  Test( testDirName +"/" + *it, outPath + *it + ".out" );
+	  ++it;
+	}
       }
+      else
+	Test( TestFileName, outputFileName );
     }
-    else
-      Test(TestFileName);
   }
   catch ( const exception& e ){
     cerr << "fatal error: " << e.what() << endl;
