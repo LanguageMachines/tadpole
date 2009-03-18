@@ -65,6 +65,7 @@ bool doTok = true;
 bool doMwu = true;
 bool doParse = true;
 bool doDirTest = false;
+bool keepIntermediateFiles = false;
 DemoOptions ** ModOpts;
 
 /* assumptions:
@@ -146,6 +147,7 @@ void usage( const string& progname ) {
        << "\t-o <outputfile> (default stdout)\n"
        << "\t-outputdir=<outputfile> (default stdout)\n"
        << "\t-s <output field separator> (default tab)\n"
+       << "\t-K : keep intermediate files, (last sentence only) (default false)\n"
        << "\t-d <debug level> (for more verbosity)\n";
 
 }
@@ -190,6 +192,10 @@ bool parse_args( TimblOpts& Opts ) {
       doParse = false;
     Opts.Delete("skip");
   };
+  
+  if ( Opts.Find( 'K',   value, mood ) ) {
+    keepIntermediateFiles = true;
+  }
    // TAGGER opts
   if ( Opts.Find( 'T',   value, mood ) ) {
     t_fileName = prefix( c_dirName, value );
@@ -646,10 +652,12 @@ void Test( const string& infilename, const string& outFileName ) {
     gettimeofday(&endTime,0);
     addTimeDiff( tokTime, startTime, endTime );
     showTimeSpan( cerr, "tokenizing", tokTime );
-    // remove tokenized file
-    string syscommand = "rm -f " + infilename + ".tok\n";
-    if ( system(syscommand.c_str()) != 0 ){
-      cerr << "execution of " << syscommand << " failed. We go on" << endl;
+    if ( !keepIntermediateFiles ){
+      // remove tokenized file
+      string syscommand = "rm -f " + infilename + ".tok\n";
+      if ( system(syscommand.c_str()) != 0 ){
+	cerr << "execution of " << syscommand << " failed. We go on" << endl;
+      }
     }
   }
   else
@@ -784,16 +792,19 @@ void Test( const string& infilename, const string& outFileName ) {
   showTimeSpan( cerr, "tagging          ", tagTime );
   showTimeSpan( cerr, "MBA              ", mbaTime );
   showTimeSpan( cerr, "Mblem            ", mblemTime );
-  showTimeSpan( cerr, "MWU resolving    ", mwuTime );
-  showTimeSpan( cerr, "Parsing (prepare)", Parser::prepareTime );
-  showTimeSpan( cerr, "Parsing (pairs)  ", Parser::pairsTime );
-  showTimeSpan( cerr, "Parsing (rels)   ", Parser::relsTime );
-  showTimeSpan( cerr, "Parsing (dir)    ", Parser::dirTime );
-  showTimeSpan( cerr, "Parsing (csi)    ", Parser::csiTime );
-  showTimeSpan( cerr, "Parsing (total)  ", parseTime );
+  if ( doMwu )
+    showTimeSpan( cerr, "MWU resolving    ", mwuTime );
+  if ( doParse ){
+    showTimeSpan( cerr, "Parsing (prepare)", Parser::prepareTime );
+    showTimeSpan( cerr, "Parsing (pairs)  ", Parser::pairsTime );
+    showTimeSpan( cerr, "Parsing (rels)   ", Parser::relsTime );
+    showTimeSpan( cerr, "Parsing (dir)    ", Parser::dirTime );
+    showTimeSpan( cerr, "Parsing (csi)    ", Parser::csiTime );
+    showTimeSpan( cerr, "Parsing (total)  ", parseTime );
+  }
   if ( !outFileName.empty() )
     cerr << "results stored in " << outFileName << endl;
-  if ( doTok ){
+  if ( doTok && !keepIntermediateFiles ){
     // remove linetokenized file
     string syscommand = "rm -f " + infilename + ".tok.lin\n";
     if ( system(syscommand.c_str()) != 0 ){

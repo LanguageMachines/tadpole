@@ -746,9 +746,9 @@ namespace Parser {
   }
   
   void Parse( vector<mwuChunker::ana>& final_ana, const string& fileName ){
-    static const char *instOutName ="tadpoleParser.inst.out";
+    static const char *pairsOutName ="tadpoleParser.pairs.out";
     static const char *dirOutName ="tadpoleParser.dir.out";
-    static const char *relOutName ="tadpoleParser.rels.out";
+    static const char *relsOutName ="tadpoleParser.rels.out";
     if ( !isInit ){
       cerr << "Parser is not initialized!" << endl;
       exit(1);
@@ -772,6 +772,9 @@ namespace Parser {
     timeval startTime;
     timeval endTime;
     string resFileName = fileName + ".result"; 
+    string pairsInName = fileName +".pairs.inst";
+    string dirInName = fileName + ".dir.inst";
+    string relsInName = fileName + ".rels.inst";
     ofstream anaFile( fileName.c_str() );
     if ( anaFile ){
       saveAna( anaFile, final_ana );
@@ -794,8 +797,8 @@ namespace Parser {
 	  timeval startTime;
 	  timeval endTime;
 	  gettimeofday(&startTime,0);
-	  unlink( instOutName );
-	  pairs->Test( fileName + ".pairs.inst", instOutName );
+	  unlink( pairsOutName );
+	  pairs->Test( pairsInName, pairsOutName );
 	  gettimeofday(&endTime,0);
 	  addTimeDiff( pairsTime, startTime, endTime );
 	}
@@ -805,7 +808,7 @@ namespace Parser {
 	  timeval endTime;
 	  gettimeofday(&startTime,0);
 	  unlink( dirOutName );
-	  dir->Test( fileName +".dir.inst", dirOutName );
+	  dir->Test( dirInName, dirOutName );
 	  gettimeofday(&endTime,0);
 	  addTimeDiff( dirTime, startTime, endTime );
 	}
@@ -814,16 +817,16 @@ namespace Parser {
 	  timeval startTime;
 	  timeval endTime;
 	  gettimeofday(&startTime,0);
-	  unlink( relOutName );
-	  rels->Test( fileName + ".rels.inst", relOutName );
+	  unlink( relsOutName );
+	  rels->Test( relsInName, relsOutName );
 	  gettimeofday(&endTime,0);
 	  addTimeDiff( relsTime, startTime, endTime );
 	}
       }
       gettimeofday(&startTime,0);
       try {
-	PI->parse( instOutName,
-		   relOutName,
+	PI->parse( pairsOutName,
+		   relsOutName,
 		   dirOutName,
 		   groupSizeS,
 		   fileName,
@@ -848,6 +851,14 @@ namespace Parser {
       }
       else
 	cerr << "couldn't open results file: " << resFileName << endl;
+      if ( !keepIntermediateFiles ){
+	unlink( pairsOutName );
+	unlink( dirOutName );
+	unlink( relsOutName );
+	unlink( pairsInName.c_str() );
+	unlink( dirInName.c_str() );
+	unlink( relsInName.c_str() );
+      }
     }
   }
 }

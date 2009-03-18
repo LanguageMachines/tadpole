@@ -44,6 +44,7 @@ void addTimeDiff( struct timeval&, struct timeval&, struct timeval& );
 
 extern std::string myOFS;
 extern int tpDebug;
+extern bool keepIntermediateFiles;
 
 class DemoOptions {
  public:
