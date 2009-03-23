@@ -1036,7 +1036,6 @@ void Classify( const string& inword,vector<MBMAana> &res) {
     string cl = UnicodeToUTF8(uInsts[i]);
     string ans;
     MTree->Classify( cl, ans);
-    cerr << "classify " << cl << " ==> " << ans << endl;
     classes.push_back( ans);
   }
   // fix for 1st char class ==0
