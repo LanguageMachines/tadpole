@@ -45,6 +45,7 @@
 
 #include <unistd.h>
 #include "tadpole/Tadpole.h"
+#include "tadpole/unicode_utils.h"
 #include "tadpole/mbma_mod.h"
 
 using namespace std;
@@ -145,14 +146,15 @@ void init( const string& cDir, const string& fname) {
 
 /* mbma stuff */
 
-size_t make_instance( const string& word, vector<string> &insts) {
+size_t make_instance( const UnicodeString& word, vector<UnicodeString> &insts) {
   if (mbaDebug > 2)
-    cout << "word: " << word <<"\nwl : " << word.length() << endl;
-  for( size_t i=0; i < word.length(); ++i ) {
+    cout << "word: " << UnicodeToUTF8(word)
+	 <<"\twl : " << word.length() << endl;
+  for( long i=0; i < word.length(); ++i ) {
     if (mbaDebug > 2)
       cout << "itt #:" << i << endl;
-    string inst;
-    for ( size_t j=i ; j <= i + RIGHT + LEFT; ++j ) {
+    UnicodeString inst;
+    for ( long j=i ; j <= i + RIGHT + LEFT; ++j ) {
       if (mbaDebug > 2)
 	cout << " " << j-LEFT << ": ";
       if ( j < LEFT || j >= word.length()+LEFT )
@@ -165,11 +167,11 @@ size_t make_instance( const string& word, vector<string> &insts) {
 	inst += ",";
       }
       if (mbaDebug > 2)
-	cout << " : " << inst << endl;
+	cout << " : " << UnicodeToUTF8( inst ) << endl;
     }
     inst += "?";
     if (mbaDebug > 2)
-      cout << "inst #" << i << " : " << inst << endl;
+      cout << "inst #" << i << " : " << UnicodeToUTF8(inst) << endl;
     // classify res
     insts.push_back( inst );
     // store res
@@ -267,16 +269,15 @@ bool check_spell_change( string& this_class,
   
   
 bool Step1( int step, string& previoustag,
-	    string& output, const string& word, int nranal,
+	    UnicodeString& output, const UnicodeString& word, int nranal,
 	    const vector<string>& classes, const string& basictags ) {
   output ="[";
   size_t tobeignored=0;
   bool infpresent = false;
   bool lemmasuppress = false;
   string this_class;
-  for ( size_t k=0; k< word.length(); ++k ) { 
+  for ( long k=0; k< word.length(); ++k ) { 
     this_class = find_class( step, k, classes, nranal );
-
     string deletestring;
     string insertstring;
     bool eexcept = check_spell_change( this_class, deletestring, insertstring);
@@ -298,7 +299,7 @@ bool Step1( int step, string& previoustag,
 	      ( test_1 == '0' && test_2 == '0' ))
 	    ) ){
       // insert the deletestring :-) 
-      output += deletestring;
+      output += UTF8ToUnicode( deletestring );
       // delete the insertstring :-) 
       if (( !tobeignored ) &&
 	   ( insertstring != "ge" ) &&
@@ -311,14 +312,14 @@ bool Step1( int step, string& previoustag,
 	 this_class != "PE" ) { 
       lemmasuppress = false;
       if (k>0) { 
-	output += "]" + previoustag + "[";
+	output += "]" + UTF8ToUnicode(previoustag) + "[";
       }
       previoustag = this_class;
     }
     else { 
       if ( this_class[0] !='0' ){ 
 	if (k>0) { 
-	  output += "]" + previoustag;
+	  output += "]" + UTF8ToUnicode(previoustag);
 	}
 	output += "[";
 	previoustag = "i";
@@ -346,7 +347,7 @@ bool Step1( int step, string& previoustag,
 	tobeignored--;
     
   }
-  output += "]" + previoustag;
+  output += "]" + UTF8ToUnicode(previoustag);
   
   /* without changes, but with inflection */
   if ( this_class.find("/") != string::npos &&
@@ -354,13 +355,13 @@ bool Step1( int step, string& previoustag,
     string inflection = "i";
     inflection += extract_from( this_class, '/' );
     output += "[]";
-    output += inflection;
+    output += UTF8ToUnicode(inflection);
   }
   
   /* remove initial double brackets; ooh this is crappy */
   if ((output[0]=='[')&&
       (output[1]=='[') )
-    output.erase(0,1);
+    output.remove(0,1);
   return infpresent;
 }
 
@@ -913,6 +914,40 @@ bool fix_right( const string& affixright, const string& output,
     return line;
   }
   
+  string finalize( const UnicodeString& word, 
+		   const string& in, bool infpresent ){
+    string line = in;
+    // remove empty bracketed elements 
+    string::size_type pos = line.find( "[]" );
+    while ( pos != string::npos ){
+      line.erase(pos,2);
+      pos = line.find( "[]" );
+    }
+    if (mode==lemmatizerMode) { 
+      if (!infpresent) { 
+	cout << " ";
+	cout << UnicodeToUTF8(word) << " ";
+	size_t pos1 = line.find( '<' );
+	while ( pos1 < line.length() ){ 
+	  cout << line[pos1];
+	  ++pos1;
+	}
+      }
+      else { 
+	cout << "  ";
+	for ( size_t pos1=0; pos1 < line.length(); ++pos1 )
+	  if ( !( line[pos1]=='[' ||
+		  line[pos1]==']' ) )
+	    cout << line[pos1];
+      }
+      cout << endl;
+    }
+    else {
+      line += "\n";
+    }
+    return line;
+  }
+  
 /* "based on mbma.c" is an understatement. The postprocessing is going
    to be a copy'n'paste from mbma.c for now, since nobody understands
    the orig code anymore, and there is no time to relearn it now. So
@@ -920,13 +955,13 @@ bool fix_right( const string& affixright, const string& output,
    front-end/wrapper/whatever.
  */
 
-string mbma_bb( const string& word, const vector<string>& classes ) { 
+string mbma_bb( const UnicodeString& word, const vector<string>& classes ) { 
 
   string basictags = "NAQVDOBPYIXZ";
 
   /* determine the number of alternative analyses */
   int nranal=1;
-  for ( size_t j=0; j< word.length(); j++)
+  for ( long j=0; j< word.length(); j++)
     if ( classes[j].find("|") != string::npos ) { 
       int thisnranal=1;
       for ( size_t k=0; k< classes[j].length(); ++k )
@@ -943,10 +978,11 @@ string mbma_bb( const string& word, const vector<string>& classes ) {
 
   string result;
   for ( int step=nranal-1; step>=0; --step ) { 
-    string output;
+    UnicodeString uOutput;
     string previoustag;
-    bool infpresent = Step1( step, previoustag, output, word, 
+    bool infpresent = Step1( step, previoustag, uOutput, word, 
 			     nranal, classes, basictags );
+    string output = UnicodeToUTF8( uOutput);
     if (mbaDebug){
       cout << "intermediate analysis 1: " << output;
       cout << endl;
@@ -978,8 +1014,9 @@ void Classify( const string& inword,vector<MBMAana> &res) {
   if (mbaDebug)
     cout << "mbma::Classify starting with " << word << endl;
   size_t num_insts=0;
-  string ans,out;
-  vector<string> insts,classes;
+  string out;
+  vector<string> insts, classes;
+  vector<UnicodeString> uInsts;
   vector<string> wstr;
   string tag;
 
@@ -990,20 +1027,23 @@ void Classify( const string& inword,vector<MBMAana> &res) {
   }
   if (mbaDebug)
     cout << "word: " << word <<" tag: " << tag << endl;
+
+  decap( word, tag);
+  UnicodeString uWord = word.c_str();
   
-  decap(word, tag);
-  
-  num_insts = make_instance(word, insts);
+  num_insts = make_instance( uWord, uInsts );
   for( size_t i=0; i < num_insts; ++i ) {
-    MTree->Classify(insts[i], ans);
+    string cl = UnicodeToUTF8(uInsts[i]);
+    string ans;
+    MTree->Classify( cl, ans);
+    cerr << "classify " << cl << " ==> " << ans << endl;
     classes.push_back( ans);
-    ans.erase();
   }
   // fix for 1st char class ==0
   if ( classes[0] == "0" )
     classes[0] = "X";
   
-  out = mbma_bb(word, classes );
+  out = mbma_bb( uWord, classes );
   vector<string> anas;
   size_t n_anas = split_at(out, anas, "\n");
   for ( size_t i=0; i < n_anas; i++) {

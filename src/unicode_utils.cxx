@@ -1,10 +1,11 @@
 #include <stdexcept>
+#include <ostream>
 #include <iostream>
 #include <string>
-#include "../utils/string_utils.h"
-#include "unicode_utils.h"
+#include "tadpole/unicode_utils.h"
 
 using std::string;
+using std::ostream;
 
 const string itohs( const int i ){
   char tmp[30];

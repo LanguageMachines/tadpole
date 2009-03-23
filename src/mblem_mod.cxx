@@ -28,6 +28,7 @@
 
 #include "timbl/TimblAPI.h"
 #include "tadpole/Tadpole.h"
+#include "tadpole/unicode_utils.h"
 #include "tadpole/mblem_mod.h"
 
 using namespace std;
@@ -130,10 +131,10 @@ namespace myMblem
     return;
   }
 
-  string make_instance( const string& in ) {
+  string make_instance( const UnicodeString& in ) {
     if (mblemDebug)
-      cout << "making instance from: " << in << endl;
-    string instance = "";
+      cout << "making instance from: " << UnicodeToUTF8(in) << endl;
+    UnicodeString instance = "";
     size_t length = in.length();
     size_t j;
     for ( size_t i=0; i < history; i++) {
@@ -149,10 +150,11 @@ namespace myMblem
 	}
     }
     instance += "?";
+    string result = UnicodeToUTF8(instance);
     if (mblemDebug)
-      cout << "inst: " << instance << endl;
+      cout << "inst: " <<  result << endl;
 
-    return instance;
+    return result;
   }
 
   /* BJ: Antal uses the tagger output more or less directly, BUT
@@ -237,9 +239,10 @@ namespace myMblem
     }
     else {
       // decapitalize 1st letter, when appropriate  
-      decap(word, tag);
+      decap( word, tag);
+      UnicodeString uWord = word.c_str();
       
-      string inst = make_instance(word);
+      string inst = make_instance(uWord);
       if (mblemDebug) 
 	cout << "inst: " << inst << endl;
       myLex->Classify(inst, res);
@@ -258,7 +261,7 @@ namespace myMblem
       while (more) {
 	string insstr;
 	string delstr;
-	string prefix;
+	UnicodeString prefix;
 	tag.clear();
 	part = res.substr(0, pos);
 	res.erase(0, pos + 1);
@@ -281,11 +284,11 @@ namespace myMblem
 	      lpos++;
 	      size_t tmppos = part.find("+", lpos);
 	      if ( tmppos != string::npos )
-		prefix = part.substr(lpos, tmppos - lpos);
+		prefix = part.substr(lpos, tmppos - lpos).c_str();
 	      else 
-		prefix = part.substr(lpos);
+		prefix = part.substr(lpos).c_str();
 	      if (mblemDebug)
-		cout << "prefix=" << prefix << endl;
+		cout << "prefix=" << UnicodeToUTF8(prefix) << endl;
 	    }
 	    break;
 	  }
@@ -324,38 +327,38 @@ namespace myMblem
 	if (mblemDebug)
 	  cout << "part: " << part << " split up in: " << endl;
 	
-	string lemma = "";
+	UnicodeString lemma = "";
 	if (mblemDebug)
 	  cout << "pre-prefix word: '" << word << "' prefix: '"
-	       << prefix << "'" << endl;
+	       << UnicodeToUTF8(prefix) << "'" << endl;
 	
-	size_t  prefixpos = 0;
-	if (!prefix.empty()) {
-	  prefixpos = word.find(prefix);
+	long  prefixpos = 0;
+	if (!prefix.isEmpty()) {
+	  prefixpos = uWord.indexOf(prefix);
 	  if (mblemDebug)
 	    cout << "prefixpos = " << prefixpos << endl;
 	} // if !prefix.empty()
 
 	// repair cases where there's actually not a prefix present
-	if (prefixpos > word.length()-2) {
+	if (prefixpos > uWord.length()-2) {
 	  prefixpos = 0;
-	  prefix.clear();
+	  prefix.remove();
 	}
 
 	if (mblemDebug)
 	  cout << "prefixpos = " << prefixpos << endl;
 	if (prefixpos > 0) 
-	  lemma += word.substr(0,prefixpos);
+	  lemma += UnicodeString( uWord, (long)0, prefixpos );
 	size_t i = prefixpos + prefix.length();
 	if (mblemDebug)
 	  cout << "post prefix != 0 word: "<< word 
-	       << " lemma: " << lemma 
-	       << " prefix: " << prefix
+	       << " lemma: " << UnicodeToUTF8(lemma) 
+	       << " prefix: " << UnicodeToUTF8(prefix)
 	       << " insstr: " << insstr
 	       << " delstr: " << delstr
 	       << " l_delstr=" << delstr.length()
 	       << " i=" << i
-	       << " l_word=" << word.length()
+	       << " l_word=" << uWord.length()
 	       << endl;
 
 	// prefixpos is absurd here
@@ -364,19 +367,20 @@ namespace myMblem
 	// This code doesn't seem to do what the comment suggests
 	// what is the intention?
 	if (word.length() - delstr.length())
-	  lemma += word.substr(i, (word.length() - delstr.length() -i ) );
+	  lemma += UnicodeString( uWord, i, uWord.length() - delstr.length()-i);
 	else // skip delstr, unless delstr is exactly the word
-	  if ( word.length() < delstr.length() ||
-	       ( word.length()-delstr.length() &&
+	  if ( uWord.length() < delstr.length() ||
+	       ( uWord.length()-delstr.length() &&
 		 insstr.empty() ))
-	    lemma += word.substr(i, (word.length() -i ) );
+	    lemma += UnicodeString( uWord, i, (uWord.length() -i ) );
 	// end PROBLEM
 	if (!insstr.empty()) 
-	  lemma += insstr;
+	  lemma += insstr.c_str();
 	if (mblemDebug)
-	  cout << "appending lemma " << lemma << " and tag " << tag << endl;
+	  cout << "appending lemma " << UnicodeToUTF8(lemma)
+	       << " and tag " << tag << endl;
 	lookuptag.push_back( tag );
-	lookuplemma.push_back( lemma );
+	lookuplemma.push_back( UnicodeToUTF8(lemma) );
 	
 	if (mblemDebug)
 	  cout << "Size after " << lookuplemma.size() << " and " << lookuptag.size() << endl;
