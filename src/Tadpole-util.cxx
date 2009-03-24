@@ -119,6 +119,18 @@ void decap( string &w, const string &t) {
     cout << "decapped: " << w << endl;
 }
 
+void decap( UnicodeString &w, const string &t ) {
+  if (tpDebug)
+    cout << "Decapping " << UnicodeToUTF8(w) << " with tag " << t;
+  size_t pos = t.find("eigen");
+  if ( pos != string::npos ) 
+    // don't decap Eigennamen
+    return;
+  w.replace( 0, 1, u_tolower( w[0] ) );
+  if (tpDebug)
+    cout << " to : " << UnicodeToUTF8(w) << endl;
+}
+
 string tokenize( const string& infilename) {
   string tokenizedfilename = infilename + ".tok";
   string lang = "ned";

@@ -38,12 +38,6 @@
 #include <fstream>
 #include <timbl/TimblAPI.h>
 
-#include <stdio.h>
-#include <string.h>
-#include <stddef.h>
-#include <stdlib.h>
-
-#include <unistd.h>
 #include "tadpole/Tadpole.h"
 #include "tadpole/unicode_utils.h"
 #include "tadpole/mbma_mod.h"
@@ -148,8 +142,7 @@ void init( const string& cDir, const string& fname) {
 
 size_t make_instance( const UnicodeString& word, vector<UnicodeString> &insts) {
   if (mbaDebug > 2)
-    cout << "word: " << UnicodeToUTF8(word)
-	 <<"\twl : " << word.length() << endl;
+    cout << "word: " << word << "\twl : " << word.length() << endl;
   for( long i=0; i < word.length(); ++i ) {
     if (mbaDebug > 2)
       cout << "itt #:" << i << endl;
@@ -167,11 +160,11 @@ size_t make_instance( const UnicodeString& word, vector<UnicodeString> &insts) {
 	inst += ",";
       }
       if (mbaDebug > 2)
-	cout << " : " << UnicodeToUTF8( inst ) << endl;
+	cout << " : " << &inst << endl;
     }
     inst += "?";
     if (mbaDebug > 2)
-      cout << "inst #" << i << " : " << UnicodeToUTF8(inst) << endl;
+      cout << "inst #" << i << " : " << inst << endl;
     // classify res
     insts.push_back( inst );
     // store res
@@ -926,7 +919,7 @@ bool fix_right( const string& affixright, const string& output,
     if (mode==lemmatizerMode) { 
       if (!infpresent) { 
 	cout << " ";
-	cout << UnicodeToUTF8(word) << " ";
+	cout << word << " ";
 	size_t pos1 = line.find( '<' );
 	while ( pos1 < line.length() ){ 
 	  cout << line[pos1];
@@ -1028,9 +1021,9 @@ void Classify( const string& inword,vector<MBMAana> &res) {
   if (mbaDebug)
     cout << "word: " << word <<" tag: " << tag << endl;
 
-  decap( word, tag);
   UnicodeString uWord = word.c_str();
-  
+  decap( uWord, tag);
+
   num_insts = make_instance( uWord, uInsts );
   for( size_t i=0; i < num_insts; ++i ) {
     string cl = UnicodeToUTF8(uInsts[i]);
@@ -1052,6 +1045,14 @@ void Classify( const string& inword,vector<MBMAana> &res) {
   
   return;
 }
+
+  ostream& operator<< ( ostream& os, const MBMAana& a ){
+    os <<"\t" << a.tag << " " 
+       << a.infl << " >>>> " << a.morphemes << " <<<< [[[[ "
+       << a.description << " ]]]] ";
+    return os;
+  }
+  
 
 }
 

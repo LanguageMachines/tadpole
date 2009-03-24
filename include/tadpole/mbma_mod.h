@@ -24,68 +24,59 @@
 #ifndef __MDMA_MOD__
 #define __MBMA_MOD__
 
-using namespace std;
-
 namespace Mbma {
 
-class MBMAana {
-  friend std::ostream& operator<< ( std::ostream& , const MBMAana& );
- public:
-  MBMAana() {
-    tag = "";
-    infl = "";
-    morphemes = "";
-    description = "";    
-  };
-  MBMAana( const string& in) {
-    vector<string> elems;
-    size_t i = Timbl::split_at(in, elems, " " );
-    if ( i > 3) {
-      tag = elems[0];
-      infl = elems[1];
-      morphemes = elems[2];
-      for ( size_t j =3; j < i; ++j){
-	description += elems[j];
-	if ( (j + 1) < i ) 
-	  description += " ";
+  class MBMAana {
+    friend std::ostream& operator<< ( std::ostream& , const MBMAana& );
+  public:
+    MBMAana() {
+      tag = "";
+      infl = "";
+      morphemes = "";
+      description = "";    
+    };
+    MBMAana( const std::string& in) {
+      std::vector<std::string> elems;
+      size_t i = Timbl::split_at(in, elems, " " );
+      if ( i > 3) {
+	tag = elems[0];
+	infl = elems[1];
+	morphemes = elems[2];
+	for ( size_t j =3; j < i; ++j){
+	  description += elems[j];
+	  if ( (j + 1) < i ) 
+	    description += " ";
+	}
       }
-    }
+    };
+    
+    
+    ~MBMAana() {};
+    
+    std::string getTag() const {
+      return tag;
+    };
+    
+    std::string getInflection() const {
+      return infl;
+    };
+    
+    std::string getMorph() const {
+      return morphemes;
+    };
+    
+  private:
+    std::string tag;
+    std::string infl;
+    std::string morphemes;
+    std::string description;
+    
   };
-
   
-  ~MBMAana() {};
-  
-  string getTag() const {
-    return tag;
-  };
-
-  string getInflection() const {
-    return infl;
-  };
- 
-  string getMorph() const {
-    return morphemes;
-  };
- 
- private:
-  string tag;
-  string infl;
-  string morphemes;
-  string description;
-
-};
-
- inline std::ostream& operator<< ( std::ostream& os, const MBMAana& a ){
-   os <<"\t" << a.tag << " " 
-      << a.infl << " >>>> " << a.morphemes << " <<<< [[[[ "
-      << a.description << " ]]]] ";
-   return os;
- }
-	      
   void init( DemoOptions *MOpts = NULL);
   void init( const std::string&, const std::string& );
-
-  void Classify( const string&, vector<MBMAana> &);
+  
+  void Classify( const std::string&, std::vector<MBMAana> &);
 }
 
 #endif

@@ -30,12 +30,14 @@
 #include <ctime>
 #include <sys/time.h>
 #include <set>
+#include "tadpole/unicode_utils.h"
 
 std::string prefix( const std::string&, const std::string& );
 bool existsDir( const std::string& );
 std::string tokenize( const std::string& );
 std::string linetokenize( const std::string& );
 void decap( std::string &, const std::string &);
+void decap( UnicodeString &, const std::string &);
 
 void getFileNames( const std::string&, std::set<std::string>& );
 

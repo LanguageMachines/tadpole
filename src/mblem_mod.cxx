@@ -21,12 +21,12 @@
       http://ilk.uvt.nl/tadpole                                          
 */                                                                   
 
+#include <cstdlib>
+#include <string>
 #include <iostream>
 #include <fstream>
-#include <string>
-#include <cstdlib>
-
 #include "timbl/TimblAPI.h"
+
 #include "tadpole/Tadpole.h"
 #include "tadpole/unicode_utils.h"
 #include "tadpole/mblem_mod.h"
@@ -34,8 +34,7 @@
 using namespace std;
 using namespace Timbl;
 
-namespace myMblem 
-{
+namespace myMblem  {
   string lemprefix="mblem/mblem";
   string lexname, transtablename,lexibase;
   string opts_lexibase;
@@ -133,7 +132,7 @@ namespace myMblem
 
   string make_instance( const UnicodeString& in ) {
     if (mblemDebug)
-      cout << "making instance from: " << UnicodeToUTF8(in) << endl;
+      cout << "making instance from: " << in << endl;
     UnicodeString instance = "";
     size_t length = in.length();
     size_t j;
@@ -152,7 +151,7 @@ namespace myMblem
     instance += "?";
     string result = UnicodeToUTF8(instance);
     if (mblemDebug)
-      cout << "inst: " <<  result << endl;
+      cout << "inst: " << instance << endl;
 
     return result;
   }
@@ -167,8 +166,8 @@ namespace myMblem
   */
 
   string Classify( const string& in) {
-    string  res,word,tag;
-    int     nrslashes=0;
+    string  res,word;
+    bool isKnown = true;
 
     nrlookup=0;
     lookuplemma.clear();
@@ -180,28 +179,33 @@ namespace myMblem
     if (mblemDebug)
       cout << "mblem::Classify starting with " << in << endl;
 
+    string tag;
     size_t pos = in.find("//");
     if ( pos != string::npos ) {
       // double slash: unknown word
       word = in.substr(0, pos);
       tag = in.substr(pos+2);
-      nrslashes = 2;
+      isKnown = false;
     } 
     else {
-	pos = in.find("/");
-	if ( pos != string::npos ) {
-	  // single slash: known word
-	  word = in.substr(0, pos);
-	  tag = in.substr(pos+1);
-	  nrslashes = 1;
-	} 
-	else {
-	  cerr << "no word/tag pair in this line: " << in << endl;
-	  return "oops";
-	}
+      pos = in.find("/");
+      if ( pos != string::npos ) {
+	// single slash: known word
+	word = in.substr(0, pos);
+	tag = in.substr(pos+1);
+      } 
+      else {
+	cerr << "no word/tag pair in this line: " << in << endl;
+	return "oops";
       }
-    if (mblemDebug) 
-      cout << "word: " << word << "\ttag: " << tag << "\t#slashes: " << nrslashes<< endl;
+    }
+    if (mblemDebug){
+      if ( isKnown )
+	cout << "known";
+      else
+	cout << "unknown";
+      cout << " word: " << word << "\ttag: " << tag << endl;
+    }
     
     // BJ: checking specials 1st
     bool special=false;
@@ -217,18 +221,18 @@ namespace myMblem
       nrlookup = 1;
       special=true;
     }
-    
-    // proper names
-    pos = tag.find("eigen");
-    if ( pos != string::npos ){
-      res = word;
-      res += " ";
-      res += "SPEC(deeleigen)";
-      res += " ";
-      nrlookup = 1;
-      special=true;
+    else {
+      // proper names
+      pos = tag.find("eigen");
+      if ( pos != string::npos ){
+	res = word;
+	res += " ";
+	res += "SPEC(deeleigen)";
+	res += " ";
+	nrlookup = 1;
+	special=true;
+      }
     }
-    
     // if it ain't special, call mblem
     
     if (special) {
@@ -239,8 +243,8 @@ namespace myMblem
     }
     else {
       // decapitalize 1st letter, when appropriate  
-      decap( word, tag);
       UnicodeString uWord = word.c_str();
+      decap( uWord, tag);
       
       string inst = make_instance(uWord);
       if (mblemDebug) 
@@ -262,19 +266,19 @@ namespace myMblem
 	string insstr;
 	string delstr;
 	UnicodeString prefix;
-	tag.clear();
+	string restag;
 	part = res.substr(0, pos);
 	res.erase(0, pos + 1);
 	if (mblemDebug)
 	  cout <<"part = " << part << " res = " << res << endl;
 	size_t lpos = part.find("+");
 	if ( lpos != string::npos )
-	  tag = part.substr(0, lpos);
+	  restag = part.substr(0, lpos);
 	else 
-	  tag = part;
-	map<string,string>::const_iterator it = classes.find(tag);
+	  restag = part;
+	map<string,string>::const_iterator it = classes.find(restag);
 	if ( it != classes.end() )
-	  tag = it->second;
+	  restag = it->second;
 	size_t  pl = part.length();
 	lpos++;
 	while(lpos < pl) {
@@ -288,7 +292,7 @@ namespace myMblem
 	      else 
 		prefix = part.substr(lpos).c_str();
 	      if (mblemDebug)
-		cout << "prefix=" << UnicodeToUTF8(prefix) << endl;
+		cout << "prefix=" << prefix << endl;
 	    }
 	    break;
 	  }
@@ -330,7 +334,7 @@ namespace myMblem
 	UnicodeString lemma = "";
 	if (mblemDebug)
 	  cout << "pre-prefix word: '" << word << "' prefix: '"
-	       << UnicodeToUTF8(prefix) << "'" << endl;
+	       << prefix << "'" << endl;
 	
 	long  prefixpos = 0;
 	if (!prefix.isEmpty()) {
@@ -352,8 +356,8 @@ namespace myMblem
 	size_t i = prefixpos + prefix.length();
 	if (mblemDebug)
 	  cout << "post prefix != 0 word: "<< word 
-	       << " lemma: " << UnicodeToUTF8(lemma) 
-	       << " prefix: " << UnicodeToUTF8(prefix)
+	       << " lemma: " << lemma
+	       << " prefix: " << prefix
 	       << " insstr: " << insstr
 	       << " delstr: " << delstr
 	       << " l_delstr=" << delstr.length()
@@ -369,7 +373,7 @@ namespace myMblem
 	if (word.length() - delstr.length())
 	  lemma += UnicodeString( uWord, i, uWord.length() - delstr.length()-i);
 	else // skip delstr, unless delstr is exactly the word
-	  if ( uWord.length() < delstr.length() ||
+	  if ( (unsigned)uWord.length() < delstr.length() ||
 	       ( uWord.length()-delstr.length() &&
 		 insstr.empty() ))
 	    lemma += UnicodeString( uWord, i, (uWord.length() -i ) );
@@ -377,9 +381,8 @@ namespace myMblem
 	if (!insstr.empty()) 
 	  lemma += insstr.c_str();
 	if (mblemDebug)
-	  cout << "appending lemma " << UnicodeToUTF8(lemma)
-	       << " and tag " << tag << endl;
-	lookuptag.push_back( tag );
+	  cout << "appending lemma " << lemma << " and tag " << restag << endl;
+	lookuptag.push_back( restag );
 	lookuplemma.push_back( UnicodeToUTF8(lemma) );
 	
 	if (mblemDebug)
