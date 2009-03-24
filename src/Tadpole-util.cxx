@@ -71,11 +71,9 @@ void getFileNames( const string& dirName, set<string>& fileNames ){
 #error BOOST: VERSION TOO OLD 
 #else
 # if BOOST_VERSION <= 103400
-    cerr << "BV=" << BOOST_VERSION << endl;
     if ( fs::exists( *itr ) && !fs::is_directory( *itr ) )
       fileNames.insert( itr->leaf() );
 # else
-    cerr << "BV=" << BOOST_VERSION << endl;
     if ( is_regular( itr->status() ) )
       fileNames.insert( itr->leaf() );
 # endif    
