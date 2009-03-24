@@ -39,6 +39,7 @@ contains help-functions for Tadpole, such as
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef HAVE_BOOST_FILESYSTEM
+#include "boost/version.hpp"
 #include "boost/filesystem/operations.hpp"
 #include "boost/filesystem/path.hpp"
 #else
@@ -66,9 +67,19 @@ void getFileNames( const string& dirName, set<string>& fileNames ){
   for ( fs::directory_iterator itr( dirName );
         itr != end_itr;
         ++itr ) {
+#if BOOST_VERSION <= 103301
+#error BOOST: VERSION TOO OLD 
+#else
+# if BOOST_VERSION <= 103400
+    cerr << "BV=" << BOOST_VERSION << endl;
+    if ( itr->exist() && !itr->is_directory() )
+      fileNames.insert( itr->leaf() );
+# else
+    cerr << "BV=" << BOOST_VERSION << endl;
     if ( is_regular( itr->status() ) )
       fileNames.insert( itr->leaf() );
-    
+# endif    
+#endif
   }
   
 }
