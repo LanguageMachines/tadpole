@@ -67,12 +67,12 @@ void getFileNames( const string& dirName, set<string>& fileNames ){
   for ( fs::directory_iterator itr( dirName );
         itr != end_itr;
         ++itr ) {
-#if BOOST_VERSION <= 103301
+#if BOOST_VERSION < 103301
 #error BOOST: VERSION TOO OLD 
 #else
 # if BOOST_VERSION <= 103400
     cerr << "BV=" << BOOST_VERSION << endl;
-    if ( itr->exist() && !itr->is_directory() )
+    if ( fs::exists( *itr ) && !fs::is_directory( *itr ) )
       fileNames.insert( itr->leaf() );
 # else
     cerr << "BV=" << BOOST_VERSION << endl;
