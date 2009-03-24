@@ -148,7 +148,7 @@ AX_BOOST_FILESYSTEM
 LIBS="$BOOST_LDFLAGS $BOOST_FILESYSTEM_LIB $LIBS"
 CXXFLAGS="$CXXFLAGS $BOOST_CPPFLAGS"
 
-AC_CHECK_ICU([3.8],
+AC_CHECK_ICU([3.6],
 	[CXXFLAGS="$CXXFLAGS $ICU_CXXFLAGS"
 	LIBS="$ICU_LIBS $LIBS"],
 	AC_MSG_FAILURE( "No ICU development environment found. Please check if libicu-dev or the like is installed" ) )
