@@ -48,8 +48,8 @@ using namespace Timbl;
 int mbaDebug = 0; // debugging on (1) or off (0)
 
 namespace Mbma {
-  const unsigned int LEFT =  6; // left context
-  const unsigned int RIGHT = 6; // right context
+  const long int LEFT =  6; // left context
+  const long int RIGHT = 6; // right context
   const unsigned int NRTAGS = 13; // number of CELEX POS tags
   const int NRINFS = 21; // number of inflection types
 
