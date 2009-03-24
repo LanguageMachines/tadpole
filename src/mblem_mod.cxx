@@ -254,7 +254,6 @@ namespace myMblem  {
 	cout << "class: " << res << endl;
       //postprocess
       // 1st find all alternatives
-      string part = "";
       pos = res.find("|");
       if ( pos == string::npos ){
 	pos = res.length();
@@ -267,7 +266,7 @@ namespace myMblem  {
 	string delstr;
 	UnicodeString prefix;
 	string restag;
-	part = res.substr(0, pos);
+	string part = res.substr(0, pos);
 	res.erase(0, pos + 1);
 	if (mblemDebug)
 	  cout <<"part = " << part << " res = " << res << endl;
@@ -328,31 +327,28 @@ namespace myMblem  {
 	  lpos++;
 	} // while lpos < pl
 	
-	if (mblemDebug)
+	if (mblemDebug){
 	  cout << "part: " << part << " split up in: " << endl;
-	
-	UnicodeString lemma = "";
-	if (mblemDebug)
 	  cout << "pre-prefix word: '" << word << "' prefix: '"
 	       << prefix << "'" << endl;
-	
-	long  prefixpos = 0;
-	if (!prefix.isEmpty()) {
+	}	
+	long prefixpos = 0;
+	if ( !prefix.isEmpty() ) {
 	  prefixpos = uWord.indexOf(prefix);
 	  if (mblemDebug)
 	    cout << "prefixpos = " << prefixpos << endl;
-	} // if !prefix.empty()
-
-	// repair cases where there's actually not a prefix present
-	if (prefixpos > uWord.length()-2) {
-	  prefixpos = 0;
-	  prefix.remove();
+	  // repair cases where there's actually not a prefix present
+	  if (prefixpos > uWord.length()-2) {
+	    prefixpos = 0;
+	    prefix.remove();
+	  }
 	}
 
 	if (mblemDebug)
 	  cout << "prefixpos = " << prefixpos << endl;
+	UnicodeString lemma = "";
 	if (prefixpos > 0) 
-	  lemma += UnicodeString( uWord, (long)0, prefixpos );
+	  lemma = UnicodeString( uWord, 0L, prefixpos );
 	size_t i = prefixpos + prefix.length();
 	if (mblemDebug)
 	  cout << "post prefix != 0 word: "<< word 
@@ -401,15 +397,17 @@ namespace myMblem  {
 	  else
 	    more = false;
 	}
-      } // while)\(more)
+      } // while(more)
     }
     if (mblemDebug) {
       cout << "stored lemma and tag options: " << lookuplemma.size() << " lemma's and " << lookuptag.size() << " tags:\n";
-      for(vector<string>::iterator tmp = lookuplemma.begin(); tmp != lookuplemma.end(); tmp++) 
+      vector<string>::iterator tmp;
+      for(  tmp = lookuplemma.begin(); tmp != lookuplemma.end(); ++tmp ){
 	cout << "lemma alt: " << (*tmp) << endl;
-      for(vector<string>::iterator tmp = lookuptag.begin(); tmp != lookuptag.end(); tmp++) 
+      }
+      for( tmp = lookuptag.begin(); tmp != lookuptag.end(); ++tmp ){
 	cout << "tag alt: " << (*tmp) << endl;
-      
+      }
       cout << "\n\n";
     }
     
