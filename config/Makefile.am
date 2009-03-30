@@ -1,7 +1,7 @@
 # $Id$
 # $URL:$
 
-config_DATA = lconfig mconfig mwuconfig parserconfig \
+config_DATA = lconfig mconfig mwuconfig parserconfig smallparserconfig \
 	mblem.transtable  mblem.tree mblem.tree.wgt \
 	mbma.igtree mbma.igtree.wgt \
         mwu.suspects5 \
@@ -17,6 +17,12 @@ config_DATA = lconfig mconfig mwuconfig parserconfig \
 	cgn-wotan-dcoi.mbt.top500 \
 	cgn-wotan-dcoi.mbt.unknown.chnppdddwFawasss \
 	cgntags.main cgntags.sub \
+	mbdp-tadpole-alpino.pairs.sampled.small-ibase \
+	mbdp-tadpole-alpino.pairs.sampled.small-ibase.wgt \
+	mbdp-tadpole-alpino.dir.small-ibase \
+	mbdp-tadpole-alpino.dir.small-ibase.wgt \
+	mbdp-tadpole-alpino.rels.small-ibase \
+	mbdp-tadpole-alpino.rels.small-ibase.wgt \
 	mbdp-tadpole-alpino.pairs.sampled.ibase \
 	mbdp-tadpole-alpino.pairs.sampled.ibase.wgt \
 	mbdp-tadpole-alpino.dir.ibase \
