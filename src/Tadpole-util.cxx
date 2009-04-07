@@ -87,7 +87,7 @@ bool existsDir( const string& dirName ){
   bool result = false;
   DIR *dir = opendir( dirName.c_str() );
   if ( dir ){
-    result = closedir( dir );
+    result = (closedir( dir ) == 0);
   }
   return result;
 }

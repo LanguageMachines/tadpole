@@ -26,7 +26,6 @@
 
 #include <cstdlib>
 #include <sys/time.h>
-#include <iostream>
 #include <ctime>
 #include <string>
 #include <cstring>
@@ -290,9 +289,14 @@ bool parse_args( TimblOpts& Opts ) {
   };
   if ( Opts.Find ('h', value, mood)) {
     usage(ProgName);
+    return false;
   };
   if ( !outputDirName.empty() && testDirName.empty() ){
     cerr << "useless -outputdir option" << endl;
+    return false;
+  }
+  if ( !outputFileName.empty() && !testDirName.empty() ){
+    cerr << "useless -o option" << endl;
     return false;
   }
 
