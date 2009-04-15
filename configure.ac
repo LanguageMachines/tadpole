@@ -150,10 +150,24 @@ LIBS="$LIBS $BOOST_FILESYSTEM_LIBS"
 LDFLAGS="$LDFLAGS $BOOST_FILESYSTEM_LDFLAGS"
 fi
 
-AC_CHECK_ICU([3.6],
-	[CXXFLAGS="$CXXFLAGS $ICU_CXXFLAGS"
-	LIBS="$ICU_LIBS $LIBS"],
-	AC_MSG_FAILURE( "No ICU development environment found. Please check if libicu-dev or the like is installed" ) )
+useICU=1;
+AC_ARG_WITH(icu,
+       [  --with-icu=DIR       use ICU installed in <DIR>],
+       [if test "$with_icu" = "no"; then
+        useICU=0;
+	fi],
+        [CXXFLAGS="$CXXFLAGS -I$prefix/include"
+        LIBS="-L$prefix/lib $LIBS"])
+
+if test "$useICU" == "1"; then
+  AC_CHECK_ICU( [3.6],
+		[CXXFLAGS="$CXXFLAGS $ICU_CXXFLAGS"
+		LIBS="$ICU_LIBS $LIBS"],
+		[AC_MSG_FAILURE( "No ICU development environment found. Please check if libicu-dev or the like is installed" )] )
+  AC_DEFINE(HAVE_ICU, 1, we want to use ICU )
+else
+  AC_MSG_NOTICE("ICU support is disabled")
+fi
 
 dnl
 dnl ----- Sockets

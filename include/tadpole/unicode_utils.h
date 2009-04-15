@@ -4,6 +4,8 @@
 #include <vector>
 #include <ostream>
 
+#include "config.h"
+#ifdef HAVE_ICU
 #include "unicode/unistr.h"
 #include "unicode/ustream.h"
 #include "unicode/ucnv.h"
@@ -45,5 +47,28 @@ private:
   UnicodeRegexMatcher();
   std::vector<UnicodeString> results;
 };
+#else
+class UnicodeString: public std::string{
+public:
+  UnicodeString(): std::string(){};
+  UnicodeString( const std::string& s ): std::string( s ){};
+  UnicodeString( const char *s ): std::string( s ){};
+ UnicodeString( const UnicodeString& s, long int b, long int l ):
+  std::string( s.substr(b,l) ){};
+  void remove( long i, long j ){ erase(i,j); };
+  void remove(){ clear(); };
+  bool isEmpty() { return empty(); };
+  long indexOf( std::string& s ){ return find(s); };
+};
+
+inline const UnicodeString UTF8ToUnicode( const std::string& s ){
+  return s;
+}
+
+inline std::string UnicodeToUTF8( const UnicodeString& u ) {
+  return u;
+};
+
+#endif
 
 #endif

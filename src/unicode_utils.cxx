@@ -4,6 +4,7 @@
 #include <string>
 #include "tadpole/unicode_utils.h"
 
+#ifdef HAVE_ICU
 using std::string;
 using std::ostream;
 
@@ -293,4 +294,5 @@ UnicodeString UnicodeRegexMatcher::replace_all( const UnicodeString& line,
   }
   return result;
 }
+#endif
 

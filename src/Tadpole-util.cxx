@@ -137,7 +137,12 @@ void decap( UnicodeString &w, const string &t ) {
   if ( pos != string::npos ) 
     // don't decap Eigennamen
     return;
+#ifdef HAVE_ICU
   w.replace( 0, 1, u_tolower( w[0] ) );
+#else
+  char tmp = tolower(w[0]);
+  w.replace( 0, 1, &tmp );
+#endif
   if (tpDebug)
     cout << " to : " << UnicodeToUTF8(w) << endl;
 }
