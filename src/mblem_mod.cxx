@@ -112,7 +112,7 @@ namespace myMblem  {
   
 
   void init( const string& cdir, const string& fname) {
-    cerr << "Initiating lemmatizer..." << endl;
+    cerr << "Initiating lemmatizer...\n";
     opts_lexibase = "-a1";
     mblemDebug = tpDebug;
     if (!readsettings( cdir, fname)) 

@@ -162,7 +162,7 @@ namespace mwuChunker {
   }
 
   bool read_mwus( const string& fname) {
-    cerr << "read mwus " + fname << endl;
+    cerr << "read mwus " + fname + "\n";
     ifstream mwufile(fname.c_str(), ios::in);
     if(mwufile.bad()){
       return false;
@@ -180,7 +180,7 @@ namespace mwuChunker {
   }
 
   void init( const string& cDir, const string& fname) {
-    cerr << "initiating mwuChunker ... " << endl;
+    cerr << "initiating mwuChunker ... \n";
     mwuDebug = tpDebug;
     if (!readsettings( cDir, fname)) {
       cerr << "Cannot read mwuChunker settingsfile " << fname << endl;

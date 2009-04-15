@@ -122,7 +122,7 @@ namespace Mbma {
   }
   
   void init( const string& cDir, const string& fname) {
-    cerr << "Initiating morphological analyzer..." << endl;
+    cerr << "Initiating morphological analyzer...\n";
     mbaDebug = tpDebug;
     if ( !readsettings( cDir, fname) ) {
       cerr << "Cannot read MBMA settingsfile " << fname << endl;
