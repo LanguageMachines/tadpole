@@ -5,6 +5,7 @@
 #include <ostream>
 
 #include "unicode/unistr.h"
+#include "unicode/ustream.h"
 #include "unicode/ucnv.h"
 #include "unicode/uchar.h"
 #include "unicode/normlzr.h"
@@ -44,7 +45,5 @@ private:
   UnicodeRegexMatcher();
   std::vector<UnicodeString> results;
 };
-
-std::ostream& operator<< ( std::ostream&, const UnicodeString& );
 
 #endif

@@ -294,6 +294,3 @@ UnicodeString UnicodeRegexMatcher::replace_all( const UnicodeString& line,
   return result;
 }
 
-std::ostream& operator<< ( std::ostream& os, const UnicodeString& us ){
-  return os << UnicodeToUTF8(us);
-}

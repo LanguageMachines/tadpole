@@ -52,6 +52,10 @@ AC_DEFUN([AC_CHECK_ICU], [
             AC_MSG_CHECKING(ICU_LIBS)
             ICU_LIBS=`$ICU_CONFIG --ldflags`
             AC_MSG_RESULT($ICU_LIBS)
+            AC_MSG_CHECKING(ICU_IOLIB)
+            ICU_IOLIB=`$ICU_CONFIG --ldflags-icuio`
+            AC_MSG_RESULT($ICU_IOLIB)
+	    ICU_LIBS="$ICU_LIBS $ICU_IOLIB"
         else
             ICU_CFLAGS=""
             ICU_CXXFLAGS=""

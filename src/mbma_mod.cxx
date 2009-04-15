@@ -158,7 +158,7 @@ namespace Mbma {
 	  inst += ",";
 	}
 	if (mbaDebug > 2)
-	  cout << " : " << &inst << endl;
+	  cout << " : " << inst << endl;
       }
       inst += "?";
       if (mbaDebug > 2)
