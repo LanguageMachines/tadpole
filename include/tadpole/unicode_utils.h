@@ -55,6 +55,7 @@ public:
   UnicodeString( const char *s ): std::string( s ){};
  UnicodeString( const UnicodeString& s, long int b, long int l ):
   std::string( s.substr(b,l) ){};
+  long length() const { return (long)std::string::length(); };
   void remove( long i, long j ){ erase(i,j); };
   void remove(){ clear(); };
   bool isEmpty() { return empty(); };
@@ -68,6 +69,13 @@ inline const UnicodeString UTF8ToUnicode( const std::string& s ){
 inline std::string UnicodeToUTF8( const UnicodeString& u ) {
   return u;
 };
+
+inline const char *u_tolower( const char k ){
+  static char chars[2];
+  chars[0] = tolower(k);
+  chars[1] = 0;
+  return chars;
+}
 
 #endif
 
