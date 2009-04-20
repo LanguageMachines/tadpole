@@ -46,7 +46,7 @@ AC_DEFUN([AC_CHECK_ICU], [
             AC_MSG_RESULT($ICU_CFLAGS)
 
             AC_MSG_CHECKING(ICU_CXXFLAGS)
-            ICU_CXXFLAGS=`$ICU_CONFIG --cxxflags`
+            ICU_CXXFLAGS=`$ICU_CONFIG --cppflags-searchpath`
             AC_MSG_RESULT($ICU_CXXFLAGS)
 
             AC_MSG_CHECKING(ICU_LIBS)
