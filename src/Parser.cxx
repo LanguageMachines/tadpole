@@ -121,7 +121,7 @@ namespace Parser {
 			      const std::string& outputFile) {
 
     PyObjectRef tmp = PyObject_CallFunction(mainFunction,
-					    "[s, s, s, s, s, s, s, s, s, s, s]",
+					    (char *)"[s, s, s, s, s, s, s, s, s, s, s]",
 					    "--dep", depFile.c_str(),
 					    "--mod", modFile.c_str(),
 					    "--dir", dirFile.c_str(),
