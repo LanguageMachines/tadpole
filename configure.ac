@@ -120,13 +120,6 @@ AC_ARG_WITH(python,
        [PYTHON="$withval/python"],
        [PYTHON="python"])
 
-#we need Python 2.5.x
-AM_PATH_PYTHON([2.5],
-	       [CXXFLAGS="$CXXFLAGS -I/usr/include/python2.5"
-	        LIBS="-L/usr/lib/python2.5 -lpython2.5 $LIBS"
-		AC_DEFINE_DIR([PYTHONDIR],pythondir, PYTHONDIR )],
-	       [:])
-
 AC_ARG_WITH(timbl,
        [  --with-timbl=DIR       use timbl installed in <DIR>],
        [CXXFLAGS="$CXXFLAGS -I$withval/include"
@@ -140,6 +133,18 @@ AC_ARG_WITH(mbt,
        LIBS="-L$withval/lib $LIBS"],
        [CXXFLAGS="$CXXFLAGS -I$prefix/include"
        LIBS="-L$prefix/lib $LIBS"] )
+
+#we need Python > 2.5.x
+AM_PATH_PYTHON([2.5],
+	[AC_DEFINE_DIR([PYTHONDIR],pythondir, PYTHONDIR)],
+	[:])
+
+AC_PYTHON_DEVEL([>= '2.5'])
+if test "x$PYTHON_CPPFLAGS" != "x"; then
+ CXXFLAGS="$CXXFLAGS $PYTHON_CPPFLAGS"
+ LDFLAGS="$PYTHON_LDFLAGS $LDFLAGS"
+fi
+
 
 AC_CHECK_HEADERS( [Python.h], , AC_MSG_FAILURE("can't find Python C API") )
 
