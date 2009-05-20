@@ -145,9 +145,9 @@ void decap( UnicodeString &w, const string &t ) {
 string tokenize( const string& infilename) {
   string tokenizedfilename = infilename + ".tok";
   string lang = "ned";
-  string command = string( BIN_PATH) + "/TPtokenize " + lang + " < " + infilename + " > " + tokenizedfilename + "\n";
+  string command = string( BIN_PATH) + "/TPtokenize " + lang + " < " + infilename + " > " + tokenizedfilename;
   if ( system(command.c_str()) != 0 ){
-    cerr << "execution of " << command << " failed. We go on" << endl;
+    cerr << "execution of " << command << " failed. We go on" << endl; //This seems to produce false positives in server mode, perhaps something to do with forking? (Maarten)
   };
 
 

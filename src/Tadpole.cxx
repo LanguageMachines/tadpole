@@ -25,7 +25,10 @@
 */
 
 #include <cstdlib>
+#include <cstdio>
 #include <sys/time.h>
+#include <sys/wait.h> 
+#include <signal.h>
 #include <ctime>
 #include <string>
 #include <cstring>
@@ -41,6 +44,8 @@
 #include "tadpole/mblem_mod.h"
 #include "tadpole/mwu_chunker_mod.h"
 #include "tadpole/Parser.h"
+#include "tadpole/ServerSocket.h"
+#include "tadpole/SocketException.h"
 
 using namespace std;
 using Mbma::MBMAana;
@@ -64,8 +69,12 @@ bool doTok = true;
 bool doMwu = true;
 bool doParse = true;
 bool doDirTest = false;
+bool doServer = false;
+int listenport = 0;
 bool keepIntermediateFiles = false;
 DemoOptions ** ModOpts;
+
+
 
 /* assumptions:
    each components gets its own configfile per cmdline options
@@ -149,8 +158,11 @@ void usage( const string& progname ) {
        << "\t-o <outputfile> (default stdout)\n"
        << "\t-outputdir=<outputfile> (default stdout)\n"
        << "\t-s <output field separator> (default tab)\n"
+       << "\t-S <port> (run as server instead of reading from testfile)\n"
        << "\t-K : keep intermediate files, (last sentence only) (default false)\n"
        << "\t-d <debug level> (for more verbosity)\n";
+
+
 
 }
 
@@ -291,6 +303,10 @@ bool parse_args( TimblOpts& Opts ) {
     usage(ProgName);
     return false;
   };
+  if ( Opts.Find ('S', value, mood)) {
+    doServer = true;
+    listenport=atoi(value.c_str());
+  }
   if ( !outputDirName.empty() && testDirName.empty() ){
     cerr << "useless -outputdir option" << endl;
     return false;
@@ -636,62 +652,11 @@ void showProgress( ostream& os, const string& line,
      << " microseconds" << endl;
 }
   
-void Test( const string& infilename, const string& outFileName ) {
-  // init's are done
-  cerr << "testing file " << infilename << endl;
-  ofstream outStream;
-  if ( !outFileName.empty() ){
-    if ( outStream.open( outFileName.c_str() ), outStream.bad() ){
-      cerr << "unable to open outputfile: " << outFileName << endl;
-      exit(1);
-    }
-  }
-  if ( doTok ){
-    //Tokenize
-    struct timeval tokTime;
-    tokTime.tv_sec=0;
-    tokTime.tv_usec=0;
-    struct timeval startTime;
-    struct timeval endTime;
-    gettimeofday(&startTime, 0 );
-    TokenizedTestFileName = tokenize(infilename);
-    LineTokenizedTestFileName = linetokenize(TokenizedTestFileName);
-    gettimeofday(&endTime,0);
-    addTimeDiff( tokTime, startTime, endTime );
-    showTimeSpan( cerr, "tokenizing", tokTime );
-    if ( !keepIntermediateFiles ){
-      // remove tokenized file
-      string syscommand = "rm -f " + infilename + ".tok\n";
-      if ( system(syscommand.c_str()) != 0 ){
-	cerr << "execution of " << syscommand << " failed. We go on" << endl;
-      }
-    }
-  }
-  else
-    LineTokenizedTestFileName = infilename;
 
-  ifstream IN( LineTokenizedTestFileName.c_str() );
+vector< vector<mwuChunker::ana> > TestLine(const string &line, timeval &tagTime, timeval &mbaTime, timeval &mblemTime, timeval &mwuTime, timeval &parseTime ) {
+    vector< vector<mwuChunker::ana> > solutions;
 
-  timeval parseTime;
-  parseTime.tv_sec=0;
-  parseTime.tv_usec=0;
-  timeval mwuTime;
-  mwuTime.tv_sec=0;
-  mwuTime.tv_usec=0;
-  timeval mblemTime;
-  mblemTime.tv_sec=0;
-  mblemTime.tv_usec=0;
-  timeval mbaTime;
-  mbaTime.tv_sec=0;
-  mbaTime.tv_usec=0;
-  timeval tagTime;
-  tagTime.tv_sec=0;
-  tagTime.tv_usec=0;
-
-  string line;
-  while( getline(IN, line) ) {
     if (line.length()>1) {
-
       if (tpDebug) 
 	cout << "in: " << line << endl;
       timeval tagStartTime;
@@ -790,12 +755,80 @@ void Test( const string& infilename, const string& outFileName ) {
 	gettimeofday(&parseEndTime,0);
 	addTimeDiff( parseTime, parseStartTime, parseEndTime );
       }
-      if ( outFileName.empty() )
-	showResults( cout, final_ana ); 
-      else
-	showResults( outStream, final_ana ); 
+      solutions.push_back(final_ana);
+      //return final_ana;
     } //while getline
+    return solutions;
+}
+
+
+void Test( const string& infilename, const string& outFileName) {
+  // init's are done
+  cerr << "testing file " << infilename << endl;
+  ofstream outStream;
+  if ( !outFileName.empty() ){
+    if ( outStream.open( outFileName.c_str() ), outStream.bad() ){
+      cerr << "unable to open outputfile: " << outFileName << endl;
+      exit(1);
+    }
   }
+  if ( doTok ){
+    //Tokenize
+    struct timeval tokTime;
+    tokTime.tv_sec=0;
+    tokTime.tv_usec=0;
+    struct timeval startTime;
+    struct timeval endTime;
+    gettimeofday(&startTime, 0 );
+    TokenizedTestFileName = tokenize(infilename);
+    LineTokenizedTestFileName = linetokenize(TokenizedTestFileName);
+    gettimeofday(&endTime,0);
+    addTimeDiff( tokTime, startTime, endTime );
+    showTimeSpan( cerr, "tokenizing", tokTime );
+    if ( !keepIntermediateFiles ){
+      // remove tokenized file
+      string tokfile = infilename + ".tok";
+      if ( std::remove(tokfile.c_str()) != 0 ) {
+       cerr << "Error removing " << tokfile << ", yet we go on..." << endl;
+      }
+    }
+  }
+  else
+    LineTokenizedTestFileName = infilename;
+
+  ifstream IN( LineTokenizedTestFileName.c_str() );
+
+  timeval parseTime;
+  parseTime.tv_sec=0;
+  parseTime.tv_usec=0;
+  timeval mwuTime;
+  mwuTime.tv_sec=0;
+  mwuTime.tv_usec=0;
+  timeval mblemTime;
+  mblemTime.tv_sec=0;
+  mblemTime.tv_usec=0;
+  timeval mbaTime;
+  mbaTime.tv_sec=0;
+  mbaTime.tv_usec=0;
+  timeval tagTime;
+  tagTime.tv_sec=0;
+  tagTime.tv_usec=0;
+
+
+
+  string line;
+  while(getline(IN, line)) {
+	vector< vector<mwuChunker::ana> > solutions = TestLine(line, tagTime, mbaTime, mblemTime, mwuTime,parseTime);
+	int solution_size = solutions.size();
+	for (int i = 0; i < solution_size; i++) {
+	        if ( outFileName.empty() )
+		  showResults( cout, solutions[i] ); 
+	        else
+		  showResults( outStream, solutions[i] ); 
+	}
+  }
+
+
   showTimeSpan( cerr, "tagging          ", tagTime );
   showTimeSpan( cerr, "MBA              ", mbaTime );
   showTimeSpan( cerr, "Mblem            ", mblemTime );
@@ -813,13 +846,63 @@ void Test( const string& infilename, const string& outFileName ) {
     cerr << "results stored in " << outFileName << endl;
   if ( doTok && !keepIntermediateFiles ){
     // remove linetokenized file
-    string syscommand = "rm -f " + infilename + ".tok.lin\n";
-    if ( system(syscommand.c_str()) != 0 ){
-      cerr << "execution of " << syscommand << " failed. We go on" << endl;
+    string lintokfile = infilename + ".tok.lin";
+    if ( std::remove(lintokfile.c_str()) != 0 ) {
+     cerr << "Error removing " << lintokfile << ", yet we go on..." << endl;
     }
   }
   return;
 }
+
+
+void serverthread(ServerSocket &conn) { //by Maarten van Gompel
+  char random_number[12];
+  snprintf(random_number, sizeof(random_number), "%d", rand());
+  string tmpTestFile = string("tadpole-server-in-") + random_number;
+  string tmpOutFile = string("tadpole-server-out-") + random_number;
+
+    try
+      {
+	 while (true) {
+	  std::string data;
+   	  conn >> data;	 //read data from client
+	  int l = data.length();
+	  if ((l >= 2) && (data[l - 2] == '\r'))
+		  data = data.substr(0, l - 2); //remove trailing \r\n
+	  else if (l > 1) 			
+		  data = data.substr(0, l - 1); //remove trailing \n
+	  if (tpDebug)
+	  	  std::cerr << "Received: [" << data << "]" << "\n";
+
+	          ofstream infile;
+	  infile.open(tmpTestFile.c_str());
+	  infile << data << "\n";
+
+  	  std::cerr << "Processing...\n";
+	  infile.close();
+	  Test( tmpTestFile, tmpOutFile );
+	  ifstream outfile;
+	  outfile.open(tmpOutFile.c_str());
+	  string line;
+	  while (getline(outfile,line)) {
+		conn << (line + "\n"); //write data to client
+	  }
+	  outfile.close();
+
+	  if ( std::remove(tmpTestFile.c_str()) != 0 ) {
+	   cerr << "Error removing " << tmpTestFile << ", yet we go on..." << endl;
+	  }
+	  if ( std::remove(tmpOutFile.c_str()) != 0 ) {
+	   cerr << "Error removing " << tmpOutFile << ", yet we go on..." << endl;
+  	  }  
+	}
+      }
+      catch ( SocketException& ) { 	
+	std::cerr << "Connection closed.\n"; 
+      }
+ 
+}
+
 
 int main(int argc, char *argv[]) {
   std::ios_base::sync_with_stdio(false);
@@ -845,8 +928,48 @@ int main(int argc, char *argv[]) {
 	  ++it;
 	}
       }
-      else
-	Test( TestFileName, outputFileName );
+      else if ( doServer ) {  
+	  //first set up some things to deal with zombies
+	  struct sigaction action;
+	  action.sa_handler = SIG_IGN;
+	  sigemptyset(&action.sa_mask);
+	  action.sa_flags = SA_NOCLDWAIT;
+	  sigaction(SIGCHLD, &action, NULL);	  
+ 
+	  srand((unsigned)time(0));
+
+	  std::cerr << "Listening on port " << listenport << "\n";
+
+	  try
+	    {
+	      // Create the socket
+	      ServerSocket server ( listenport );
+
+	      while ( true ) {
+	
+		  ServerSocket conn;
+		  server.accept ( conn );
+		  std::cerr << "New connection...\n";
+		  int pid = fork();				
+	          if (pid < 0) {
+	             std::cerr << "ERROR on fork\n";
+		     exit(EXIT_FAILURE);
+	          } else if (pid == 0)  {
+		     server = NULL;
+		     serverthread(conn);
+	             exit(EXIT_SUCCESS);
+	          }		
+		
+
+	      }
+	  } catch ( SocketException& e )
+	    {
+	      std::cerr << "Server error:" << e.description() << "\nExiting.\n";
+	    }
+
+      } else {
+	  Test( TestFileName, outputFileName );
+      }
     }
   }
   catch ( const exception& e ){
