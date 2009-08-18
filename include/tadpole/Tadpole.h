@@ -27,8 +27,6 @@
 
 #define MAX_NAMELEN 2048 
 
-#include <ctime>
-#include <sys/time.h>
 #include <set>
 #include "tadpole/unicode_utils.h"
 
@@ -40,9 +38,6 @@ void decap( std::string &, const std::string &);
 void decap( UnicodeString &, const std::string &);
 
 void getFileNames( const std::string&, std::set<std::string>& );
-
-void showTimeSpan( std::ostream&, const std::string&, struct timeval& );
-void addTimeDiff( struct timeval&, struct timeval&, struct timeval& );
 
 extern std::string myOFS;
 extern int tpDebug;

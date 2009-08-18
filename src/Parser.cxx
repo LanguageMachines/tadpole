@@ -146,12 +146,12 @@ namespace Parser {
   PythonInterface *PI;
   static bool isInit = false;
 
-  timeval initTime;
-  timeval prepareTime;
-  timeval pairsTime;
-  timeval relsTime;
-  timeval dirTime;
-  timeval csiTime;
+  Common::Timer initTimer;
+  Common::Timer prepareTimer;
+  Common::Timer relsTimer;
+  Common::Timer pairsTimer;
+  Common::Timer dirTimer;
+  Common::Timer csiTimer;
 
   bool readsettings( const string& cDir, const string& fname ){
     ifstream setfile(fname.c_str(), ios::in);
@@ -237,21 +237,7 @@ namespace Parser {
     PI = new PythonInterface();
     bool happy = false;
     cerr << "initiating parser ... " << endl;
-    prepareTime.tv_sec=0;
-    prepareTime.tv_usec=0;
-    pairsTime.tv_sec=0;
-    pairsTime.tv_usec=0;
-    relsTime.tv_sec=0;
-    relsTime.tv_usec=0;
-    dirTime.tv_sec=0;
-    dirTime.tv_usec=0;
-    csiTime.tv_sec=0;
-    csiTime.tv_usec=0;
-    initTime.tv_sec=0;
-    initTime.tv_usec=0;
-    timeval startTime;
-    timeval endTime;
-    gettimeofday(&startTime,0);
+    initTimer.start();
     if ( !readsettings( cDir, fname)) {
       cerr << "Cannot read parser settingsfile " << fname << endl;
     }
@@ -277,8 +263,7 @@ namespace Parser {
       }
     }
     isInit = happy;
-    gettimeofday(&endTime,0);
-    addTimeDiff( initTime, startTime, endTime );
+    initTimer.stop();
     return happy;
   }
 
@@ -757,20 +742,6 @@ namespace Parser {
       cerr << "unable to parse an analisis without words" << endl;
       return;
     }
-    prepareTime.tv_sec=0;
-    prepareTime.tv_usec=0;
-    pairsTime.tv_sec=0;
-    pairsTime.tv_usec=0;
-    relsTime.tv_sec=0;
-    relsTime.tv_usec=0;
-    dirTime.tv_sec=0;
-    dirTime.tv_usec=0;
-    csiTime.tv_sec=0;
-    csiTime.tv_usec=0;
-    initTime.tv_sec=0;
-    initTime.tv_usec=0;
-    timeval startTime;
-    timeval endTime;
     string resFileName = fileName + ".result"; 
     string pairsInName = fileName +".pairs.inst";
     string dirInName = fileName + ".dir.inst";
@@ -779,7 +750,7 @@ namespace Parser {
     if ( anaFile ){
       saveAna( anaFile, final_ana );
       unlink( resFileName.c_str() );
-      gettimeofday(&startTime,0);    
+      prepareTimer.start();
 //       string cmd = string("sh ") + BIN_PATH + "/prepareParser.sh " + fileName;
 //       // run some python scripts to prepare the input.
 //       int result = system( cmd.c_str() ); 
@@ -788,42 +759,32 @@ namespace Parser {
 // 	return;
 //       }
       prepare( final_ana, fileName );
-      gettimeofday(&endTime,0);
-      addTimeDiff( prepareTime, startTime, endTime );    
+      prepareTimer.stop();
 #pragma omp parallel sections
       {
 #pragma omp section
 	{
-	  timeval startTime;
-	  timeval endTime;
-	  gettimeofday(&startTime,0);
 	  unlink( pairsOutName );
+	  pairsTimer.start();
 	  pairs->Test( pairsInName, pairsOutName );
-	  gettimeofday(&endTime,0);
-	  addTimeDiff( pairsTime, startTime, endTime );
+	  pairsTimer.stop();
 	}
 #pragma omp section
 	{
-	  timeval startTime;
-	  timeval endTime;
-	  gettimeofday(&startTime,0);
 	  unlink( dirOutName );
+	  dirTimer.start();
 	  dir->Test( dirInName, dirOutName );
-	  gettimeofday(&endTime,0);
-	  addTimeDiff( dirTime, startTime, endTime );
+	  dirTimer.stop();
 	}
 #pragma omp section
 	{
-	  timeval startTime;
-	  timeval endTime;
-	  gettimeofday(&startTime,0);
 	  unlink( relsOutName );
+	  relsTimer.start();
 	  rels->Test( relsInName, relsOutName );
-	  gettimeofday(&endTime,0);
-	  addTimeDiff( relsTime, startTime, endTime );
+	  relsTimer.stop();
 	}
       }
-      gettimeofday(&startTime,0);
+      csiTimer.start();
       try {
 	PI->parse( pairsOutName,
 		   relsOutName,
@@ -843,8 +804,7 @@ namespace Parser {
 // 	cerr << "finalizing parse failed" << endl;
 // 	return;
 //       }
-      gettimeofday(&endTime,0);
-      addTimeDiff( csiTime, startTime, endTime );
+      csiTimer.stop();
       ifstream resFile( resFileName.c_str() );
       if ( resFile ){
 	readAna( resFile, final_ana );

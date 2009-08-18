@@ -26,10 +26,8 @@
 
 #include <cstdlib>
 #include <cstdio>
-#include <sys/time.h>
 #include <sys/wait.h> 
 #include <signal.h>
-#include <ctime>
 #include <string>
 #include <cstring>
 #include <iostream>
@@ -343,7 +341,7 @@ bool parse_args( TimblOpts& Opts ) {
     }
   }
   if ( doParse )
-    showTimeSpan( cerr, "init Parse", Parser::initTime );  
+    cerr << "init Parse took: " << Parser::initTimer << endl;
   cerr << "Initialization done." << endl;
   return true;
 }
@@ -643,28 +641,15 @@ ostream &showResults( ostream& os,
   return os;
 }
 
-void showProgress( ostream& os, const string& line, 
-		   struct timeval& timeBefore ){
-  struct timeval timeAfter;
-  gettimeofday(&timeAfter, 0 );
-  os << line << " took:" << timeAfter.tv_sec - timeBefore.tv_sec
-     << " seconds and " << timeAfter.tv_usec - timeBefore.tv_usec 
-     << " microseconds" << endl;
-}
-  
-
-vector< vector<mwuChunker::ana> > TestLine(const string &line, timeval &tagTime, timeval &mbaTime, timeval &mblemTime, timeval &mwuTime, timeval &parseTime ) {
+vector< vector<mwuChunker::ana> > TestLine(const string &line, Common::Timer& tagTimer, Common::Timer& mbmaTimer, Common::Timer& mblemTimer, Common::Timer& mwuTimer, Common::Timer& parseTimer ) {
     vector< vector<mwuChunker::ana> > solutions;
 
     if (line.length()>1) {
       if (tpDebug) 
 	cout << "in: " << line << endl;
-      timeval tagStartTime;
-      timeval tagEndTime;
-      gettimeofday(&tagStartTime,0);
+      tagTimer.start();
       string tagged = tagger->Tag(line);
-      gettimeofday(&tagEndTime,0);
-      addTimeDiff( tagTime, tagStartTime, tagEndTime );
+      tagTimer.stop();
       if (tpDebug) {
 	cout << "line: " << line
 	     <<"\ntagged: "<< tagged
@@ -692,20 +677,12 @@ vector< vector<mwuChunker::ana> > TestLine(const string &line, timeval &tagTime,
 	  //process each word and dump every ana for now
 	  string analysis;
 	  vector<MBMAana> res;
-	  timeval mbaStartTime;
-	  timeval mbaEndTime;
-	  gettimeofday(&mbaStartTime,0);
+	  mbmaTimer.start();
 	  Mbma::Classify(tagged_words[i], res);
-	  gettimeofday(&mbaEndTime,0);
-	  addTimeDiff( mbaTime, mbaStartTime, mbaEndTime );
-
-	  timeval mblemStartTime;
-	  timeval mblemEndTime;
-	  gettimeofday(&mblemStartTime,0);
+	  mbmaTimer.stop();
+	  mblemTimer.start();
 	  string lemma = myMblem::Classify(tagged_words[i]);
-	  gettimeofday(&mblemEndTime,0);
-	  addTimeDiff( mblemTime, mblemStartTime, mblemEndTime );
-
+	  mblemTimer.stop();
 	  if (tpDebug) 
 	    {
 	      cout << "word: " << words[i] << "\t#anas: " << res.size()<< endl;
@@ -734,12 +711,10 @@ vector< vector<mwuChunker::ana> > TestLine(const string &line, timeval &tagTime,
 	//mwu chunker goes here, otherwise we get a mess when 
 	if (tpDebug)
 	  cout << "starting mwu Chunking ... \n";
-	timeval mwuStartTime;
-	timeval mwuEndTime;
-	gettimeofday(&mwuStartTime,0);
+	mwuTimer.start();
 	mwuChunker::Classify(words, final_ana);
-	gettimeofday(&mwuEndTime,0);
-	addTimeDiff( mwuTime, mwuStartTime, mwuEndTime );
+	mwuTimer.stop();
+
       }
       if (tpDebug) {
 	cout << "\n\nfinished mwu chunking!\n";
@@ -748,12 +723,9 @@ vector< vector<mwuChunker::ana> > TestLine(const string &line, timeval &tagTime,
 	cout << endl;
       }
       if ( doParse ){
-	timeval parseStartTime;
-	timeval parseEndTime;
-	gettimeofday(&parseStartTime,0);
+	parseTimer.start();
 	Parser::Parse( final_ana, parserTmpFile );
-	gettimeofday(&parseEndTime,0);
-	addTimeDiff( parseTime, parseStartTime, parseEndTime );
+	parseTimer.stop();
       }
       solutions.push_back(final_ana);
       //return final_ana;
@@ -774,17 +746,12 @@ void Test( const string& infilename, const string& outFileName) {
   }
   if ( doTok ){
     //Tokenize
-    struct timeval tokTime;
-    tokTime.tv_sec=0;
-    tokTime.tv_usec=0;
-    struct timeval startTime;
-    struct timeval endTime;
-    gettimeofday(&startTime, 0 );
+    Common::Timer tokTimer;
+    tokTimer.start();
     TokenizedTestFileName = tokenize(infilename);
     LineTokenizedTestFileName = linetokenize(TokenizedTestFileName);
-    gettimeofday(&endTime,0);
-    addTimeDiff( tokTime, startTime, endTime );
-    showTimeSpan( cerr, "tokenizing", tokTime );
+    tokTimer.stop();
+    cerr << "tokenizing took:" << tokTimer << endl;
     if ( !keepIntermediateFiles ){
       // remove tokenized file
       string tokfile = infilename + ".tok";
@@ -798,27 +765,16 @@ void Test( const string& infilename, const string& outFileName) {
 
   ifstream IN( LineTokenizedTestFileName.c_str() );
 
-  timeval parseTime;
-  parseTime.tv_sec=0;
-  parseTime.tv_usec=0;
-  timeval mwuTime;
-  mwuTime.tv_sec=0;
-  mwuTime.tv_usec=0;
-  timeval mblemTime;
-  mblemTime.tv_sec=0;
-  mblemTime.tv_usec=0;
-  timeval mbaTime;
-  mbaTime.tv_sec=0;
-  mbaTime.tv_usec=0;
-  timeval tagTime;
-  tagTime.tv_sec=0;
-  tagTime.tv_usec=0;
-
+  Common::Timer mblemTimer;
+  Common::Timer mbmaTimer;
+  Common::Timer mwuTimer;
+  Common::Timer tagTimer;
+  Common::Timer parseTimer;
 
 
   string line;
   while(getline(IN, line)) {
-	vector< vector<mwuChunker::ana> > solutions = TestLine(line, tagTime, mbaTime, mblemTime, mwuTime,parseTime);
+    vector< vector<mwuChunker::ana> > solutions = TestLine(line, tagTimer, mbmaTimer, mblemTimer, mwuTimer, parseTimer );
 	int solution_size = solutions.size();
 	for (int i = 0; i < solution_size; i++) {
 	        if ( outFileName.empty() )
@@ -829,18 +785,18 @@ void Test( const string& infilename, const string& outFileName) {
   }
 
 
-  showTimeSpan( cerr, "tagging          ", tagTime );
-  showTimeSpan( cerr, "MBA              ", mbaTime );
-  showTimeSpan( cerr, "Mblem            ", mblemTime );
+  cerr << "tagging took:     " << tagTimer << endl;
+  cerr << "MBA took:         " << mbmaTimer << endl;
+  cerr << "Mblem took:       " << mblemTimer << endl;
   if ( doMwu )
-    showTimeSpan( cerr, "MWU resolving    ", mwuTime );
+    cerr << "MWU resolving took: " << mwuTimer << endl;
   if ( doParse ){
-    showTimeSpan( cerr, "Parsing (prepare)", Parser::prepareTime );
-    showTimeSpan( cerr, "Parsing (pairs)  ", Parser::pairsTime );
-    showTimeSpan( cerr, "Parsing (rels)   ", Parser::relsTime );
-    showTimeSpan( cerr, "Parsing (dir)    ", Parser::dirTime );
-    showTimeSpan( cerr, "Parsing (csi)    ", Parser::csiTime );
-    showTimeSpan( cerr, "Parsing (total)  ", parseTime );
+    cerr << "Parsing (prepare) took: " << Parser::prepareTimer << endl;
+    cerr << "Parsing (pairs)   took: " << Parser::pairsTimer << endl;
+    cerr << "Parsing (rels)    took: " << Parser::relsTimer << endl;
+    cerr << "Parsing (dir)     took: " << Parser::dirTimer << endl;
+    cerr << "Parsing (csi)     took: " << Parser::csiTimer << endl;
+    cerr << "Parsing (total)   took: " << parseTimer << endl;
   }
   if ( !outFileName.empty() )
     cerr << "results stored in " << outFileName << endl;

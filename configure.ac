@@ -4,7 +4,7 @@
 # $URL: $
 
 AC_PREREQ(2.59)
-AC_INIT([Tadpole], [0.3], [timbl@uvt.nl])
+AC_INIT([Tadpole], [0.4], [timbl@uvt.nl])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
@@ -23,8 +23,7 @@ else
 fi
 
 # Checks for programs.
-# when available, we prefer the Intel Compiler
-AC_PROG_CXX( [icpc g++] )
+AC_PROG_CXX( [g++] )
 
 if $cxx_flags_were_set; then
   CXXFLAGS=$CXXFLAGS
@@ -275,7 +274,7 @@ if test "$pkgconfigpath" != "NONE"; then
        [  --with-timbl=DIR       use timbl installed in <DIR>],
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$withval/lib/pkgconfig"],
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$prefix/lib/pkgconfig"])
-  PKG_CHECK_MODULES([timbl], [timbl >= 6.1.3] )
+  PKG_CHECK_MODULES([timbl], [timbl >= 6.2.0] )
   CXXFLAGS="$CXXFLAGS $timbl_CFLAGS"
   LIBS="$LIBS $timbl_LIBS"
   AC_ARG_WITH(mbt,

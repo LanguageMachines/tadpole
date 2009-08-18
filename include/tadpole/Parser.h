@@ -30,12 +30,12 @@
 namespace Parser {
   bool init( const std::string&, const std::string& );
   void Parse( std::vector<mwuChunker::ana>&, const std::string& );
-  extern timeval initTime;
-  extern timeval prepareTime;
-  extern timeval pairsTime;
-  extern timeval relsTime;
-  extern timeval dirTime;
-  extern timeval csiTime;
+  extern Common::Timer initTimer;
+  extern Common::Timer prepareTimer;
+  extern Common::Timer pairsTimer;
+  extern Common::Timer relsTimer;
+  extern Common::Timer dirTimer;
+  extern Common::Timer csiTimer;
 
 }
 

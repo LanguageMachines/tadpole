@@ -175,21 +175,3 @@ string linetokenize( const string& infilename) {
   return linetokenizedfilename;
 }
 
-
-void showTimeSpan( ostream& os, const string& line, 
-		   struct timeval& timeBefore ){
-  os << line << " took:" << timeBefore.tv_sec
-     << " seconds and " << timeBefore.tv_usec 
-     << " microseconds" << endl;
-}
-  
-void addTimeDiff( struct timeval& time, 
-		  struct timeval& start, 
-		  struct timeval& end ){
-  long usecs = (time.tv_sec + end.tv_sec - start.tv_sec) * 1000000 
-    + time.tv_usec + end.tv_usec - start.tv_usec;
-  ldiv_t div = ldiv( usecs, 1000000 );
-  time.tv_sec = div.quot;
-  time.tv_usec = div.rem;
-}
-
