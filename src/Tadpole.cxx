@@ -914,6 +914,10 @@ int main(int argc, char *argv[]) {
 		Sockets::ServerSocket conn;
 		if ( server.accept( conn ) ){
 		  std::cerr << "New connection...\n";
+#define FORNOW
+#ifdef FORNOW
+		  serverthread(conn);
+#else		
 		  int pid = fork();				
 		  if (pid < 0) {
 		    std::cerr << "ERROR on fork\n";
@@ -923,6 +927,7 @@ int main(int argc, char *argv[]) {
 		    serverthread(conn);
 		    exit(EXIT_SUCCESS);
 		  } 
+#endif
 		}
 		else {
 		  throw( runtime_error( "accept failed" ) );
