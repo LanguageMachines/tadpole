@@ -42,8 +42,7 @@
 #include "tadpole/mblem_mod.h"
 #include "tadpole/mwu_chunker_mod.h"
 #include "tadpole/Parser.h"
-#include "tadpole/ServerSocket.h"
-#include "tadpole/SocketException.h"
+#include "timbl/SocketBasics.h"
 
 using namespace std;
 using Mbma::MBMAana;
@@ -68,7 +67,7 @@ bool doMwu = true;
 bool doParse = true;
 bool doDirTest = false;
 bool doServer = false;
-int listenport = 0;
+string listenport = "void";
 bool keepIntermediateFiles = false;
 DemoOptions ** ModOpts;
 
@@ -303,7 +302,7 @@ bool parse_args( TimblOpts& Opts ) {
   };
   if ( Opts.Find ('S', value, mood)) {
     doServer = true;
-    listenport=atoi(value.c_str());
+    listenport= value;
   }
   if ( !outputDirName.empty() && testDirName.empty() ){
     cerr << "useless -outputdir option" << endl;
@@ -811,7 +810,7 @@ void Test( const string& infilename, const string& outFileName) {
 }
 
 
-void serverthread(ServerSocket &conn) { //by Maarten van Gompel
+void serverthread( Sockets::ServerSocket &conn) { //by Maarten van Gompel
   char random_number[12];
   snprintf(random_number, sizeof(random_number), "%d", rand());
   string tmpTestFile = string("tadpole-server-in-") + random_number;
@@ -821,7 +820,8 @@ void serverthread(ServerSocket &conn) { //by Maarten van Gompel
       {
 	 while (true) {
 	  std::string data;
-   	  conn >> data;	 //read data from client
+   	  if ( !conn.read( data ) )	 //read data from client
+	    throw( runtime_error( "read failed" ) );
 	  int l = data.length();
 	  if ((l >= 2) && (data[l - 2] == '\r'))
 		  data = data.substr(0, l - 2); //remove trailing \r\n
@@ -841,7 +841,8 @@ void serverthread(ServerSocket &conn) { //by Maarten van Gompel
 	  outfile.open(tmpOutFile.c_str());
 	  string line;
 	  while (getline(outfile,line)) {
-		conn << (line + "\n"); //write data to client
+	    if ( !conn.write( line + "\n" ) ) //write data to client
+	      throw( runtime_error( "write failed" ) );
 	  }
 	  outfile.close();
 
@@ -853,8 +854,9 @@ void serverthread(ServerSocket &conn) { //by Maarten van Gompel
   	  }  
 	}
       }
-      catch ( SocketException& ) { 	
-	std::cerr << "Connection closed.\n"; 
+    catch ( std::exception& e ) {
+      cerr << "connection problem: " << e.what() << endl;
+	cerr << "Connection closed.\n"; 
       }
  
 }
@@ -899,28 +901,36 @@ int main(int argc, char *argv[]) {
 	  try
 	    {
 	      // Create the socket
-	      ServerSocket server ( listenport );
-
+	      Sockets::ServerSocket server;
+	      if ( !server.connect( listenport ) )
+		throw( runtime_error( "starting server on port " + listenport + " failed" ) );
+	      if ( !server.listen( 5 ) ) {
+		// maximum of 5 pending requests
+		throw( runtime_error( "listen(5) failed" ) ); 
+	      }
+	      
 	      while ( true ) {
 	
-		  ServerSocket conn;
-		  server.accept ( conn );
+		Sockets::ServerSocket conn;
+		if ( server.accept( conn ) ){
 		  std::cerr << "New connection...\n";
 		  int pid = fork();				
-	          if (pid < 0) {
-	             std::cerr << "ERROR on fork\n";
-		     exit(EXIT_FAILURE);
-	          } else if (pid == 0)  {
-		     server = NULL;
-		     serverthread(conn);
-	             exit(EXIT_SUCCESS);
-	          }		
-		
-
+		  if (pid < 0) {
+		    std::cerr << "ERROR on fork\n";
+		    exit(EXIT_FAILURE);
+		  } else if (pid == 0)  {
+		    //		  server = NULL;
+		    serverthread(conn);
+		    exit(EXIT_SUCCESS);
+		  } 
+		}
+		else {
+		  throw( runtime_error( "accept failed" ) );
+		}
 	      }
-	  } catch ( SocketException& e )
+	    } catch ( std::exception& e )
 	    {
-	      std::cerr << "Server error:" << e.description() << "\nExiting.\n";
+	      std::cerr << "Server error:" << e.what() << "\nExiting.\n";
 	    }
 
       } else {
