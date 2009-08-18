@@ -42,7 +42,7 @@ namespace myMblem  {
   int mblemDebug=0;
 
   string punctuation = "?...,:;\\'`(){}[]%#+-_=/!";
-  TimblAPI *myLex;
+  TimblAPI *myLex = 0;
   map <string,string> classes;
   vector<string> lookuplemma, lookuptag;
   int nrlookup;
@@ -128,6 +128,12 @@ namespace myMblem  {
     myLex = new TimblAPI(opts_lexibase);
     myLex->GetInstanceBase(lexibase);
     return;
+  }
+
+  void cleanUp(){
+    //    cerr << "cleaning up MBLEM stuff" << endl;
+    delete myLex;
+    myLex = 0;
   }
 
   string make_instance( const UnicodeString& in ) {

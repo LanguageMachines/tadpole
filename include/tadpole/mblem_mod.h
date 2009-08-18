@@ -29,6 +29,7 @@ namespace myMblem {
   extern int nrlookup;
 
   void init( const std::string&, const std::string& );
+  void cleanUp();
   std::string Classify( const std::string& );
 }
 

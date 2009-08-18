@@ -75,6 +75,7 @@ namespace Mbma {
   
   void init( DemoOptions *MOpts = NULL);
   void init( const std::string&, const std::string& );
+  void cleanUp();
   
   void Classify( const std::string&, std::vector<MBMAana> &);
 }

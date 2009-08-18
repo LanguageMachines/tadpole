@@ -59,7 +59,7 @@ namespace Mbma {
   string punctuation = "?...,:;\\'`(){}[]%#+-_=/!";
 
   string MTreeFilename = "dm.igtree"; //default tree name
-  TimblAPI *MTree;
+  TimblAPI *MTree = 0;
   string sep = " "; // "&= " for cgi 
 
   // std. stuff to parse command line, read settingsfile, etc.
@@ -135,6 +135,11 @@ namespace Mbma {
     return;
   }
   
+  void cleanUp(){
+    //    cerr << "cleaning up MBMA stuff " << endl;
+    delete MTree;
+    MTree = 0;
+  }
   /* mbma stuff */
   
   size_t make_instance( const UnicodeString& word, 

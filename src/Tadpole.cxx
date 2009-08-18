@@ -975,5 +975,9 @@ int main(int argc, char *argv[]) {
   catch ( const exception& e ){
     cerr << "fatal error: " << e.what() << endl;
   }
+  Mbma::cleanUp();
+  myMblem::cleanUp();
+  delete tagger;
+  
   return 0;
 }
