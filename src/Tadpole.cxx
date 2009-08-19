@@ -53,7 +53,6 @@ string outputFileName;
 string outputDirName;
 set<string> fileNames;
 string ProgName;
-string parserTmpFile = "tadpole.ana";
 string TokenizedTestFileName = "";
 string LineTokenizedTestFileName = "";
 int num_modules = 0;
@@ -313,31 +312,54 @@ bool parse_args( TimblOpts& Opts ) {
     return false;
   }
 
-#pragma omp parallel sections
-  {
+  if ( doServer ){
+    // we use fork(). omp (GCC version) doesn't do well when omp is used
+    // before the fork!
+    // see: http://bisqwit.iki.fi/story/howto/openmp/#OpenmpAndFork
     init_cgn( c_dirName );
-#pragma omp section
     myMblem::init( c_dirName, l_fileName );
-#pragma omp section
     Mbma::init( c_dirName, m_fileName );
-#pragma omp section 
-    {
-      cerr << "Initiating tagger..." << endl;
-      tagger = new MbtAPI( string( "-s " ) + t_fileName );
+    cerr << "Initiating tagger..." << endl;
+    tagger = new MbtAPI( string( "-s " ) + t_fileName );
+    if ( doMwu ){
+      mwuChunker::init( c_dirName, u_fileName);
+      if ( doParse )
+	Parser::init( c_dirName, p_fileName );
     }
+    else {
+      if ( doParse )
+	cerr << " Parser disabled, because MWU is deselected" << endl;
+      doParse = false;;
+    }
+  }
+  else {
+#pragma omp parallel sections
+    {
+      init_cgn( c_dirName );
 #pragma omp section
-    {
-      if ( doMwu ){
-	mwuChunker::init( c_dirName, u_fileName);
-	if ( doParse )
-	  Parser::init( c_dirName, p_fileName );
+      myMblem::init( c_dirName, l_fileName );
+#pragma omp section
+      Mbma::init( c_dirName, m_fileName );
+#pragma omp section 
+      {
+	cerr << "Initiating tagger..." << endl;
+	tagger = new MbtAPI( string( "-s " ) + t_fileName );
       }
-      else {
-	if ( doParse )
-	  cerr << " Parser disabled, because MWU is deselected" << endl;
-	doParse = false;;
+#pragma omp section
+      {
+	if ( doMwu ){
+	  mwuChunker::init( c_dirName, u_fileName);
+	  if ( doParse )
+	    Parser::init( c_dirName, p_fileName );
+	}
+	else {
+	  if ( doParse )
+	    cerr << " Parser disabled, because MWU is deselected" << endl;
+	  doParse = false;;
+	}
       }
     }
+    // end omp parallel sections
   }
   if ( doParse )
     cerr << "init Parse took: " << Parser::initTimer << endl;
@@ -640,96 +662,103 @@ ostream &showResults( ostream& os,
   return os;
 }
 
-vector< vector<mwuChunker::ana> > TestLine(const string &line, Common::Timer& tagTimer, Common::Timer& mbmaTimer, Common::Timer& mblemTimer, Common::Timer& mwuTimer, Common::Timer& parseTimer ) {
-    vector< vector<mwuChunker::ana> > solutions;
-
-    if (line.length()>1) {
+vector< vector<mwuChunker::ana> > TestLine( const string& line,
+					    const string& fileName,
+					    Common::Timer& tagTimer, 
+					    Common::Timer& mbmaTimer,
+					    Common::Timer& mblemTimer, 
+					    Common::Timer& mwuTimer,
+					    Common::Timer& parseTimer ) {
+  vector< vector<mwuChunker::ana> > solutions;
+  
+  if (line.length()>1) {
+    if (tpDebug) 
+      cout << "in: " << line << endl;
+    tagTimer.start();
+    string tagged = tagger->Tag(line);
+    tagTimer.stop();
+    if (tpDebug) {
+      cout << "line: " << line
+	   <<"\ntagged: "<< tagged
+	   << endl;
+    }
+    vector<string> words, tagged_words;
+    size_t num_words = split_at( line, words, sep );
+    size_t num_tagged_words = split_at( tagged, tagged_words, sep );
+    if (tpDebug) {
+      cout << "#words: " << num_words << endl;
+      for( size_t i = 0; i < num_words; i++) 
+	cout << "\tword #" << i <<": " << words[i] << endl;
+      cout << "#tagged_words: " << num_tagged_words << endl;
+      for( size_t i = 0; i < num_tagged_words; i++) 
+	cout << "\ttagged_word #" << i <<": " << tagged_words[i] << endl;
+      
+    }
+    if (num_words && num_words != num_tagged_words - 1) {
+      // the last "word" is <utt> which gets added by the tagger
+      cerr << "Something is rotten here, #words != #tagged_words\n";
+      exit(1);
+    }
+    vector<mwuChunker::ana> final_ana;
+    for( size_t i = 0; i < num_words; ++i ) {
+      //process each word and dump every ana for now
+      string analysis;
+      vector<MBMAana> res;
+      mbmaTimer.start();
+      Mbma::Classify(tagged_words[i], res);
+      mbmaTimer.stop();
+      mblemTimer.start();
+      string lemma = myMblem::Classify(tagged_words[i]);
+      mblemTimer.stop();
       if (tpDebug) 
-	cout << "in: " << line << endl;
-      tagTimer.start();
-      string tagged = tagger->Tag(line);
-      tagTimer.stop();
-      if (tpDebug) {
-	cout << "line: " << line
-	     <<"\ntagged: "<< tagged
-	     << endl;
-      }
-      vector<string> words, tagged_words;
-      size_t num_words = split_at( line, words, sep );
-      size_t num_tagged_words = split_at( tagged, tagged_words, sep );
-      if (tpDebug) {
-	  cout << "#words: " << num_words << endl;
-	  for( size_t i = 0; i < num_words; i++) 
-	    cout << "\tword #" << i <<": " << words[i] << endl;
-	  cout << "#tagged_words: " << num_tagged_words << endl;
-	  for( size_t i = 0; i < num_tagged_words; i++) 
-	    cout << "\ttagged_word #" << i <<": " << tagged_words[i] << endl;
-	  
-      }
-      if (num_words && num_words != num_tagged_words - 1) {
-	// the last "word" is <utt> which gets added by the tagger
-	cerr << "Something is rotten here, #words != #tagged_words\n";
-	exit(1);
-      }
-      vector<mwuChunker::ana> final_ana;
-      for( size_t i = 0; i < num_words; ++i ) {
-	  //process each word and dump every ana for now
-	  string analysis;
-	  vector<MBMAana> res;
-	  mbmaTimer.start();
-	  Mbma::Classify(tagged_words[i], res);
-	  mbmaTimer.stop();
-	  mblemTimer.start();
-	  string lemma = myMblem::Classify(tagged_words[i]);
-	  mblemTimer.stop();
-	  if (tpDebug) 
-	    {
-	      cout << "word: " << words[i] << "\t#anas: " << res.size()<< endl;
-	      for (vector<MBMAana>::iterator it=res.begin(); it != res.end(); it++)
-		cout << *it << endl;
-	      cout   << "tagged word[" << i <<"]: " << tagged_words[i]  << endl
-		     <<"lemma: " << lemma
-		     << endl;
-	    }
-
-	  analysis = postprocess(tagged_words[i], lemma, res);
-
-	  string tmp = words[i] + myOFS + analysis;
-	  if (tpDebug)
-	    cout << tmp;
-	  mwuChunker::ana tmp1(tmp);
-	  final_ana.push_back( tmp1 );
-	  if (tpDebug){
-	    cout << endl;
-	  }
-	  res.clear();
-
-	} //for int i = 0 to num_words
-
-      if ( doMwu ){
-	//mwu chunker goes here, otherwise we get a mess when 
-	if (tpDebug)
-	  cout << "starting mwu Chunking ... \n";
-	mwuTimer.start();
-	mwuChunker::Classify(words, final_ana);
-	mwuTimer.stop();
-
-      }
-      if (tpDebug) {
-	cout << "\n\nfinished mwu chunking!\n";
-	for( size_t i =0; i < words.size(); i++)
-	  cout << i <<": " << words[i] << endl;
+	{
+	  cout << "word: " << words[i] << "\t#anas: " << res.size()<< endl;
+	  for (vector<MBMAana>::iterator it=res.begin(); it != res.end(); it++)
+	    cout << *it << endl;
+	  cout   << "tagged word[" << i <<"]: " << tagged_words[i]  << endl
+		 <<"lemma: " << lemma
+		 << endl;
+	}
+      
+      analysis = postprocess(tagged_words[i], lemma, res);
+      
+      string tmp = words[i] + myOFS + analysis;
+      if (tpDebug)
+	cout << tmp;
+      mwuChunker::ana tmp1(tmp);
+      final_ana.push_back( tmp1 );
+      if (tpDebug){
 	cout << endl;
       }
-      if ( doParse ){
-	parseTimer.start();
-	Parser::Parse( final_ana, parserTmpFile );
-	parseTimer.stop();
-      }
-      solutions.push_back(final_ana);
-      //return final_ana;
-    } //while getline
-    return solutions;
+      res.clear();
+      
+    } //for int i = 0 to num_words
+    
+    if ( doMwu ){
+      //mwu chunker goes here, otherwise we get a mess when 
+      if (tpDebug)
+	cout << "starting mwu Chunking ... \n";
+      mwuTimer.start();
+      mwuChunker::Classify(words, final_ana);
+      mwuTimer.stop();
+      
+    }
+    if (tpDebug) {
+      cout << "\n\nfinished mwu chunking!\n";
+      for( size_t i =0; i < words.size(); i++)
+	cout << i <<": " << words[i] << endl;
+      cout << endl;
+    }
+    string myParserTmpFile = fileName + ".csiparser";
+    if ( doParse ){
+      parseTimer.start();
+      Parser::Parse( final_ana, myParserTmpFile );
+      parseTimer.stop();
+    }
+    solutions.push_back(final_ana);
+    //return final_ana;
+  } //while getline
+  return solutions;
 }
 
 
@@ -773,7 +802,9 @@ void Test( const string& infilename, const string& outFileName) {
 
   string line;
   while(getline(IN, line)) {
-    vector< vector<mwuChunker::ana> > solutions = TestLine(line, tagTimer, mbmaTimer, mblemTimer, mwuTimer, parseTimer );
+    vector< vector<mwuChunker::ana> > solutions 
+      = TestLine( line,  LineTokenizedTestFileName,
+		  tagTimer, mbmaTimer, mblemTimer, mwuTimer, parseTimer );
 	int solution_size = solutions.size();
 	for (int i = 0; i < solution_size; i++) {
 	        if ( outFileName.empty() )
@@ -822,15 +853,10 @@ void serverthread( Sockets::ServerSocket &conn) { //by Maarten van Gompel
 	  std::string data;
    	  if ( !conn.read( data ) )	 //read data from client
 	    throw( runtime_error( "read failed" ) );
-	  int l = data.length();
-	  if ((l >= 2) && (data[l - 2] == '\r'))
-		  data = data.substr(0, l - 2); //remove trailing \r\n
-	  else if (l > 1) 			
-		  data = data.substr(0, l - 1); //remove trailing \n
 	  if (tpDebug)
-	  	  std::cerr << "Received: [" << data << "]" << "\n";
+	    std::cerr << "Received: [" << data << "]" << "\n";
 
-	          ofstream infile;
+	  ofstream infile;
 	  infile.open(tmpTestFile.c_str());
 	  infile << data << "\n";
 
@@ -869,7 +895,7 @@ int main(int argc, char *argv[]) {
     exit(0);
   }
   ProgName = argv[0];
-
+  
   try {
     TimblOpts Opts(argc, argv);
     if ( parse_args(Opts) ){
@@ -887,59 +913,53 @@ int main(int argc, char *argv[]) {
 	}
       }
       else if ( doServer ) {  
-	  //first set up some things to deal with zombies
-	  struct sigaction action;
-	  action.sa_handler = SIG_IGN;
-	  sigemptyset(&action.sa_mask);
-	  action.sa_flags = SA_NOCLDWAIT;
-	  sigaction(SIGCHLD, &action, NULL);	  
- 
-	  srand((unsigned)time(0));
-
-	  std::cerr << "Listening on port " << listenport << "\n";
-
-	  try
-	    {
-	      // Create the socket
-	      Sockets::ServerSocket server;
-	      if ( !server.connect( listenport ) )
-		throw( runtime_error( "starting server on port " + listenport + " failed" ) );
-	      if ( !server.listen( 5 ) ) {
-		// maximum of 5 pending requests
-		throw( runtime_error( "listen(5) failed" ) ); 
-	      }
-	      
-	      while ( true ) {
+	//first set up some things to deal with zombies
+	struct sigaction action;
+	action.sa_handler = SIG_IGN;
+	sigemptyset(&action.sa_mask);
+	action.sa_flags = SA_NOCLDWAIT;
+	sigaction(SIGCHLD, &action, NULL);	  
 	
-		Sockets::ServerSocket conn;
-		if ( server.accept( conn ) ){
-		  std::cerr << "New connection...\n";
-#define FORNOW
-#ifdef FORNOW
-		  serverthread(conn);
-#else		
-		  int pid = fork();				
-		  if (pid < 0) {
-		    std::cerr << "ERROR on fork\n";
-		    exit(EXIT_FAILURE);
-		  } else if (pid == 0)  {
-		    //		  server = NULL;
-		    serverthread(conn);
-		    exit(EXIT_SUCCESS);
-		  } 
-#endif
-		}
-		else {
-		  throw( runtime_error( "accept failed" ) );
-		}
-	      }
-	    } catch ( std::exception& e )
-	    {
-	      std::cerr << "Server error:" << e.what() << "\nExiting.\n";
+	srand((unsigned)time(0));
+	
+	std::cerr << "Listening on port " << listenport << "\n";
+	
+	try
+	  {
+	    // Create the socket
+	    Sockets::ServerSocket server;
+	    if ( !server.connect( listenport ) )
+	      throw( runtime_error( "starting server on port " + listenport + " failed" ) );
+	    if ( !server.listen( 5 ) ) {
+	      // maximum of 5 pending requests
+	      throw( runtime_error( "listen(5) failed" ) ); 
 	    }
-
+	    while ( true ) {
+	      
+	      Sockets::ServerSocket conn;
+	      if ( server.accept( conn ) ){
+		std::cerr << "New connection...\n";
+		int pid = fork();				
+		if (pid < 0) {
+		  std::cerr << "ERROR on fork\n";
+		  exit(EXIT_FAILURE);
+		} else if (pid == 0)  {
+		  //		  server = NULL;
+		  serverthread(conn);
+		  exit(EXIT_SUCCESS);
+		} 
+	      }
+	      else {
+		throw( runtime_error( "accept failed" ) );
+	      }
+	    }
+	  } catch ( std::exception& e )
+	  {
+	    std::cerr << "Server error:" << e.what() << "\nExiting.\n";
+	  }
+	
       } else {
-	  Test( TestFileName, outputFileName );
+	Test( TestFileName, outputFileName );
       }
     }
   }

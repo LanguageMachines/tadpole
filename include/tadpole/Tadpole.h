@@ -42,6 +42,7 @@ void getFileNames( const std::string&, std::set<std::string>& );
 extern std::string myOFS;
 extern int tpDebug;
 extern bool keepIntermediateFiles;
+extern bool doServer;
 
 class DemoOptions {
  public:

@@ -146,10 +146,12 @@ string tokenize( const string& infilename) {
   string tokenizedfilename = infilename + ".tok";
   string lang = "ned";
   string command = string( BIN_PATH) + "/TPtokenize " + lang + " < " + infilename + " > " + tokenizedfilename;
-  if ( system(command.c_str()) != 0 ){
-    cerr << "execution of " << command << " failed. We go on" << endl; //This seems to produce false positives in server mode, perhaps something to do with forking? (Maarten)
+  int ret=system(command.c_str());
+  if ( ret < 0 && !doServer ){
+    // in server mode system() always seem to return -1
+    // just ignore and hope the best of it
+    cerr << "execution of " << command << " failed. We go on" << endl;
   };
-
 
   return tokenizedfilename;
 }
