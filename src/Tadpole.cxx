@@ -841,11 +841,10 @@ void Test( const string& infilename, const string& outFileName) {
 }
 
 
-void serverthread( Sockets::ServerSocket &conn) { //by Maarten van Gompel
-  char random_number[12];
-  snprintf(random_number, sizeof(random_number), "%d", rand());
-  string tmpTestFile = string("tadpole-server-in-") + random_number;
-  string tmpOutFile = string("tadpole-server-out-") + random_number;
+void serverthread( Sockets::ServerSocket &conn, const string& random ) {
+  //by Maarten van Gompel
+  string tmpTestFile = string("tadpole-server-in-") + random;
+  string tmpOutFile = string("tadpole-server-out-") + random;
 
     try
       {
@@ -939,13 +938,15 @@ int main(int argc, char *argv[]) {
 	      Sockets::ServerSocket conn;
 	      if ( server.accept( conn ) ){
 		std::cerr << "New connection...\n";
+		char random_number[12];
+		snprintf(random_number, sizeof(random_number), "%d", rand());
 		int pid = fork();				
 		if (pid < 0) {
 		  std::cerr << "ERROR on fork\n";
 		  exit(EXIT_FAILURE);
 		} else if (pid == 0)  {
 		  //		  server = NULL;
-		  serverthread(conn);
+		  serverthread(conn, random_number );
 		  exit(EXIT_SUCCESS);
 		} 
 	      }
