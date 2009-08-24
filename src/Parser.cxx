@@ -143,10 +143,9 @@ namespace Parser {
   static TimblAPI *pairs = 0;
   static TimblAPI *dir = 0;
   static TimblAPI *rels = 0;
-  PythonInterface *PI;
+  static PythonInterface *PI;
   static bool isInit = false;
 
-  Common::Timer initTimer;
   Common::Timer prepareTimer;
   Common::Timer relsTimer;
   Common::Timer pairsTimer;
@@ -237,7 +236,6 @@ namespace Parser {
     PI = new PythonInterface();
     bool happy = false;
     cerr << "initiating parser ... " << endl;
-    initTimer.start();
     if ( !readsettings( cDir, fname)) {
       cerr << "Cannot read parser settingsfile " << fname << endl;
     }
@@ -263,7 +261,6 @@ namespace Parser {
       }
     }
     isInit = happy;
-    initTimer.stop();
     return happy;
   }
 
@@ -730,7 +727,9 @@ namespace Parser {
       }
   }
   
-  void Parse( vector<mwuChunker::ana>& final_ana, const string& fileName ){
+  void Parse( vector<mwuChunker::ana>& final_ana, const string& fileName,
+	      TimerBlock& timers ){
+    timers.parseTimer.start();
     static const char *pairsOutName ="tadpoleParser.pairs.out";
     static const char *dirOutName ="tadpoleParser.dir.out";
     static const char *relsOutName ="tadpoleParser.rels.out";
@@ -750,7 +749,7 @@ namespace Parser {
     if ( anaFile ){
       saveAna( anaFile, final_ana );
       unlink( resFileName.c_str() );
-      prepareTimer.start();
+      timers.prepareTimer.start();
 //       string cmd = string("sh ") + BIN_PATH + "/prepareParser.sh " + fileName;
 //       // run some python scripts to prepare the input.
 //       int result = system( cmd.c_str() ); 
@@ -759,32 +758,32 @@ namespace Parser {
 // 	return;
 //       }
       prepare( final_ana, fileName );
-      prepareTimer.stop();
+      timers.prepareTimer.stop();
 #pragma omp parallel sections
       {
 #pragma omp section
 	{
 	  unlink( pairsOutName );
-	  pairsTimer.start();
+	  timers.pairsTimer.start();
 	  pairs->Test( pairsInName, pairsOutName );
-	  pairsTimer.stop();
+	  timers.pairsTimer.stop();
 	}
 #pragma omp section
 	{
 	  unlink( dirOutName );
-	  dirTimer.start();
+	  timers.dirTimer.start();
 	  dir->Test( dirInName, dirOutName );
-	  dirTimer.stop();
+	  timers.dirTimer.stop();
 	}
 #pragma omp section
 	{
 	  unlink( relsOutName );
-	  relsTimer.start();
+	  timers.relsTimer.start();
 	  rels->Test( relsInName, relsOutName );
-	  relsTimer.stop();
+	  timers.relsTimer.stop();
 	}
       }
-      csiTimer.start();
+      timers.csiTimer.start();
       try {
 	PI->parse( pairsOutName,
 		   relsOutName,
@@ -798,13 +797,14 @@ namespace Parser {
       catch( exception const & ){
 	PyErr_Print();
       }
+
 //       string cmd1 = string("sh ") + BIN_PATH + "/finalizeParser.sh " + fileName;
 //       int result1 = system( cmd1.c_str() );  
 //       if ( result1 != 0 ){
 // 	cerr << "finalizing parse failed" << endl;
 // 	return;
 //       }
-      csiTimer.stop();
+      timers.csiTimer.stop();
       ifstream resFile( resFileName.c_str() );
       if ( resFile ){
 	readAna( resFile, final_ana );
@@ -820,5 +820,6 @@ namespace Parser {
 	unlink( relsInName.c_str() );
       }
     }
+    timers.parseTimer.stop();
   }
 }

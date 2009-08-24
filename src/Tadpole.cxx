@@ -349,8 +349,13 @@ bool parse_args( TimblOpts& Opts ) {
       {
 	if ( doMwu ){
 	  mwuChunker::init( c_dirName, u_fileName);
-	  if ( doParse )
+	  if ( doParse ){
+	    Common::Timer initTimer;
+	    initTimer.start();
 	    Parser::init( c_dirName, p_fileName );
+	    initTimer.stop();
+	    cerr << "init Parse took: " << initTimer << endl;
+	  }
 	}
 	else {
 	  if ( doParse )
@@ -361,8 +366,6 @@ bool parse_args( TimblOpts& Opts ) {
     }
     // end omp parallel sections
   }
-  if ( doParse )
-    cerr << "init Parse took: " << Parser::initTimer << endl;
   cerr << "Initialization done." << endl;
   return true;
 }
@@ -664,19 +667,15 @@ ostream &showResults( ostream& os,
 
 vector< vector<mwuChunker::ana> > TestLine( const string& line,
 					    const string& fileName,
-					    Common::Timer& tagTimer, 
-					    Common::Timer& mbmaTimer,
-					    Common::Timer& mblemTimer, 
-					    Common::Timer& mwuTimer,
-					    Common::Timer& parseTimer ) {
+					    TimerBlock& timers ){
   vector< vector<mwuChunker::ana> > solutions;
   
   if (line.length()>1) {
     if (tpDebug) 
       cout << "in: " << line << endl;
-    tagTimer.start();
+    timers.tagTimer.start();
     string tagged = tagger->Tag(line);
-    tagTimer.stop();
+    timers.tagTimer.stop();
     if (tpDebug) {
       cout << "line: " << line
 	   <<"\ntagged: "<< tagged
@@ -704,21 +703,20 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
       //process each word and dump every ana for now
       string analysis;
       vector<MBMAana> res;
-      mbmaTimer.start();
+      timers.mbmaTimer.start();
       Mbma::Classify(tagged_words[i], res);
-      mbmaTimer.stop();
-      mblemTimer.start();
+      timers.mbmaTimer.stop();
+      timers.mblemTimer.start();
       string lemma = myMblem::Classify(tagged_words[i]);
-      mblemTimer.stop();
-      if (tpDebug) 
-	{
-	  cout << "word: " << words[i] << "\t#anas: " << res.size()<< endl;
-	  for (vector<MBMAana>::iterator it=res.begin(); it != res.end(); it++)
-	    cout << *it << endl;
-	  cout   << "tagged word[" << i <<"]: " << tagged_words[i]  << endl
-		 <<"lemma: " << lemma
-		 << endl;
-	}
+      timers.mblemTimer.stop();
+      if (tpDebug) {
+	cout << "word: " << words[i] << "\t#anas: " << res.size()<< endl;
+	for (vector<MBMAana>::iterator it=res.begin(); it != res.end(); it++)
+	  cout << *it << endl;
+	cout   << "tagged word[" << i <<"]: " << tagged_words[i]  << endl
+	       <<"lemma: " << lemma
+	       << endl;
+      }
       
       analysis = postprocess(tagged_words[i], lemma, res);
       
@@ -738,9 +736,9 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
       //mwu chunker goes here, otherwise we get a mess when 
       if (tpDebug)
 	cout << "starting mwu Chunking ... \n";
-      mwuTimer.start();
+      timers.mwuTimer.start();
       mwuChunker::Classify(words, final_ana);
-      mwuTimer.stop();
+      timers.mwuTimer.stop();
       
     }
     if (tpDebug) {
@@ -751,9 +749,7 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
     }
     string myParserTmpFile = fileName + ".csiparser";
     if ( doParse ){
-      parseTimer.start();
-      Parser::Parse( final_ana, myParserTmpFile );
-      parseTimer.stop();
+      Parser::Parse( final_ana, myParserTmpFile, timers );
     }
     solutions.push_back(final_ana);
     //return final_ana;
@@ -761,10 +757,9 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
   return solutions;
 }
 
-
 void Test( const string& infilename, const string& outFileName) {
   // init's are done
-  cerr << "testing file " << infilename << endl;
+  TimerBlock timers;
   ofstream outStream;
   if ( !outFileName.empty() ){
     if ( outStream.open( outFileName.c_str() ), outStream.bad() ){
@@ -774,67 +769,59 @@ void Test( const string& infilename, const string& outFileName) {
   }
   if ( doTok ){
     //Tokenize
-    Common::Timer tokTimer;
-    tokTimer.start();
+    timers.tokTimer.start();
     TokenizedTestFileName = tokenize(infilename);
     LineTokenizedTestFileName = linetokenize(TokenizedTestFileName);
-    tokTimer.stop();
-    cerr << "tokenizing took:" << tokTimer << endl;
+    timers.tokTimer.stop();
+    cerr << "tokenizing " << infilename << " took:" << timers.tokTimer << endl;
     if ( !keepIntermediateFiles ){
       // remove tokenized file
-      string tokfile = infilename + ".tok";
-      if ( std::remove(tokfile.c_str()) != 0 ) {
-       cerr << "Error removing " << tokfile << ", yet we go on..." << endl;
+      if ( std::remove(TokenizedTestFileName.c_str()) != 0 ) {
+       cerr << "Error removing " << TokenizedTestFileName << ", yet we go on..." << endl;
       }
     }
   }
   else
     LineTokenizedTestFileName = infilename;
-
+  
   ifstream IN( LineTokenizedTestFileName.c_str() );
-
-  Common::Timer mblemTimer;
-  Common::Timer mbmaTimer;
-  Common::Timer mwuTimer;
-  Common::Timer tagTimer;
-  Common::Timer parseTimer;
-
 
   string line;
   while(getline(IN, line)) {
+    if ( line.empty() )
+      continue;
     vector< vector<mwuChunker::ana> > solutions 
-      = TestLine( line,  LineTokenizedTestFileName,
-		  tagTimer, mbmaTimer, mblemTimer, mwuTimer, parseTimer );
-	int solution_size = solutions.size();
-	for (int i = 0; i < solution_size; i++) {
-	        if ( outFileName.empty() )
-		  showResults( cout, solutions[i] ); 
-	        else
-		  showResults( outStream, solutions[i] ); 
-	}
+      = TestLine( line,  LineTokenizedTestFileName, timers );
+    int solution_size = solutions.size();
+    for (int i = 0; i < solution_size; i++) {
+      if ( outFileName.empty() )
+	showResults( cout, solutions[i] ); 
+      else
+	showResults( outStream, solutions[i] ); 
+    }
   }
-
-
-  cerr << "tagging took:     " << tagTimer << endl;
-  cerr << "MBA took:         " << mbmaTimer << endl;
-  cerr << "Mblem took:       " << mblemTimer << endl;
+  
+  
+  cerr << "tagging took:     " << timers.tagTimer << endl;
+  cerr << "MBA took:         " << timers.mbmaTimer << endl;
+  cerr << "Mblem took:       " << timers.mblemTimer << endl;
   if ( doMwu )
-    cerr << "MWU resolving took: " << mwuTimer << endl;
+    cerr << "MWU resolving took: " << timers.mwuTimer << endl;
   if ( doParse ){
-    cerr << "Parsing (prepare) took: " << Parser::prepareTimer << endl;
-    cerr << "Parsing (pairs)   took: " << Parser::pairsTimer << endl;
-    cerr << "Parsing (rels)    took: " << Parser::relsTimer << endl;
-    cerr << "Parsing (dir)     took: " << Parser::dirTimer << endl;
-    cerr << "Parsing (csi)     took: " << Parser::csiTimer << endl;
-    cerr << "Parsing (total)   took: " << parseTimer << endl;
+    cerr << "Parsing (prepare) took: " << timers.prepareTimer << endl;
+    cerr << "Parsing (pairs)   took: " << timers.pairsTimer << endl;
+    cerr << "Parsing (rels)    took: " << timers.relsTimer << endl;
+    cerr << "Parsing (dir)     took: " << timers.dirTimer << endl;
+    cerr << "Parsing (csi)     took: " << timers.csiTimer << endl;
+    cerr << "Parsing (total)   took: " << timers.parseTimer << endl;
   }
   if ( !outFileName.empty() )
     cerr << "results stored in " << outFileName << endl;
   if ( doTok && !keepIntermediateFiles ){
     // remove linetokenized file
-    string lintokfile = infilename + ".tok.lin";
-    if ( std::remove(lintokfile.c_str()) != 0 ) {
-     cerr << "Error removing " << lintokfile << ", yet we go on..." << endl;
+    if ( std::remove(LineTokenizedTestFileName.c_str()) != 0 ) {
+     cerr << "Error removing " << LineTokenizedTestFileName 
+	  << ", yet we go on..." << endl;
     }
   }
   return;
@@ -845,45 +832,43 @@ void serverthread( Sockets::ServerSocket &conn, const string& random ) {
   //by Maarten van Gompel
   string tmpTestFile = string("tadpole-server-in-") + random;
   string tmpOutFile = string("tadpole-server-out-") + random;
-
-    try
-      {
-	 while (true) {
-	  std::string data;
-   	  if ( !conn.read( data ) )	 //read data from client
-	    throw( runtime_error( "read failed" ) );
-	  if (tpDebug)
-	    std::cerr << "Received: [" << data << "]" << "\n";
-
-	  ofstream infile;
-	  infile.open(tmpTestFile.c_str());
-	  infile << data << "\n";
-
-  	  std::cerr << "Processing...\n";
-	  infile.close();
-	  Test( tmpTestFile, tmpOutFile );
-	  ifstream outfile;
-	  outfile.open(tmpOutFile.c_str());
-	  string line;
-	  while (getline(outfile,line)) {
-	    if ( !conn.write( line + "\n" ) ) //write data to client
-	      throw( runtime_error( "write failed" ) );
-	  }
-	  outfile.close();
-
-	  if ( std::remove(tmpTestFile.c_str()) != 0 ) {
-	   cerr << "Error removing " << tmpTestFile << ", yet we go on..." << endl;
-	  }
-	  if ( std::remove(tmpOutFile.c_str()) != 0 ) {
-	   cerr << "Error removing " << tmpOutFile << ", yet we go on..." << endl;
-  	  }  
-	}
+  
+  try {
+    while (true) {
+      string data;
+      if ( !conn.read( data ) )	 //read data from client
+	throw( runtime_error( "read failed" ) );
+      if (tpDebug)
+	std::cerr << "Received: [" << data << "]" << "\n";
+      
+      ofstream infile;
+      infile.open(tmpTestFile.c_str());
+      infile << data << "\n";
+      
+      cerr << "Processing... " << endl;
+      infile.close();
+      Test( tmpTestFile, tmpOutFile );
+      ifstream outfile;
+      outfile.open(tmpOutFile.c_str());
+      string line;
+      while (getline(outfile,line)) {
+	if ( !conn.write( line + "\n" ) ) //write data to client
+	  throw( runtime_error( "write failed" ) );
       }
-    catch ( std::exception& e ) {
-      cerr << "connection problem: " << e.what() << endl;
-	cerr << "Connection closed.\n"; 
+      outfile.close();
+      
+      if ( std::remove(tmpTestFile.c_str()) != 0 ) {
+	cerr << "Error removing " << tmpTestFile << ", yet we go on..." << endl;
       }
- 
+      if ( std::remove(tmpOutFile.c_str()) != 0 ) {
+	cerr << "Error removing " << tmpOutFile << ", yet we go on..." << endl;
+      }  
+    }
+  }
+  catch ( std::exception& e ) {
+    cerr << "connection problem: " << e.what() << endl;
+    cerr << "Connection closed.\n"; 
+  } 
 }
 
 

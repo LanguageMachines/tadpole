@@ -44,6 +44,22 @@ extern int tpDebug;
 extern bool keepIntermediateFiles;
 extern bool doServer;
 
+class TimerBlock{
+public:
+  Common::Timer parseTimer;
+  Common::Timer tokTimer;
+  Common::Timer mblemTimer;
+  Common::Timer mbmaTimer;
+  Common::Timer mwuTimer;
+  Common::Timer tagTimer;
+  Common::Timer prepareTimer;
+  Common::Timer pairsTimer;
+  Common::Timer relsTimer;
+  Common::Timer dirTimer;
+  Common::Timer csiTimer;
+};
+
+
 class DemoOptions {
  public:
   DemoOptions(){

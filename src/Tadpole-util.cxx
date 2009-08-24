@@ -34,6 +34,7 @@ contains help-functions for Tadpole, such as
 #include <vector>
 #include <cstdlib>
 #include "config.h"
+#include "timbl/TimblAPI.h"
 #include "tadpole/Tadpole.h"
 
 #include <sys/types.h>
@@ -152,7 +153,6 @@ string tokenize( const string& infilename) {
     // just ignore and hope the best of it
     cerr << "execution of " << command << " failed. We go on" << endl;
   };
-
   return tokenizedfilename;
 }
 
