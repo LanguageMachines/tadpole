@@ -59,7 +59,7 @@ namespace Parser {
     }
     
     ~PyObjectRef() {
-      Py_DECREF(ref);
+      Py_XDECREF(ref);
     }
   };
 
@@ -72,12 +72,12 @@ namespace Parser {
     PythonInterface();
     ~PythonInterface();
     
-    void parse(const std::string& depFile,
-	       const std::string& modFile,
-	       const std::string& dirFile,
-	       const std::string& maxDist,
-	       const std::string& inputFile,
-	       const std::string& outputFile);
+    void parse(const string& depFile,
+	       const string& modFile,
+	       const string& dirFile,
+	       const string& maxDist,
+	       const string& inputFile,
+	       const string& outputFile);
   };  
 
   PythonInterface::PythonInterface( ) {
@@ -113,12 +113,12 @@ namespace Parser {
     Py_Finalize();
   }
   
-  void PythonInterface::parse(const std::string& depFile,
-			      const std::string& modFile,
-			      const std::string& dirFile,
-			      const std::string& maxDist,
-			      const std::string& inputFile,
-			      const std::string& outputFile) {
+  void PythonInterface::parse(const string& depFile,
+			      const string& modFile,
+			      const string& dirFile,
+			      const string& maxDist,
+			      const string& inputFile,
+			      const string& outputFile) {
 
     PyObjectRef tmp = PyObject_CallFunction(mainFunction,
 					    (char *)"[s, s, s, s, s, s, s, s, s, s, s]",
@@ -267,7 +267,7 @@ namespace Parser {
   void createPairs( const vector<mwuChunker::ana>& ana,
 		    const string& fileName ){
     string pFile = fileName + ".pairs.inst";
-    unlink( pFile.c_str() );
+    remove( pFile.c_str() );
     ofstream ps( pFile.c_str() );
     if ( ps ){
       if ( ana.size() == 1 ){
@@ -402,10 +402,10 @@ namespace Parser {
     string tag_2, tag_1, tag0, tag1, tag2;
     string mod_2, mod_1, mod0, mod1, mod2;
     string dFile = fileName + ".dir.inst";
-    unlink( dFile.c_str() );
+    remove( dFile.c_str() );
     ofstream ds( dFile.c_str() );
     string rFile = fileName + ".rels.inst";
-    unlink( rFile.c_str() );
+    remove( rFile.c_str() );
     ofstream rs( rFile.c_str() );
     if ( ds && rs ){
       if ( ana.size() == 1 ){
@@ -730,9 +730,6 @@ namespace Parser {
   void Parse( vector<mwuChunker::ana>& final_ana, const string& fileName,
 	      TimerBlock& timers ){
     timers.parseTimer.start();
-    static const char *pairsOutName ="tadpoleParser.pairs.out";
-    static const char *dirOutName ="tadpoleParser.dir.out";
-    static const char *relsOutName ="tadpoleParser.rels.out";
     if ( !isInit ){
       cerr << "Parser is not initialized!" << endl;
       exit(1);
@@ -743,12 +740,15 @@ namespace Parser {
     }
     string resFileName = fileName + ".result"; 
     string pairsInName = fileName +".pairs.inst";
+    string pairsOutName = fileName +".pairs.out";
     string dirInName = fileName + ".dir.inst";
+    string dirOutName = fileName + ".dir.out";
     string relsInName = fileName + ".rels.inst";
+    string relsOutName = fileName + ".rels.out";
     ofstream anaFile( fileName.c_str() );
     if ( anaFile ){
       saveAna( anaFile, final_ana );
-      unlink( resFileName.c_str() );
+      remove( resFileName.c_str() );
       timers.prepareTimer.start();
 //       string cmd = string("sh ") + BIN_PATH + "/prepareParser.sh " + fileName;
 //       // run some python scripts to prepare the input.
@@ -763,21 +763,21 @@ namespace Parser {
       {
 #pragma omp section
 	{
-	  unlink( pairsOutName );
+	  remove( pairsOutName.c_str() );
 	  timers.pairsTimer.start();
 	  pairs->Test( pairsInName, pairsOutName );
 	  timers.pairsTimer.stop();
 	}
 #pragma omp section
 	{
-	  unlink( dirOutName );
+	  remove( dirOutName.c_str() );
 	  timers.dirTimer.start();
 	  dir->Test( dirInName, dirOutName );
 	  timers.dirTimer.stop();
 	}
 #pragma omp section
 	{
-	  unlink( relsOutName );
+	  remove( relsOutName.c_str() );
 	  timers.relsTimer.start();
 	  rels->Test( relsInName, relsOutName );
 	  timers.relsTimer.stop();
@@ -812,12 +812,12 @@ namespace Parser {
       else
 	cerr << "couldn't open results file: " << resFileName << endl;
       if ( !keepIntermediateFiles ){
-	unlink( pairsOutName );
-	unlink( dirOutName );
-	unlink( relsOutName );
-	unlink( pairsInName.c_str() );
-	unlink( dirInName.c_str() );
-	unlink( relsInName.c_str() );
+	remove( pairsOutName.c_str() );
+	remove( dirOutName.c_str() );
+	remove( relsOutName.c_str() );
+	remove( pairsInName.c_str() );
+	remove( dirInName.c_str() );
+	remove( relsInName.c_str() );
       }
     }
     timers.parseTimer.stop();
