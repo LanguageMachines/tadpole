@@ -855,6 +855,8 @@ void serverthread( Sockets::ServerSocket &conn, const string& random ) {
 	if ( !conn.write( line + "\n" ) ) //write data to client
 	  throw( runtime_error( "write failed" ) );
       }
+      if ( !conn.write( "READY\n" ) ) //all done
+       throw( runtime_error( "write failed" ) );
       outfile.close();
       
       if ( std::remove(tmpTestFile.c_str()) != 0 ) {
@@ -866,9 +868,10 @@ void serverthread( Sockets::ServerSocket &conn, const string& random ) {
     }
   }
   catch ( std::exception& e ) {
-    cerr << "connection problem: " << e.what() << endl;
-    cerr << "Connection closed.\n"; 
+    if (tpDebug)
+      cerr << "connection lost: " << e.what() << endl;
   } 
+  cerr << "Connection closed.\n";
 }
 
 
@@ -902,7 +905,7 @@ int main(int argc, char *argv[]) {
 	action.sa_handler = SIG_IGN;
 	sigemptyset(&action.sa_mask);
 	action.sa_flags = SA_NOCLDWAIT;
-	sigaction(SIGCHLD, &action, NULL);	  
+	sigaction(SIGCHLD, &action, NULL); 
 	
 	srand((unsigned)time(0));
 	
@@ -936,7 +939,7 @@ int main(int argc, char *argv[]) {
 		} 
 	      }
 	      else {
-		throw( runtime_error( "accept failed" ) );
+		throw( runtime_error( "Accept failed" ) );
 	      }
 	    }
 	  } catch ( std::exception& e )
