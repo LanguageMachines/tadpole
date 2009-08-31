@@ -119,6 +119,10 @@ AC_ARG_WITH(python,
        [PYTHON="$withval/python"],
        [PYTHON="python"])
 
+if test x$prefix == "xNONE"; then 
+   prefix=/usr/local
+fi
+
 AC_ARG_WITH(timbl,
        [  --with-timbl=DIR       use timbl installed in <DIR>],
        [CXXFLAGS="$CXXFLAGS -I$withval/include"
