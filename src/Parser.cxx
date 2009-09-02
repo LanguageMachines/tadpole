@@ -750,13 +750,6 @@ namespace Parser {
       saveAna( anaFile, final_ana );
       remove( resFileName.c_str() );
       timers.prepareTimer.start();
-//       string cmd = string("sh ") + BIN_PATH + "/prepareParser.sh " + fileName;
-//       // run some python scripts to prepare the input.
-//       int result = system( cmd.c_str() ); 
-//       if ( result != 0 ){
-// 	cerr << "initializing parse failed" << endl;
-// 	return;
-//       }
       prepare( final_ana, fileName );
       timers.prepareTimer.stop();
 #pragma omp parallel sections
@@ -797,13 +790,6 @@ namespace Parser {
       catch( exception const & ){
 	PyErr_Print();
       }
-
-//       string cmd1 = string("sh ") + BIN_PATH + "/finalizeParser.sh " + fileName;
-//       int result1 = system( cmd1.c_str() );  
-//       if ( result1 != 0 ){
-// 	cerr << "finalizing parse failed" << endl;
-// 	return;
-//       }
       timers.csiTimer.stop();
       ifstream resFile( resFileName.c_str() );
       if ( resFile ){
