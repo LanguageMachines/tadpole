@@ -55,7 +55,7 @@ AC_TRY_COMPILE([
 AC_SUBST(INTELC)
 
 # Checks for header files.
-AC_CHECK_HEADERS([unistd.h sys/time.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h netdb.h netinet/in.h string.h sys/socket.h unistd.h sys/time.h])
 AC_CHECK_HEADERS([omp.h] )
 
 doOmp=0
@@ -108,7 +108,8 @@ fi
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
-AC_C_CONST
+AC_C_INLINE
+AC_TYPE_INT32_T
 AC_TYPE_SIZE_T
 
 # Checks for libraries.
@@ -248,7 +249,8 @@ else
 fi
 
 # Checks for library functions.
-AC_CHECK_FUNCS([getaddrinfo])
+AC_FUNC_FORK
+AC_CHECK_FUNCS([memset])
 
 AC_PATH_PROG(pkgconfigpath, pkg-config, NONE)
 #check for Timbl and Mbt
