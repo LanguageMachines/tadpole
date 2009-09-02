@@ -119,24 +119,6 @@ AC_ARG_WITH(python,
        [PYTHON="$withval/python"],
        [PYTHON="python"])
 
-if test x$prefix == "xNONE"; then 
-   prefix=/usr/local
-fi
-
-AC_ARG_WITH(timbl,
-       [  --with-timbl=DIR       use timbl installed in <DIR>],
-       [CXXFLAGS="$CXXFLAGS -I$withval/include"
-       LIBS="-L$withval/lib $LIBS"],
-       [CXXFLAGS="$CXXFLAGS -I$prefix/include"
-       LIBS="-L$prefix/lib $LIBS"] )
-
-AC_ARG_WITH(mbt,
-       [  --with-mbt=DIR       use Mbt installed in <DIR>],
-       [CXXFLAGS="$CXXFLAGS -I$withval/include"
-       LIBS="-L$withval/lib $LIBS"],
-       [CXXFLAGS="$CXXFLAGS -I$prefix/include"
-       LIBS="-L$prefix/lib $LIBS"] )
-
 #we need Python > 2.5.x
 AM_PATH_PYTHON([2.5],
 	[AC_DEFINE_DIR([PYTHONDIR],pythondir, PYTHONDIR)],
@@ -158,6 +140,9 @@ LIBS="$LIBS $BOOST_FILESYSTEM_LIBS $BOOST_SYSTEM_LIBS"
 LDFLAGS="$LDFLAGS $BOOST_FILESYSTEM_LDFLAGS $BOOST_SYSTEM_LDFLAGS"
 fi
 
+if test $prefix = "NONE"; then
+   prefix="$ac_default_prefix"
+fi
 useICU=1;
 AC_ARG_WITH(icu,
        [  --with-icu=DIR       use ICU installed in <DIR>],
