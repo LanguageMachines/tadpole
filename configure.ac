@@ -305,6 +305,7 @@ fi
 
 AC_OUTPUT([
   Makefile
+  m4/Makefile
   src/Makefile
   src/TPtokenize
   config/Makefile
@@ -312,7 +313,6 @@ AC_OUTPUT([
   scripts/pylet/Makefile
   scripts/pylet/data/Makefile
   scripts/pylet/util/Makefile
-  scripts/finalizeParser.sh
   include/Makefile
   include/tadpole/Makefile
 ])

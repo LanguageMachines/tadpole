@@ -1,11 +1,11 @@
 # $Id$
 # $URL: $
 
-ACLOCAL_AMFLAGS = -I m4
+ACLOCAL_AMFLAGS = -I m4 --install
 
-SUBDIRS = src include config scripts
+SUBDIRS = src include config scripts m4
 
-EXTRA_DIST = bootstrap AUTHORS TODO NEWS test.txt m4
+EXTRA_DIST = bootstrap AUTHORS TODO NEWS test.txt
 
 docdir = $(datadir)/doc/$(PACKAGE)
 doc_DATA = ChangeLog
