@@ -56,55 +56,10 @@ AC_SUBST(INTELC)
 
 # Checks for header files.
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h netdb.h netinet/in.h string.h sys/socket.h unistd.h sys/time.h])
-AC_CHECK_HEADERS([omp.h] )
 
-doOmp=0
-if test "$ac_cv_header_omp_h" = "yes"; then
-   if test "$ac_cv_prog_ac_ct_CXX" == "g++"; then
-     AC_MSG_NOTICE( [Test for gcc's gomp] )
-     oldCXXFLAGS=$CXXFLAGS
-     oldLIBS=$LIBS
-     CXXFLAGS="$CXXFLAGS -fopenmp"
-     LIBS="$LIBS -lgomp"
-     AC_SEARCH_LIBS( omp_get_num_threads, [gomp], [doOmp=1] )
-     if test "$doOmp" != "1"; then
-       CXXFLAGS=$oldCXXFLAGS
-       LIBS=$oldLIBS
-     fi
-   else
-     if test "$ac_cv_prog_ac_ct_CXX" == "xlc++"; then
-       oldCXXFLAGS=$CXXFLAGS
-       oldLDFLAGS=$LDFLAGS
-       CXXFLAGS="$CXXFLAGS -qsmp -qsuppress=1500-029"
-       LDFLAGS="$LDFLAGS -qsmp"
-       AC_SEARCH_LIBS( omp_get_num_threads, [], [doOmp=1] )
-       if test "$doOmp" != "1"; then
-         CXXFLAGS=$oldCXXFLAGS
-         LDFLAGS=$oldLDFLAGS
-       fi
-     else
-       if test "$ac_cv_prog_ac_ct_CXX" == "icpc"; then
-         oldCXXFLAGS=$CXXFLAGS
-         oldLDFLAGS=$LDFLAGS
-         CXXFLAGS="$CXXFLAGS -openmp"
-         LDFLAGS="$LDFLAGS -openmp"
-         AC_SEARCH_LIBS( omp_get_num_threads, [], [doOmp=1] )
-         if test "$doOmp" != "1"; then
-           CXXFLAGS=$oldCXXFLAGS
-           LDFLAGS=$oldLDFLAGS
-         fi
-       fi
-     fi
-   fi
-fi
-
-if test "$doOmp" == "1"; then
-   AC_MSG_NOTICE( we have Open MP )
-else
-   AC_MSG_NOTICE( We don't seem top have Open MP )
-   LIBS="$LIBS -lpthread"
-   CXXFLAGS="$CXXFLAGS -DPTHREADS"
-fi
+# check for OpenMP
+AX_OPENMP( [CXXFLAGS="$CXXFLAGS $OPENMP_CXXFLAGS"],
+	   [AC_MSG_ERROR([We need OpenMP, please use a recent compiler!])])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
