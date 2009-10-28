@@ -4,7 +4,7 @@
 # $URL: $
 
 AC_PREREQ(2.59)
-AC_INIT([Tadpole], [0.4], [timbl@uvt.nl])
+AC_INIT([Tadpole], [0.5], [timbl@uvt.nl])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
@@ -207,56 +207,24 @@ fi
 AC_FUNC_FORK
 AC_CHECK_FUNCS([memset])
 
-AC_PATH_PROG(pkgconfigpath, pkg-config, NONE)
+PKG_PROG_PKG_CONFIG
+
 #check for Timbl and Mbt
-
-if test "$pkgconfigpath" != "NONE"; then
-# ugly hack when PKG_CONFIG_PATH isn't defined.
-# couldn't get it to work otherwise
-  if test "x$PKG_CONFIG_PATH" == x; then
-     export PKG_CONFIG_PATH=""
-  fi
-  AC_ARG_WITH(timbl,
+AC_ARG_WITH(timbl,
        [  --with-timbl=DIR       use timbl installed in <DIR>],
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$withval/lib/pkgconfig"],
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$prefix/lib/pkgconfig"])
-  PKG_CHECK_MODULES([timbl], [timbl >= 6.2.0] )
-  CXXFLAGS="$CXXFLAGS $timbl_CFLAGS"
-  LIBS="$LIBS $timbl_LIBS"
-  AC_ARG_WITH(mbt,
+PKG_CHECK_MODULES([timbl], [timbl >= 6.1.90] )
+CXXFLAGS="$CXXFLAGS $timbl_CFLAGS"
+LIBS="$LIBS $timbl_LIBS"
+
+AC_ARG_WITH(mbt,
        [  --with-mbt=DIR       use mbt installed in <DIR>],
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$withval/lib/pkgconfig"],
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$prefix/lib/pkgconfig"])
-  PKG_CHECK_MODULES([mbt], [mbt >= 3.1.1] )
-  CXXFLAGS="$CXXFLAGS $mbt_CFLAGS"
-  LIBS="$LIBS $mbt_LIBS"
-else
-  AC_ARG_WITH(timbl,
-       [  --with-timbl=DIR       use timbl installed in <DIR>],
-       [CXXFLAGS="$CXXFLAGS -I$withval/include"
-        LIBS="-L$withval/lib $LIBS"],
-        [CXXFLAGS="$CXXFLAGS -I$prefix/include"
-        LIBS="-L$prefix/lib $LIBS"])
-
-  noTimbl=0
-  AC_CHECK_LIB([Timbl],timbl_present,,noTimbl=1)
-  if test "$noTimbl" =  "1"; then
-     AC_MSG_FAILURE( [libTimbl not found, please see usage of --with-timbl] )
-  fi
-  AC_ARG_WITH(mbt,
-       [  --with-mbt=DIR       use mbt installed in <DIR>],
-       [CXXFLAGS="$CXXFLAGS -I$withval/include"
-        LIBS="-L$withval/lib $LIBS"],
-        [CXXFLAGS="$CXXFLAGS -I$prefix/include"
-        LIBS="-L$prefix/lib $LIBS"])
-
-  noMbt=0
-  AC_CHECK_LIB([Mbt],mbt_present,,noMbt=1)
-  if test "$noMbt" =  "1"; then
-     AC_MSG_FAILURE( [libMbt not found, please see usage of --with-mbt] )
-  fi
-
-fi
+PKG_CHECK_MODULES([mbt], [mbt >= 3.1.1] )
+CXXFLAGS="$CXXFLAGS $mbt_CFLAGS"
+LIBS="$LIBS $mbt_LIBS"
 
 AC_OUTPUT([
   Makefile
