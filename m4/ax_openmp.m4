@@ -1,5 +1,5 @@
 # ===========================================================================
-#            http://www.nongnu.org/autoconf-archive/ax_openmp.html
+#               http://autoconf-archive.cryp.to/ax_openmp.html
 # ===========================================================================
 #
 # SYNOPSIS

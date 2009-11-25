@@ -90,10 +90,10 @@ fi
 AC_CHECK_HEADERS( [Python.h], , AC_MSG_FAILURE("can't find Python C API") )
 
 if test "$with_boost" != "no"; then
-BOOST_REQUIRE([1.33.1])
-BOOST_FILESYSTEM
-LIBS="$LIBS $BOOST_FILESYSTEM_LIBS $BOOST_SYSTEM_LIBS"
-LDFLAGS="$LDFLAGS $BOOST_FILESYSTEM_LDFLAGS $BOOST_SYSTEM_LDFLAGS"
+   AX_BOOST_BASE([1.33])
+   AX_BOOST_FILESYSTEM
+   LIBS="$LIBS $BOOST_FILESYSTEM_LIBS $BOOST_SYSTEM_LIBS"
+   LDFLAGS="$LDFLAGS $BOOST_FILESYSTEM_LDFLAGS $BOOST_SYSTEM_LDFLAGS"
 fi
 
 if test $prefix = "NONE"; then
@@ -109,9 +109,9 @@ AC_ARG_WITH(icu,
         LIBS="-L$prefix/lib $LIBS"])
 
 if test "$useICU" == "1"; then
-  AC_CHECK_ICU( [3.6],
+  AX_ICU_CHECK( [3.6],
 		[CXXFLAGS="$CXXFLAGS $ICU_CXXFLAGS"
-		LIBS="$ICU_LIBS $LIBS"],
+		LIBS="$ICU_LIBS $ICU_IOLIBS $LIBS"],
 		[AC_MSG_FAILURE( "No ICU development environment found. Please check if libicu-dev or the like is installed" )] )
   AC_DEFINE(HAVE_ICU, 1, we want to use ICU )
 else
@@ -208,6 +208,13 @@ AC_FUNC_FORK
 AC_CHECK_FUNCS([memset])
 
 PKG_PROG_PKG_CONFIG
+if test "$pkgconfigpath" != "NONE"; then
+# ugly hack when PKG_CONFIG_PATH isn't defined.
+# couldn't get it to work otherwise
+  if test "x$PKG_CONFIG_PATH" == x; then
+     export PKG_CONFIG_PATH=""
+  fi
+fi
 
 #check for Timbl and Mbt
 AC_ARG_WITH(timbl,
