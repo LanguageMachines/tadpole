@@ -208,6 +208,7 @@ AC_FUNC_FORK
 AC_CHECK_FUNCS([memset])
 
 PKG_PROG_PKG_CONFIG
+AC_PATH_PROG(pkgconfigpath, pkg-config, NONE)
 if test "$pkgconfigpath" != "NONE"; then
 # ugly hack when PKG_CONFIG_PATH isn't defined.
 # couldn't get it to work otherwise
