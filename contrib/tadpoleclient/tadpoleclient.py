@@ -6,7 +6,7 @@ import re
 class TadpoleClient:
 	def __init__(self,host="localhost",port="12345", tadpole_encoding="iso-8859-1"):
 		"""Create a client connecting to a Tadpole server"""
-		self.BUFSIZE = 1024
+		self.BUFSIZE = 4096
 		self.socket = socket(AF_INET,SOCK_STREAM)
 		self.socket.connect( (host,port) )
 		self.tadpole_encoding = tadpole_encoding
@@ -27,12 +27,13 @@ class TadpoleClient:
 		
 		cnt = 0
 		done = False
-		while not done:
-			data = self.socket.recv(self.BUFSIZE)
+		while not done:	
+			data = ""
+			while not data or data[-1] != '\n':
+				data += self.socket.recv(self.BUFSIZE)
 			if return_unicode:
 				data = unicode(data,self.tadpole_encoding)
-
-			#print "RECV: ",data.strip(' \t\r\n') #DEBUG
+		
 
 			for line in data.strip(' \t\r\n').split('\n'):
 				if line == "READY":
@@ -41,9 +42,10 @@ class TadpoleClient:
 					break
 				elif line:
 					l = line.split('\t') # remove the linenumbers + \t here that tadpole seems to add now
-					buffer += re.sub("[ -]","",l[1])
-					line = '\t'.join(l[1:]) 
-					tp_output.append(tuple(line.strip('\t').split('\t')))
+					if len(l) > 1:
+    						buffer += re.sub("[ -]","",l[1])
+	    					line = '\t'.join(l[1:]) 
+	    					tp_output.append(tuple(line.strip('\t').split('\t')))
 		return tp_output
 
 	def __del__(self):
