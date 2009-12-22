@@ -604,7 +604,7 @@ string postprocess( const string& wstr, const string& lstr,
 	  cout << "#unique lemma's: " << possible_lemmas.size() << endl;
 	// append all unique lemmas
 	size_t current_best = 0;
-	bool hit = false;
+	int hit = 0;
 	if ( possible_lemmas.size() >= 1) {
 	  // find best match
 	  // loop through subparts 1 t/m num_tag_parts-1, 
@@ -628,14 +628,21 @@ string postprocess( const string& wstr, const string& lstr,
 	    }
 	    if (tpDebug)
 	      cout << "score: " << match_count << endl;
-	    if (match_count > max_count) {
-	      max_count = match_count;
-	      current_best = q;
-	      hit = true;
+	    if (match_count >= max_count) {
+	      if (match_count > max_count)
+		{
+		  max_count = match_count;
+		  current_best = q;
+		  hit = 1;
+		}
+	      else
+		{
+		  hit++;
+		}
 	    }
 	  }
 	} 			
-	if ( hit ) {
+	if ( hit == 1 ) {
 	  if (tpDebug)
 	    cout << "best match: " << m[matches[current_best]].getMorph() << endl;
 	  res += myOFS + m[matches[current_best]].getMorph();
@@ -647,7 +654,8 @@ string postprocess( const string& wstr, const string& lstr,
 	  lemma_count = possible_lemmas.begin();
 	  if (tpDebug)
 	    cout << "Appending: " << lemma_count->first << " to " << res << endl;
-	  res += myOFS + "[" + lemma_count->first;
+	  res += myOFS + lemma_count->first;
+	  //res += myOFS + "[" + lemma_count->first;
 	  lemma_count++;
 	  while (lemma_count != possible_lemmas.end()){
 	    if (tpDebug)
@@ -655,7 +663,7 @@ string postprocess( const string& wstr, const string& lstr,
 	    res += "/" + lemma_count->first;
 	    lemma_count++;
 	  }
-	  res += "]";
+	  //res += "]";
 	} // no current_best
       } 
       else {
