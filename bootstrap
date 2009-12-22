@@ -48,6 +48,7 @@ aclocal=aclocal
       if test -f ${d}ac_define_dir.m4
       then
          found=true
+	 acdir=${d}
          break
       fi
    done
@@ -85,7 +86,7 @@ fi
 # if not installed, use: apt-get install automake1.9
 
 AUTOMAKE=automake ACLOCAL=aclocal autoreconf --install \
-      --symlink
+      --symlink -I${acdir}
 
 # add --make if you want to run "make" too.
 
