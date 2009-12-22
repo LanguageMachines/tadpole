@@ -166,11 +166,11 @@ string linetokenize( const string& infilename) {
     if ( readword == "<utt>" )
       doel << endl;
     else {
-      if ( readword.find('/') != string::npos ){
+      /* if ( readword.find('/') != string::npos ){
 	for ( size_t i=0; i < readword.length(); ++i )
 	  if ( readword[i] == '/' )
 	    readword[i]='-';
-      }
+	    } */
       doel << readword << ' ';
     }
   }

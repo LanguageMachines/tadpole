@@ -386,11 +386,28 @@ string postprocess( const string& wstr, const string& lstr,
   vector<string> lookuplemma = myMblem::lookuplemma;
   vector<string> lookuptag = myMblem::lookuptag;
 
+  int nr = split_at( wstr, wt, "/");
+
+  // be robust against words with forward slashes                             
+  if ( nr > 1 ){
+    tag = wt[nr-1];
+    word = "";
+    for (int i=0; i<nr-2; i++)
+      word += wt[i] + '/';
+    word += wt[nr-2];
+  }
+  else {
+    tag = wt[1];
+    word = wt[0];
+  }
+
+  /*
   if (split_at(wstr, wt, "/") != 2) {
     wt[1] = wt[2];
   } 
   word = wt[0];
   tag = wt[1];
+  */
 
   if (tpDebug)
     cout << "wstr " << wstr << " split in word " << word << " and tag " << tag << endl;
