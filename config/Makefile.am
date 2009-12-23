@@ -2,7 +2,7 @@
 # $URL:$
 
 config_DATA = lconfig mconfig mwuconfig \
-	parserconfig smallparserconfig largeparserconfig \
+	parserconfig smallparserconfig \
 	mblem.transtable  mblem.tree mblem.tree.wgt \
 	mbma.igtree mbma.igtree.wgt \
         mwu.suspects5 \
@@ -30,12 +30,6 @@ config_DATA = lconfig mconfig mwuconfig \
 	mbdp-tadpole-alpino.dir.ibase.wgt \
 	mbdp-tadpole-alpino.rels.ibase \
 	mbdp-tadpole-alpino.rels.ibase.wgt \
-	mbdp-tadpole-alpino.pairs.sampled.large-ibase \
-	mbdp-tadpole-alpino.pairs.sampled.large-ibase.wgt \
-	mbdp-tadpole-alpino.dir.large-ibase \
-	mbdp-tadpole-alpino.dir.large-ibase.wgt \
-	mbdp-tadpole-alpino.rels.large-ibase \
-	mbdp-tadpole-alpino.rels.large-ibase.wgt \
 	money vreemd
 configdir = $(prefix)/etc/$(PACKAGE)
 
