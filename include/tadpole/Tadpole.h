@@ -28,6 +28,7 @@
 #define MAX_NAMELEN 2048 
 
 #include <set>
+#include "timbl/LogStream.h"
 #include "tadpole/unicode_utils.h"
 
 std::string prefix( const std::string&, const std::string& );
@@ -38,6 +39,8 @@ void decap( std::string &, const std::string &);
 void decap( UnicodeString &, const std::string &);
 
 void getFileNames( const std::string&, std::set<std::string>& );
+
+extern LogStream *theErrLog;
 
 extern std::string myOFS;
 extern int tpDebug;

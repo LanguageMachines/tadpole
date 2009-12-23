@@ -174,8 +174,8 @@ namespace Parser {
 	      groupSize = gs;
 	    }
 	    else {
-	      cerr << "invalid groupSize value in config file" << endl;
-	      cerr << "keeping default " << groupSizeS << endl;
+	      *Log(theErrLog) << "invalid groupSize value in config file" << endl;
+	      *Log(theErrLog) << "keeping default " << groupSizeS << endl;
 	      problem = true;
 	    }
 	  }
@@ -226,7 +226,7 @@ namespace Parser {
       else
 	problem = true;
       if ( problem )
-	cerr << "Unknown option in settingsfile, (ignored)\n"
+	*Log(theErrLog) << "Unknown option in settingsfile, (ignored)\n"
 	     << SetBuffer << " ignored." <<endl;
     }
     return true;
@@ -235,28 +235,28 @@ namespace Parser {
   bool init( const string& cDir, const string& fname ){
     PI = new PythonInterface();
     bool happy = false;
-    cerr << "initiating parser ... " << endl;
+    *Log(theErrLog) << "initiating parser ... " << endl;
     if ( !readsettings( cDir, fname)) {
-      cerr << "Cannot read parser settingsfile " << fname << endl;
+      *Log(theErrLog) << "Cannot read parser settingsfile " << fname << endl;
     }
     else {
       pairs = new TimblAPI( pairsOptions );
       if ( pairs->Valid() )
 	happy = pairs->GetInstanceBase( pairsFileName );
       else
-	cerr << "creating Timbl for pairs failed:" << pairsOptions << endl;
+	*Log(theErrLog) << "creating Timbl for pairs failed:" << pairsOptions << endl;
       if ( happy ){
 	dir = new TimblAPI( dirOptions );
 	if ( dir->Valid() )
 	  happy = dir->GetInstanceBase( dirFileName );
 	else
-	  cerr << "creating Timbl for dir failed:" << dirOptions << endl;
+	  *Log(theErrLog) << "creating Timbl for dir failed:" << dirOptions << endl;
 	if ( happy ){
 	  rels = new TimblAPI( relsOptions );
 	  if ( rels->Valid() )
 	    happy = rels->GetInstanceBase( relsFileName );
 	  else
-	    cerr << "creating Timbl for rels failed:" << relsOptions << endl;
+	    *Log(theErrLog) << "creating Timbl for rels failed:" << relsOptions << endl;
 	}
       }
     }
@@ -731,11 +731,11 @@ namespace Parser {
 	      TimerBlock& timers ){
     timers.parseTimer.start();
     if ( !isInit ){
-      cerr << "Parser is not initialized!" << endl;
+      *Log(theErrLog) << "Parser is not initialized!" << endl;
       exit(1);
     }
     if ( final_ana.size() < 1 ){
-      cerr << "unable to parse an analisis without words" << endl;
+      *Log(theErrLog) << "unable to parse an analisis without words" << endl;
       return;
     }
     string resFileName = fileName + ".result"; 
@@ -796,7 +796,7 @@ namespace Parser {
 	readAna( resFile, final_ana );
       }
       else
-	cerr << "couldn't open results file: " << resFileName << endl;
+	*Log(theErrLog) << "couldn't open results file: " << resFileName << endl;
       if ( !keepIntermediateFiles ){
 	remove( pairsOutName.c_str() );
 	remove( dirOutName.c_str() );

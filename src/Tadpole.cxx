@@ -47,6 +47,9 @@
 using namespace std;
 using Mbma::MBMAana;
 
+LogStream tadpole_default_log( cerr, "tadpole-", StampMessage ); // fall-back
+LogStream *theErrLog = &tadpole_default_log;  // fill the externals
+
 string TestFileName;
 string testDirName;
 string outputFileName;
@@ -109,7 +112,7 @@ void init_cgn( const string& dir ) {
       tmp.clear();
       num = split_at(line, tmp, " ");
       if ( num < 2 ){
-	cerr << "splitting '" << line << "' failed" << endl;
+	*Log(theErrLog) << "splitting '" << line << "' failed" << endl;
 	throw ( runtime_error("panic") );
       }
       TAGconv.insert( make_pair( tmp[0], tmp[1] ) );
@@ -251,18 +254,18 @@ bool parse_args( TimblOpts& Opts ) {
     testDirName = value;
     if ( !testDirName.empty() ){
       if ( !existsDir( testDirName ) ){
-	cerr << "input dir " << testDirName << " not readable" << endl;
+	*Log(theErrLog) << "input dir " << testDirName << " not readable" << endl;
 	return false;
       }
       getFileNames( testDirName, fileNames );
       if ( fileNames.empty() ){
-	cerr << "error: couln't find any files in directory: " 
+	*Log(theErrLog) << "error: couln't find any files in directory: " 
 	     << testDirName << endl;
 	return false;
       }
     }
     else {
-      cerr << "empty testdir name!" << endl;
+      *Log(theErrLog) << "empty testdir name!" << endl;
       return false;
     }
     Opts.Delete("testdir");
@@ -275,7 +278,7 @@ bool parse_args( TimblOpts& Opts ) {
     outputDirName = value;
     if ( !outputDirName.empty() ){
       if ( !existsDir( outputDirName ) ){
-	cerr << "output dir " << outputDirName << " not readable" << endl;
+	*Log(theErrLog) << "output dir " << outputDirName << " not readable" << endl;
 	return false;
       }
     }
@@ -304,11 +307,11 @@ bool parse_args( TimblOpts& Opts ) {
     listenport= value;
   }
   if ( !outputDirName.empty() && testDirName.empty() ){
-    cerr << "useless -outputdir option" << endl;
+    *Log(theErrLog) << "useless -outputdir option" << endl;
     return false;
   }
   if ( !outputFileName.empty() && !testDirName.empty() ){
-    cerr << "useless -o option" << endl;
+    *Log(theErrLog) << "useless -o option" << endl;
     return false;
   }
 
@@ -319,8 +322,7 @@ bool parse_args( TimblOpts& Opts ) {
     init_cgn( c_dirName );
     myMblem::init( c_dirName, l_fileName );
     Mbma::init( c_dirName, m_fileName );
-    cerr << "Initiating tagger..." << endl;
-    tagger = new MbtAPI( string( "-s " ) + t_fileName );
+    tagger = new MbtAPI( string( "-s " ) + t_fileName, *theErrLog );
     if ( doMwu ){
       mwuChunker::init( c_dirName, u_fileName);
       if ( doParse )
@@ -328,7 +330,7 @@ bool parse_args( TimblOpts& Opts ) {
     }
     else {
       if ( doParse )
-	cerr << " Parser disabled, because MWU is deselected" << endl;
+	*Log(theErrLog) << " Parser disabled, because MWU is deselected" << endl;
       doParse = false;;
     }
   }
@@ -342,8 +344,7 @@ bool parse_args( TimblOpts& Opts ) {
       Mbma::init( c_dirName, m_fileName );
 #pragma omp section 
       {
-	cerr << "Initiating tagger..." << endl;
-	tagger = new MbtAPI( string( "-s " ) + t_fileName );
+	tagger = new MbtAPI( string( "-s " ) + t_fileName, *theErrLog );
       }
 #pragma omp section
       {
@@ -354,19 +355,19 @@ bool parse_args( TimblOpts& Opts ) {
 	    initTimer.start();
 	    Parser::init( c_dirName, p_fileName );
 	    initTimer.stop();
-	    cerr << "init Parse took: " << initTimer << endl;
+	    *Log(theErrLog) << "init Parse took: " << initTimer << endl;
 	  }
 	}
 	else {
 	  if ( doParse )
-	    cerr << " Parser disabled, because MWU is deselected" << endl;
+	    *Log(theErrLog) << " Parser disabled, because MWU is deselected" << endl;
 	  doParse = false;;
 	}
       }
     }
     // end omp parallel sections
   }
-  cerr << "Initialization done." << endl;
+  *Log(theErrLog) << "Initialization done." << endl;
   return true;
 }
 
@@ -531,14 +532,14 @@ string postprocess( const string& wstr, const string& lstr,
     cout << "tag: " << tag << endl;
   size_t sp = tag_parts[0].find("(");
   if ( sp == string::npos ) {
-    cerr << "main tag without subparts: impossible\n";
+    *Log(theErrLog) << "main tag without subparts: impossible\n";
     exit(-1);
   }
   string main_tag = tag_parts[0].substr( 0, sp );
   tag_parts[0].erase(0, sp+1 );
   sp = tag_parts[num_tag_parts - 1].find(")" );
   if ( sp == string::npos ) {
-    cerr << "last subtag unclosed: impossible\n";
+    *Log(theErrLog) << "last subtag unclosed: impossible\n";
     exit(-1);
   }
   tag_parts[num_tag_parts -1].erase( sp, 1 );
@@ -720,7 +721,7 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
     }
     if (num_words && num_words != num_tagged_words - 1) {
       // the last "word" is <utt> which gets added by the tagger
-      cerr << "Something is rotten here, #words != #tagged_words\n";
+      *Log(theErrLog) << "Something is rotten here, #words != #tagged_words\n";
       exit(1);
     }
     vector<mwuChunker::ana> final_ana;
@@ -788,7 +789,7 @@ void Test( const string& infilename, const string& outFileName) {
   ofstream outStream;
   if ( !outFileName.empty() ){
     if ( outStream.open( outFileName.c_str() ), outStream.bad() ){
-      cerr << "unable to open outputfile: " << outFileName << endl;
+      *Log(theErrLog) << "unable to open outputfile: " << outFileName << endl;
       exit(1);
     }
   }
@@ -798,11 +799,11 @@ void Test( const string& infilename, const string& outFileName) {
     TokenizedTestFileName = tokenize(infilename);
     LineTokenizedTestFileName = linetokenize(TokenizedTestFileName);
     timers.tokTimer.stop();
-    cerr << "tokenizing " << infilename << " took:" << timers.tokTimer << endl;
+    *Log(theErrLog) << "tokenizing " << infilename << " took:" << timers.tokTimer << endl;
     if ( !keepIntermediateFiles ){
       // remove tokenized file
       if ( std::remove(TokenizedTestFileName.c_str()) != 0 ) {
-       cerr << "Error removing " << TokenizedTestFileName << ", yet we go on..." << endl;
+       *Log(theErrLog) << "Error removing " << TokenizedTestFileName << ", yet we go on..." << endl;
       }
     }
   }
@@ -827,25 +828,25 @@ void Test( const string& infilename, const string& outFileName) {
   }
   
   
-  cerr << "tagging took:     " << timers.tagTimer << endl;
-  cerr << "MBA took:         " << timers.mbmaTimer << endl;
-  cerr << "Mblem took:       " << timers.mblemTimer << endl;
+  *Log(theErrLog) << "tagging took:     " << timers.tagTimer << endl;
+  *Log(theErrLog) << "MBA took:         " << timers.mbmaTimer << endl;
+  *Log(theErrLog) << "Mblem took:       " << timers.mblemTimer << endl;
   if ( doMwu )
-    cerr << "MWU resolving took: " << timers.mwuTimer << endl;
+    *Log(theErrLog) << "MWU resolving took: " << timers.mwuTimer << endl;
   if ( doParse ){
-    cerr << "Parsing (prepare) took: " << timers.prepareTimer << endl;
-    cerr << "Parsing (pairs)   took: " << timers.pairsTimer << endl;
-    cerr << "Parsing (rels)    took: " << timers.relsTimer << endl;
-    cerr << "Parsing (dir)     took: " << timers.dirTimer << endl;
-    cerr << "Parsing (csi)     took: " << timers.csiTimer << endl;
-    cerr << "Parsing (total)   took: " << timers.parseTimer << endl;
+    *Log(theErrLog) << "Parsing (prepare) took: " << timers.prepareTimer << endl;
+    *Log(theErrLog) << "Parsing (pairs)   took: " << timers.pairsTimer << endl;
+    *Log(theErrLog) << "Parsing (rels)    took: " << timers.relsTimer << endl;
+    *Log(theErrLog) << "Parsing (dir)     took: " << timers.dirTimer << endl;
+    *Log(theErrLog) << "Parsing (csi)     took: " << timers.csiTimer << endl;
+    *Log(theErrLog) << "Parsing (total)   took: " << timers.parseTimer << endl;
   }
   if ( !outFileName.empty() )
-    cerr << "results stored in " << outFileName << endl;
+    *Log(theErrLog) << "results stored in " << outFileName << endl;
   if ( doTok && !keepIntermediateFiles ){
     // remove linetokenized file
     if ( std::remove(LineTokenizedTestFileName.c_str()) != 0 ) {
-     cerr << "Error removing " << LineTokenizedTestFileName 
+     *Log(theErrLog) << "Error removing " << LineTokenizedTestFileName 
 	  << ", yet we go on..." << endl;
     }
   }
@@ -870,7 +871,7 @@ void serverthread( Sockets::ServerSocket &conn, const string& random ) {
       infile.open(tmpTestFile.c_str());
       infile << data << "\n";
       
-      cerr << "Processing... " << endl;
+      *Log(theErrLog) << "Processing... " << endl;
       infile.close();
       Test( tmpTestFile, tmpOutFile );
       ifstream outfile;
@@ -885,18 +886,18 @@ void serverthread( Sockets::ServerSocket &conn, const string& random ) {
       outfile.close();
       
       if ( std::remove(tmpTestFile.c_str()) != 0 ) {
-	cerr << "Error removing " << tmpTestFile << ", yet we go on..." << endl;
+	*Log(theErrLog) << "Error removing " << tmpTestFile << ", yet we go on..." << endl;
       }
       if ( std::remove(tmpOutFile.c_str()) != 0 ) {
-	cerr << "Error removing " << tmpOutFile << ", yet we go on..." << endl;
+	*Log(theErrLog) << "Error removing " << tmpOutFile << ", yet we go on..." << endl;
       }  
     }
   }
   catch ( std::exception& e ) {
     if (tpDebug)
-      cerr << "connection lost: " << e.what() << endl;
+      *Log(theErrLog) << "connection lost: " << e.what() << endl;
   } 
-  cerr << "Connection closed.\n";
+  *Log(theErrLog) << "Connection closed.\n";
 }
 
 
@@ -978,7 +979,7 @@ int main(int argc, char *argv[]) {
     }
   }
   catch ( const exception& e ){
-    cerr << "fatal error: " << e.what() << endl;
+    *Log(theErrLog) << "fatal error: " << e.what() << endl;
   }
   Mbma::cleanUp();
   myMblem::cleanUp();

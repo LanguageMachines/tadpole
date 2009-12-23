@@ -112,9 +112,9 @@ namespace mwuChunker {
       int num = split_at( line, parts, " " );
       if ( num > 7 ){
 	if ( stringTo<int>( parts[0] ) != cnt+1 ){
-	  cerr << "confused! " << endl;
-	  cerr << "got line '" << line << "'" << endl;
-	  cerr << "expected something like '" << cnt+1 << " " << ana[cnt] << endl;
+	  *Log(theErrLog) << "confused! " << endl;
+	  *Log(theErrLog) << "got line '" << line << "'" << endl;
+	  *Log(theErrLog) << "expected something like '" << cnt+1 << " " << ana[cnt] << endl;
 	}
 	ana[cnt].setParseNum( parts[6] );
 	ana[cnt].setParseTag( parts[7] );
@@ -149,20 +149,20 @@ namespace mwuChunker {
 	  myOFS = parts[1];
 	  break;
 	default:
-	  cerr << "Unknown option in settingsfile, (ignored)\n"
+	  *Log(theErrLog) << "Unknown option in settingsfile, (ignored)\n"
 	       << SetBuffer << " ignored." <<endl;
 	  break;
 	}
       }
       else
-	cerr << "Unknown option in settingsfile, (ignored)\n"
+	*Log(theErrLog) << "Unknown option in settingsfile, (ignored)\n"
 	     << SetBuffer << " ignored." <<endl;
     }
     return true;
   }
 
   bool read_mwus( const string& fname) {
-    cerr << "read mwus " + fname + "\n";
+    *Log(theErrLog) << "read mwus " + fname + "\n";
     ifstream mwufile(fname.c_str(), ios::in);
     if(mwufile.bad()){
       return false;
@@ -180,14 +180,14 @@ namespace mwuChunker {
   }
 
   void init( const string& cDir, const string& fname) {
-    cerr << "initiating mwuChunker ... \n";
+    *Log(theErrLog) << "initiating mwuChunker ... \n";
     mwuDebug = tpDebug;
     if (!readsettings( cDir, fname)) {
-      cerr << "Cannot read mwuChunker settingsfile " << fname << endl;
+      *Log(theErrLog) << "Cannot read mwuChunker settingsfile " << fname << endl;
       exit(1);
     }
     if (!read_mwus(mwuFileName)) {
-      cerr << "Cannot read mwu file " << mwuFileName << endl;
+      *Log(theErrLog) << "Cannot read mwu file " << mwuFileName << endl;
       exit(1);
     }
     return;

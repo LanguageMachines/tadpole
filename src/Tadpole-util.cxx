@@ -64,7 +64,7 @@ bool existsDir( const string& dirName ){
   return fs::exists( fs::path(dirName) );
 }
 void getFileNames( const string& dirName, set<string>& fileNames ){
-  //  cerr << "get file Names " << dirName << endl;
+  //  errLog << "get file Names " << dirName << endl;
   fs::directory_iterator end_itr; // default construction yields past-the-end
   for ( fs::directory_iterator itr( dirName );
         itr != end_itr;
@@ -72,7 +72,7 @@ void getFileNames( const string& dirName, set<string>& fileNames ){
 #if BOOST_VERSION < 103301
 #error BOOST: VERSION TOO OLD 
 #else
-    //    cerr << "found leaf " << itr->leaf() << endl;
+    //    errLog << "found leaf " << itr->leaf() << endl;
 # if BOOST_VERSION <= 103400
     if ( fs::exists( *itr ) && !fs::is_directory( *itr ) )
       fileNames.insert( itr->leaf() );
@@ -151,7 +151,7 @@ string tokenize( const string& infilename) {
   if ( ret < 0 && !doServer ){
     // in server mode system() always seem to return -1
     // just ignore and hope the best of it
-    cerr << "execution of " << command << " failed. We go on" << endl;
+    *Log(theErrLog) << "execution of " << command << " failed. We go on" << endl;
   };
   return tokenizedfilename;
 }

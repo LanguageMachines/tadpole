@@ -102,8 +102,8 @@ namespace Mbma {
       }
 	break;
       default:
-	cerr << "Unknown option in settingsfile, (ignored)\n"
-	     << SetBuffer << " ignored." <<endl;
+	*Log(theErrLog) << "Unknown option in settingsfile, (ignored)\n"
+	       << SetBuffer << " ignored." <<endl;
 	break;
       }
     }
@@ -122,10 +122,10 @@ namespace Mbma {
   }
   
   void init( const string& cDir, const string& fname) {
-    cerr << "Initiating morphological analyzer...\n";
+    *Log(theErrLog) << "Initiating morphological analyzer...\n";
     mbaDebug = tpDebug;
     if ( !readsettings( cDir, fname) ) {
-      cerr << "Cannot read MBMA settingsfile " << fname << endl;
+      *Log(theErrLog) << "Cannot read MBMA settingsfile " << fname << endl;
       exit(1);
     }
     
@@ -136,7 +136,7 @@ namespace Mbma {
   }
   
   void cleanUp(){
-    //    cerr << "cleaning up MBMA stuff " << endl;
+    // *Log(theErrLog) << "cleaning up MBMA stuff " << endl;
     delete MTree;
     MTree = 0;
   }

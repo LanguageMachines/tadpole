@@ -50,7 +50,7 @@ namespace myMblem  {
   void read_transtable() {
     ifstream bron( transtablename.c_str() );
     if ( !bron ) {
-      cerr << "translation table file '" << transtablename 
+      *Log(theErrLog) << "translation table file '" << transtablename 
 	   << "' appears to be missing." << endl;
       exit(1);
     }
@@ -86,7 +86,7 @@ namespace myMblem  {
       vector<string> fields;
       int i = split_at( buf, fields, " " );
       if ( i < 2 ){
-	cerr << "No option in settingsfile, (ignored)\n"
+	*Log(theErrLog) << "No option in settingsfile, (ignored)\n"
 	     << "offensive line: '" << buf << "'." <<endl;
 	continue;
       }
@@ -102,7 +102,7 @@ namespace myMblem  {
 	  opts_lexibase = fields[1];
 	  break;
       default:
-	cerr << "Unknown option in settingsfile, (ignored)\n"
+	*Log(theErrLog) << "Unknown option in settingsfile, (ignored)\n"
 	     << "offensive line: '" << buf << "'." <<endl;
 	break;
       }
@@ -112,12 +112,12 @@ namespace myMblem  {
   
 
   void init( const string& cdir, const string& fname) {
-    cerr << "Initiating lemmatizer...\n";
+    *Log(theErrLog) << "Initiating lemmatizer...\n";
     opts_lexibase = "-a1";
     mblemDebug = tpDebug;
     if (!readsettings( cdir, fname)) 
       {
-	cerr << "Cannot read MBLem settingsfile " << fname << endl;
+	*Log(theErrLog) << "Cannot read MBLem settingsfile " << fname << endl;
 	exit(1);
       }
     //make it silent
@@ -131,7 +131,7 @@ namespace myMblem  {
   }
 
   void cleanUp(){
-    //    cerr << "cleaning up MBLEM stuff" << endl;
+    //    *Log(theErrLog) << "cleaning up MBLEM stuff" << endl;
     delete myLex;
     myLex = 0;
   }
@@ -238,7 +238,7 @@ namespace myMblem  {
 
       } 
       else {
-	cerr << "no word/tag pair in this line: " << in << endl;
+	*Log(theErrLog) << "no word/tag pair in this line: " << in << endl;
 	return "oops";
       }
     }
