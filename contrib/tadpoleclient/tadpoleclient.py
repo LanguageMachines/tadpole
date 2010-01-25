@@ -1,10 +1,10 @@
 #!/usr/bin/python
-#version 1.3 -- by Maarten van Gompel (adapted from code by Rogier Kraf), licensed under GPLv3
+#version 1.3.1 -- by Maarten van Gompel (adapted from code by Rogier Kraf), licensed under GPLv3
 from socket import *
 import re
 
 class TadpoleClient:
-	def __init__(self,host="localhost",port="12345", tadpole_encoding="utf-8"):
+	def __init__(self,host="localhost",port=12345, tadpole_encoding="utf-8"):
 		"""Create a client connecting to a Tadpole server"""
 		self.BUFSIZE = 4096
 		self.socket = socket(AF_INET,SOCK_STREAM)
