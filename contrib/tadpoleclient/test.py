@@ -4,8 +4,9 @@ from sys import stderr
 from tadpoleclient import TadpoleClient
 
 #generating some example sentences to pass to the server:
-sentences = [u"Dhr. M. A. de Vries heeft vandaag één nieuwe koelkast gekocht."] #a sentence with diacritics, the client will take care of proper conversion
+sentences = [u"Dhr. M. A. de Vries heeft vandaag één nieuwe koelkast gekocht.", "De cliënt houdt een appèl in de oude ruïne"] #sentences with diacritics, the client will take care of proper conversion
 sentences += ['Dit is zin ' + str(i) + "." for i in range(0,101)] #100 sentences
+
 
 #Create a client instance connecting to the specified server (make sure to run the server first: $ Tadpole -S 12345 )
 tadpoleclient = TadpoleClient('localhost',12345) 

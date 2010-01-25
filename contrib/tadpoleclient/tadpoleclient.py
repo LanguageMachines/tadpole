@@ -1,10 +1,10 @@
 #!/usr/bin/python
-#by Maarten van Gompel (adapted from code by Rogier Kraf), licensed under GPLv3
+#version 1.3 -- by Maarten van Gompel (adapted from code by Rogier Kraf), licensed under GPLv3
 from socket import *
 import re
 
 class TadpoleClient:
-	def __init__(self,host="localhost",port="12345", tadpole_encoding="iso-8859-1"):
+	def __init__(self,host="localhost",port="12345", tadpole_encoding="utf-8"):
 		"""Create a client connecting to a Tadpole server"""
 		self.BUFSIZE = 4096
 		self.socket = socket(AF_INET,SOCK_STREAM)
@@ -12,7 +12,7 @@ class TadpoleClient:
 		self.tadpole_encoding = tadpole_encoding
 
 	def process(self,input_data, source_encoding="utf-8", return_unicode = True):
-		"""Receives input_data in the form of a str unicode object, passes this to the server, with proper consideration for the encodings, and returns the Tadpole output as a list of tuples: (word,pos,lemma,morphology), each of these is a proper unicode object unless return_unicode is set to False, in which case raw strings in the tadpole encoding will be returned."""
+		"""Receives input_data in the form of a str or unicode object, passes this to the server, with proper consideration for the encodings, and returns the Tadpole output as a list of tuples: (word,pos,lemma,morphology), each of these is a proper unicode object unless return_unicode is set to False, in which case raw strings in the tadpole encoding will be returned."""
 		input_data = input_data.strip(' \t\n')
 
 		targetbuffer = re.sub("[ -]","",input_data)
