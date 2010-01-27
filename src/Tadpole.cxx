@@ -398,8 +398,10 @@ string postprocess( const string& wstr, const string& lstr,
     word += wt[nr-2];
   }
   else {
-    tag = wt[1];
-    word = wt[0];
+    tag = wt[0];
+    word = "/"; //wstr[0];
+    //tag = wt[1];
+    //word = wt[0];
   }
 
   /*
@@ -414,25 +416,32 @@ string postprocess( const string& wstr, const string& lstr,
     cout << "wstr " << wstr << " split in word " << word << " and tag " << tag << endl;
   size_t num = split_at(lstr, ltpairs, " ");
   if (tpDebug) {
-    cout << "postprocess:\n\tword: " << wt[0] <<"\n\ttags: " << wt[1] << " ";
+    cout << "**DEBUG**" << endl;
+    if (nr > 1) {
+        cout << "postprocess:\n\tword: " << wt[0] <<"\n\ttags: " << wt[1] << " ";
+    } else {
+        cout << "postprocess:\n\tword: /\n\ttags: " << wt[0] << " ";
+
+    }
+
     for(vector<MBMAana>::iterator it=m.begin(); it != m.end(); it++)
       cout << it->getTag() << it->getInflection()<< " ";
-    
     for ( size_t i=0; i < num; i++) {
       vector<string> tmp;
-      if ( split_at(ltpairs[i], tmp, "/") > 1 )
-	cout << tmp[1] << " ";
-      else
-	cout << ltpairs[i] << " ";
+      if ( split_at(ltpairs[i], tmp, "/") > 1 ) {
+    	cout << tmp[1] << " ";
+      } else {
+    	cout << ltpairs[i] << " ";
+      }
     }
+    
     cout << "\n\tmorph analyses: ";
     for (vector<MBMAana>::iterator it=m.begin(); it != m.end(); it++)
       cout << it->getMorph() << " ";
     cout << "\n\tlemmas: ";
     for ( size_t i=0; i < num; i++) {
       vector<string> tmp;
-      split_at(ltpairs[i], tmp, "/");
-      cout << tmp[0] << " ";
+      if (split_at(ltpairs[i], tmp, "/") > 1) cout << tmp[0] << " ";
     }
     cout << endl <<endl;
   }
@@ -730,9 +739,11 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
       string analysis;
       vector<MBMAana> res;
       timers.mbmaTimer.start();
+      if (tpDebug) cout << "Calling mbma..." << endl;
       Mbma::Classify(tagged_words[i], res);
       timers.mbmaTimer.stop();
       timers.mblemTimer.start();
+      if (tpDebug) cout << "Calling mblem..." << endl;
       string lemma = myMblem::Classify(tagged_words[i]);
       timers.mblemTimer.stop();
       if (tpDebug) {

@@ -985,15 +985,18 @@ namespace Mbma {
       tag = wstr[num-1];
       word = "";
       for (int i=0; i<num-2; i++)
-	word += wstr[i] + '/';
+        word += wstr[i] + '/';
       word += wstr[num-2];
     }
     else {
-      tag = wstr[1];
-      word = wstr[0];
+      //fixed handling of slashes (Maarten van Gompel)
+      word = "/";
+      tag = wstr[0];
+      //tag = wstr[1];
+      //word = wstr[0];
     }
     if (mbaDebug)
-      cout << "word: " << word <<" tag: " << tag << endl;
+      cout << "word: " << word << " tag: " << tag << endl;
     
     UnicodeString uWord = word.c_str();
     decap( uWord, tag);

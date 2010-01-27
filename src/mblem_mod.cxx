@@ -194,15 +194,15 @@ namespace myMblem  {
       // be robust against words with forward slashes                             
       int num = split_at( in, wstr, "/");
       if ( num > 1 ){
-	tag = wstr[num-1];
-	word = "";
-	for (int i=0; i<num-2; i++)
-	  word += wstr[i] + '/';
-	word += wstr[num-2];
+        tag = wstr[num-1];
+        word = "";
+        for (int i=0; i<num-2; i++)
+            word += wstr[i] + '/';
+        word += wstr[num-2];
       }
       else {
-	tag = wstr[1];
-	word = wstr[0];
+        tag = wstr[0];
+        word = "/"; //wstr[0];
       }
 
       /*
@@ -210,8 +210,7 @@ namespace myMblem  {
       tag = in.substr(pos+2);
       */
       isKnown = false;
-    } 
-    else {
+    } else {
       pos = in.find("/");
       if ( pos != string::npos ) {
 	// single slash: known word
@@ -227,8 +226,10 @@ namespace myMblem  {
 	  word += wstr[num-2];
 	}
 	else {
-	  tag = wstr[1];
-	  word = wstr[0];
+      tag = wstr[0];
+      word = "/"; //wstr[0];
+	  //tag = wstr[1];
+	  //word = wstr[0];
 	}
 
 
