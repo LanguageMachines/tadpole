@@ -69,12 +69,6 @@ AC_TYPE_SIZE_T
 
 # Checks for libraries.
 
-# inspired by feh-1.3.4/configure.ac.  Tnx Tom Gilbert and feh hackers.
-AC_ARG_WITH(python,
-       [  --with-python=DIR       use python executable installed in <DIR>],
-       [PYTHON="$withval/python"],
-       [PYTHON="python"])
-
 if test "$with_boost" != "no"; then
    AX_BOOST_BASE([1.33])
    AX_BOOST_FILESYSTEM
@@ -85,6 +79,27 @@ fi
 if test $prefix = "NONE"; then
    prefix="$ac_default_prefix"
 fi
+useICU=1;
+# inspired by feh-1.3.4/configure.ac.  Tnx Tom Gilbert and feh hackers.
+AC_ARG_WITH(icu,
+       [  --with-icu=DIR       use ICU installed in <DIR>],
+       [if test "$with_icu" = "no"; then
+           useICU=0
+	else
+	   CXXFLAGS="$CXXFLAGS -I$withval/include"
+           LIBS="-L$withval/lib $LIBS"
+	fi] )
+
+if test "$useICU" == "1"; then
+  AX_ICU_CHECK( [3.6],
+		[CXXFLAGS="$CXXFLAGS $ICU_CXXFLAGS"
+		LIBS="$ICU_LIBS $ICU_IOLIBS $LIBS"],
+		[AC_MSG_FAILURE( "No ICU development environment found. Please check if libicu-dev or the like is installed" )] )
+  AC_DEFINE(HAVE_ICU, 1, we want to use ICU )
+else
+  AC_MSG_NOTICE("ICU support is disabled")
+fi
+
 dnl
 dnl ----- Sockets
 checkBoth=0
@@ -174,25 +189,6 @@ fi
 AC_FUNC_FORK
 AC_CHECK_FUNCS([memset])
 
-useICU=1;
-AC_ARG_WITH(icu,
-       [  --with-icu=DIR       use ICU installed in <DIR>],
-       [if test "$with_icu" = "no"; then
-        useICU=0;
-	fi],
-        [CXXFLAGS="$CXXFLAGS -I$prefix/include"
-        LIBS="-L$prefix/lib $LIBS"])
-
-if test "$useICU" == "1"; then
-  AX_ICU_CHECK( [3.6],
-		[CXXFLAGS="$CXXFLAGS $ICU_CXXFLAGS"
-		LIBS="$ICU_LIBS $ICU_IOLIBS $LIBS"],
-		[AC_MSG_FAILURE( "No ICU development environment found. Please check if libicu-dev or the like is installed" )] )
-  AC_DEFINE(HAVE_ICU, 1, we want to use ICU )
-else
-  AC_MSG_NOTICE("ICU support is disabled")
-fi
-
 PKG_PROG_PKG_CONFIG
 AC_PATH_PROG(pkgconfigpath, pkg-config, NONE)
 if test "$pkgconfigpath" != "NONE"; then
@@ -210,7 +206,7 @@ AC_ARG_WITH(timbl,
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$prefix/lib/pkgconfig"])
 PKG_CHECK_MODULES([timbl], [timbl >= 6.1.90] )
 CXXFLAGS="$CXXFLAGS $timbl_CFLAGS"
-LIBS="$timbl_LIBS $LIBS"
+LIBS="$LIBS $timbl_LIBS"
 
 AC_ARG_WITH(mbt,
        [  --with-mbt=DIR       use mbt installed in <DIR>],
@@ -218,10 +214,16 @@ AC_ARG_WITH(mbt,
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$prefix/lib/pkgconfig"])
 PKG_CHECK_MODULES([mbt], [mbt >= 3.1.99.2] )
 CXXFLAGS="$CXXFLAGS $mbt_CFLAGS"
-LIBS="$mbt_LIBS $LIBS"
+LIBS="$LIBS $mbt_LIBS"
 
-saveLIBS=$LIBS
-AC_MSG_NOTICE([LIBS=$LIBS])
+#
+# the ac_python_devel.m4 script tramples upon $LIBS, so we save it
+save_LIBS="$LIBS"
+
+AC_ARG_WITH(python,
+       [  --with-python=DIR       use python executable installed in <DIR>],
+       [PYTHON="$withval/python"],
+       [PYTHON="python"])
 
 #we need Python > 2.5.x
 AM_PATH_PYTHON([2.5],
@@ -231,15 +233,12 @@ AM_PATH_PYTHON([2.5],
 AC_PYTHON_DEVEL([>= '2.5'])
 if test "x$PYTHON_CPPFLAGS" != "x"; then
  CXXFLAGS="$CXXFLAGS $PYTHON_CPPFLAGS"
- LIBS="$LIBS $PYTHON_LDFLAGS"
+ LIBS="$save_LIBS $PYTHON_LDFLAGS"
+else
+ LIBS="$save_LIBS"
 fi
-AC_MSG_NOTICE([LIBS=$LIBS])
-
-LIBS="$saveLIBS $LIBS"
-AC_MSG_NOTICE([LIBS=$LIBS])
 
 AC_CHECK_HEADERS( [Python.h], , AC_MSG_FAILURE("can't find Python C API") )
-
 
 AC_OUTPUT([
   Makefile
