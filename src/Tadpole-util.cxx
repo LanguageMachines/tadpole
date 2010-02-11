@@ -115,7 +115,7 @@ void getFileNames( const string& dirName, set<string>& fileNames ){
 
 #endif
 
-//BJ: to decapitalize 1st letter
+//BJ: to decapitalize the whole word except for "eigennamen"
 void decap( string &w, const string &t) {
   if (tpDebug)
     cout << "Decapping " << w << " with tag " << t << endl;
@@ -126,7 +126,8 @@ void decap( string &w, const string &t) {
   //pos = t.find("ADJ");
   //if ( pos != string::npos ) 
   //  return;
-  w[0] = tolower( w[0] );
+  for ( int i =0; i < w.length(); ++i )
+    w[i] = tolower( w[i] );
   if (tpDebug)
     cout << "decapped: " << w << endl;
 }
@@ -138,7 +139,8 @@ void decap( UnicodeString &w, const string &t ) {
   if ( pos != string::npos ) 
     // don't decap Eigennamen
     return;
-  w.replace( 0, 1, u_tolower( w[0] ) );
+  for ( int i =0; i < w.length(); ++i )
+    w.replace( i, 1, u_tolower( w[i] ) );
   if (tpDebug)
     cout << " to : " << UnicodeToUTF8(w) << endl;
 }
