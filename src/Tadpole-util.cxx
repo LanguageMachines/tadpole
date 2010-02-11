@@ -120,13 +120,11 @@ void decap( string &w, const string &t) {
   if (tpDebug)
     cout << "Decapping " << w << " with tag " << t << endl;
   size_t pos = t.find("eigen");
+  unsigned int start = 0;
   if ( pos != string::npos ) 
-    // don't decap Eigennamen
-    return;
-  //pos = t.find("ADJ");
-  //if ( pos != string::npos ) 
-  //  return;
-  for ( int i =0; i < w.length(); ++i )
+    // don't decap first letter for Eigennamen
+    start = 1;
+  for ( unsigned int i=start; i < w.length(); ++i )
     w[i] = tolower( w[i] );
   if (tpDebug)
     cout << "decapped: " << w << endl;
@@ -136,10 +134,11 @@ void decap( UnicodeString &w, const string &t ) {
   if (tpDebug)
     cout << "Decapping " << UnicodeToUTF8(w) << " with tag " << t;
   size_t pos = t.find("eigen");
+  unsigned int start = 0;
   if ( pos != string::npos ) 
     // don't decap Eigennamen
-    return;
-  for ( int i =0; i < w.length(); ++i )
+    start = 1;
+  for ( int i = start; i < w.length(); ++i )
     w.replace( i, 1, u_tolower( w[i] ) );
   if (tpDebug)
     cout << " to : " << UnicodeToUTF8(w) << endl;
