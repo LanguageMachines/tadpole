@@ -394,7 +394,7 @@ namespace Parser {
 	}
       }
     }
-  };
+  }
 
   void createRelDir( const vector<mwuChunker::ana>& ana,
 		     const string& fileName ){

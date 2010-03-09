@@ -204,7 +204,7 @@ AC_ARG_WITH(timbl,
        [  --with-timbl=DIR       use timbl installed in <DIR>],
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$withval/lib/pkgconfig"],
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$prefix/lib/pkgconfig"])
-PKG_CHECK_MODULES([timbl], [timbl >= 6.2.3] )
+PKG_CHECK_MODULES([timbl], [timbl >= 6.2.2] )
 CXXFLAGS="$CXXFLAGS $timbl_CFLAGS"
 LIBS="$LIBS $timbl_LIBS"
 
@@ -227,6 +227,7 @@ LIBS="$LIBS $mbt_LIBS"
 #
 # the ac_python_devel.m4 script tramples upon $LIBS, so we save it
 save_LIBS="$LIBS"
+save_FLAGS="$CXXFLAGS"
 
 AC_ARG_WITH(python,
        [  --with-python=DIR       use python executable installed in <DIR>],
@@ -240,9 +241,10 @@ AM_PATH_PYTHON([2.5],
 
 AC_PYTHON_DEVEL([>= '2.5'])
 if test "x$PYTHON_CPPFLAGS" != "x"; then
- CXXFLAGS="$CXXFLAGS $PYTHON_CPPFLAGS"
+ CXXFLAGS="$save_FLAGS $PYTHON_CPPFLAGS"
  LIBS="$save_LIBS $PYTHON_LDFLAGS"
 else
+ CXXFLAGS="$save_FLAGS"
  LIBS="$save_LIBS"
 fi
 

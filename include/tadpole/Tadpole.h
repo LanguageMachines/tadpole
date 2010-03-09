@@ -28,7 +28,7 @@
 #define MAX_NAMELEN 2048 
 
 #include <set>
-#include "timbl/LogStream.h"
+#include "timblserver/LogStream.h"
 #include "tadpole/unicode_utils.h"
 
 std::string prefix( const std::string&, const std::string& );

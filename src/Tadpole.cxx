@@ -42,7 +42,7 @@
 #include "tadpole/mblem_mod.h"
 #include "tadpole/mwu_chunker_mod.h"
 #include "tadpole/Parser.h"
-#include "timbl/SocketBasics.h"
+#include "timblserver/SocketBasics.h"
 
 using namespace std;
 using Mbma::MBMAana;
