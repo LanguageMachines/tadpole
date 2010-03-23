@@ -29,6 +29,7 @@ if $cxx_flags_were_set; then
   CXXFLAGS=$CXXFLAGS
 fi
 
+AC_PROG_RANLIB
 # use libtool
 AC_PROG_LIBTOOL
 AC_SUBST([LIBTOOL_DEPS])
@@ -55,7 +56,7 @@ AC_TRY_COMPILE([
 AC_SUBST(INTELC)
 
 # Checks for header files.
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h netdb.h netinet/in.h string.h sys/socket.h unistd.h sys/time.h])
+AC_CHECK_HEADERS([fcntl.h unistd.h sys/time.h])
 
 # check for OpenMP
 AX_OPENMP( [CXXFLAGS="$CXXFLAGS $OPENMP_CXXFLAGS"],
@@ -64,8 +65,12 @@ AX_OPENMP( [CXXFLAGS="$CXXFLAGS $OPENMP_CXXFLAGS"],
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
 AC_C_INLINE
+AC_C_CONST
 AC_TYPE_INT32_T
 AC_TYPE_SIZE_T
+AC_FUNC_STAT
+AC_HEADER_DIRENT
+AC_HEADER_SYS_WAIT
 
 # Checks for libraries.
 
