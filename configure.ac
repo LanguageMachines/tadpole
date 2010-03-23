@@ -37,27 +37,6 @@ AC_SUBST([LIBTOOL_DEPS])
 # when running tests, use CXX
 AC_LANG([C++])
 
-# First check if CXX is an Intel compiler; 
-# those lie and claim to be gcc but are not argument compatible
-INTELC=
-
-AC_MSG_CHECKING(whether cxx is an Intel compiler)
-AC_TRY_COMPILE([
-#ifndef __INTEL_COMPILER
-       choke me
-#endif
-], [],
-    AC_MSG_RESULT(yes)
-    INTELC=1
-    ,
-    AC_MSG_RESULT(no)
-)
-
-AC_SUBST(INTELC)
-
-# Checks for header files.
-AC_CHECK_HEADERS([fcntl.h unistd.h sys/time.h])
-
 # check for OpenMP
 AX_OPENMP( [CXXFLAGS="$CXXFLAGS $OPENMP_CXXFLAGS"],
 	   [AC_MSG_ERROR([We need OpenMP, please use a recent compiler!])])
@@ -103,91 +82,6 @@ if test "$useICU" == "1"; then
   AC_DEFINE(HAVE_ICU, 1, we want to use ICU )
 else
   AC_MSG_NOTICE("ICU support is disabled")
-fi
-
-dnl
-dnl ----- Sockets
-checkBoth=0
-AC_CHECK_FUNC(connect)
-if test "$ac_cv_func_connect" = "no"; then
-    AC_CHECK_LIB(socket, main, LIBS="$LIBS -lsocket", checkBoth=1)
-fi
-if test "$checkBoth" = "1"; then
-    oldLibs=$LIBS
-    LIBS="$LIBS -lsocket -lnsl"
-    AC_CHECK_FUNC(accept, , [LIBS=$oldLibs])
-fi
-AC_CHECK_FUNC(gethostbyname, ,[AC_CHECK_LIB(nsl, main, [LIBS="$LIBS -lnsl"])])
-
-dnl ------ socklen_t
-dnl We check for socklen_t by making prototypes with the
-dnl various types. First socklen_t, then size_t, finally int.
-dnl If the prototype succeeds, we are probably safe.
-dnl That works if accept is not preprocessor defined (such sa AIX)
-AC_MSG_CHECKING([for socklen_t])
-AC_CACHE_VAL(ac_cv_check_socklen_t,[ac_cv_check_socklen_t=''
-        AC_TRY_COMPILE([
-#include <sys/types.h>
-#include <sys/socket.h>
-#ifdef __cplusplus
-extern "C" {
-#endif
-#define try 1
-#ifdef AIX
-#if AIX >= 51
-#define try 0
-#endif
-#endif
-#if try
-extern int accept(int, struct sockaddr *, socklen_t *);
-#endif
-#ifdef __cplusplus
-}
-#endif
-        ],,[ac_cv_check_socklen_t=socklen_t],[
-                AC_TRY_COMPILE([
-#include <sys/types.h>
-#include <sys/socket.h>
-#ifdef __cplusplus
-extern "C" {
-#endif
-#define try 1
-#ifdef AIX
-#if AIX >= 42
-#define try 0
-#endif
-#endif
-#if try
-extern int accept(int, struct sockaddr *, size_t t *);
-#endif
-#ifdef __cplusplus
-}
-#endif
-],,[ac_cv_check_socklen_t=size_t],[ac_cv_check_socklen_t=int])
-                ])
-        ])
-AC_MSG_RESULT($ac_cv_check_socklen_t)
-AC_DEFINE_UNQUOTED(TIMBL_SOCKLEN_T,$ac_cv_check_socklen_t, "sock_len" )
-
-if test "$ac_cv_prog_ac_ct_CXX" == "g++"; then
-  have_abi64=0
-  oldLibs=$LIBS
-  oldCXXFLAGS=$CXXFLAGS
-  LIBS="$LIBS -mabi=64 -mips4"
-  CXXFLAGS="$CXXFLAGS -mabi=64 -mips4"
-  AC_MSG_CHECKING([-mabi=64 compiler flag] )
-  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[const char hw[] = "Hello World\n";]])],
-                 [have_abi64=1])
-  if test "$have_abi64" == "0"; then
-      LIBS=$oldLibs
-      CXXFLAGS=$oldCXXFLAGS
-      AC_MSG_RESULT( [No] )
-  else
-      AC_MSG_RESULT( [Ok] )
-  fi
-  CXXFLAGS="$CXXFLAGS -W -Wall"
-else
-  CXXFLAGS="$CXXFLAGS -W"
 fi
 
 # Checks for library functions.
