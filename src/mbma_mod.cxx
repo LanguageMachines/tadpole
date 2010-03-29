@@ -218,7 +218,7 @@ namespace Mbma {
 	else {
 	  cerr << "PANIEK!!!!" << endl;
 	  cerr << "blijkbaar komt het komt voor" << endl;
-	  cerr << "Stuur de voorbeeldzin bar Ko!" << endl;
+	  cerr << "Stuur de voorbeeldzin naar Ko!" << endl;
 	  result = "0";
 	}
       }
