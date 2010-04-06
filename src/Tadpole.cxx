@@ -705,7 +705,7 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
 					    TimerBlock& timers ){
   vector< vector<mwuChunker::ana> > solutions;
   
-  if (line.length()>1) {
+  if ( !line.empty() ) {
     if (tpDebug) 
       cout << "in: " << line << endl;
     timers.tagTimer.start();
