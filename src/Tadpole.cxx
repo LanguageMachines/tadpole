@@ -769,7 +769,7 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
       
     } //for int i = 0 to num_words
     
-    if ( doMwu ){
+    if ( doMwu && words.size() > 1 ){
       //mwu chunker goes here, otherwise we get a mess when 
       if (tpDebug)
 	cout << "starting mwu Chunking ... \n";
@@ -777,12 +777,12 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
       mwuChunker::Classify(words, final_ana);
       timers.mwuTimer.stop();
       
-    }
-    if (tpDebug) {
-      cout << "\n\nfinished mwu chunking!\n";
-      for( size_t i =0; i < words.size(); i++)
-	cout << i <<": " << words[i] << endl;
-      cout << endl;
+      if (tpDebug) {
+	cout << "\n\nfinished mwu chunking!\n";
+	for( size_t i =0; i < words.size(); i++)
+	  cout << i <<": " << words[i] << endl;
+	cout << endl;
+      }
     }
     string myParserTmpFile = fileName + ".csiparser";
     if ( doParse ){
