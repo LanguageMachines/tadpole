@@ -126,7 +126,8 @@ void init_cgn( const string& dir ) {
     while( getline(tc1, line) ) {
       tmp.clear();
       num = split_at(line, tmp, " ");
-      TAGconv.insert( make_pair( tmp[0], tmp[1] ) );
+      if ( num == 2 )
+	TAGconv.insert( make_pair( tmp[0], tmp[1] ) );
     }
   }
   else
@@ -797,6 +798,8 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
 void Test( const string& infilename, const string& outFileName) {
   // init's are done
   TimerBlock timers;
+  Common::Timer tpTimer;
+  tpTimer.start();
   ofstream outStream;
   if ( !outFileName.empty() ){
     if ( outStream.open( outFileName.c_str() ), outStream.bad() ){
@@ -837,7 +840,7 @@ void Test( const string& infilename, const string& outFileName) {
 	showResults( outStream, solutions[i] ); 
     }
   }
-  
+  tpTimer.stop();
   
   *Log(theErrLog) << "tagging took:     " << timers.tagTimer << endl;
   *Log(theErrLog) << "MBA took:         " << timers.mbmaTimer << endl;
@@ -852,6 +855,7 @@ void Test( const string& infilename, const string& outFileName) {
     *Log(theErrLog) << "Parsing (csi)     took: " << timers.csiTimer << endl;
     *Log(theErrLog) << "Parsing (total)   took: " << timers.parseTimer << endl;
   }
+  *Log(theErrLog) << "Tadpole took:      " << tpTimer << endl;
   if ( !outFileName.empty() )
     *Log(theErrLog) << "results stored in " << outFileName << endl;
   if ( doTok && !keepIntermediateFiles ){
