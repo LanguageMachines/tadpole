@@ -388,12 +388,14 @@ namespace myMblem  {
 	  }
 	}
 
+
 	if (mblemDebug)
 	  cout << "prefixpos = " << prefixpos << endl;
 	UnicodeString lemma = "";
-	if (prefixpos > 0) 
+	if (prefixpos >= 0) {
 	  lemma = UnicodeString( uWord, 0L, prefixpos );
-	size_t i = prefixpos + prefix.length();
+	  prefixpos = prefixpos + prefix.length();
+	}
 	if (mblemDebug)
 	  cout << "post prefix != 0 word: "<< word 
 	       << " lemma: " << lemma
@@ -401,25 +403,27 @@ namespace myMblem  {
 	       << " insstr: " << insstr
 	       << " delstr: " << delstr
 	       << " l_delstr=" << delstr.length()
-	       << " i=" << i
 	       << " l_word=" << uWord.length()
 	       << endl;
 
-	// prefixpos is absurd here
-	//
-	// Ko: 13-5-2008 PROBLEM
-	// This code doesn't seem to do what the comment suggests
-	// what is the intention?
-	if (word.length() - delstr.length())
-	  lemma += UnicodeString( uWord, i, uWord.length() - delstr.length()-i);
-	else // skip delstr, unless delstr is exactly the word
-	  if ( (unsigned)uWord.length() < delstr.length() ||
-	       ( uWord.length()-delstr.length() &&
-		 insstr.empty() ))
-	    lemma += UnicodeString( uWord, i, (uWord.length() -i ) );
-	// end PROBLEM
-	if (!insstr.empty()) 
-	  lemma += insstr.c_str();
+	if ( uWord.endsWith( delstr.c_str() ) ){
+	  if ( uWord.length() - delstr.length() > 0 ){
+	    UnicodeString part;
+	    part = UnicodeString( uWord, prefixpos, uWord.length() - delstr.length() - prefixpos );
+	    lemma += part + UnicodeString( insstr.c_str() );
+	  }
+	  else if ( insstr.empty() ){
+	    // do not delete whole word
+	    lemma += uWord;
+	  }
+	  else {
+	    // but replace if possible
+	    lemma += UnicodeString( insstr.c_str() );
+	  }
+	}
+	else if ( lemma.isEmpty() ){
+	  lemma = uWord;
+	}
 	if (mblemDebug)
 	  cout << "appending lemma " << lemma << " and tag " << restag << endl;
 	lookuptag.push_back( restag );
