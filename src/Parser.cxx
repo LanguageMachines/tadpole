@@ -798,6 +798,8 @@ namespace Parser {
       else
 	*Log(theErrLog) << "couldn't open results file: " << resFileName << endl;
       if ( !keepIntermediateFiles ){
+	remove( fileName.c_str() );
+	remove( resFileName.c_str() );
 	remove( pairsOutName.c_str() );
 	remove( dirOutName.c_str() );
 	remove( relsOutName.c_str() );
