@@ -4,7 +4,7 @@
 #
 # SYNOPSIS
 #
-#   AX_OPENMP([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+#   OPENMP_CHECK([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 #
 # DESCRIPTION
 #
@@ -65,7 +65,7 @@
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
 
-AC_DEFUN([AX_OPENMP], [
+AC_DEFUN([OPENMP_CHECK], [
 AC_PREREQ(2.59) dnl for _AC_LANG_PREFIX
 
 AC_CACHE_CHECK([for OpenMP flag of _AC_LANG compiler], ax_cv_[]_AC_LANG_ABBREV[]_openmp, [save[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
@@ -94,4 +94,4 @@ else
   fi
   m4_default([$1], [AC_DEFINE(HAVE_OPENMP,1,[Define if OpenMP is enabled])])
 fi
-])dnl AX_OPENMP
+])dnl OPENMP_CHECK

@@ -38,8 +38,8 @@ AC_SUBST([LIBTOOL_DEPS])
 AC_LANG([C++])
 
 # check for OpenMP
-AX_OPENMP( [CXXFLAGS="$CXXFLAGS $OPENMP_CXXFLAGS"],
-	   [AC_MSG_ERROR([We need OpenMP, please use a recent compiler!])])
+OPENMP_CHECK( [CXXFLAGS="$CXXFLAGS $OPENMP_CXXFLAGS"],
+	      [AC_MSG_ERROR([We need OpenMP, please use a recent compiler!])])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
