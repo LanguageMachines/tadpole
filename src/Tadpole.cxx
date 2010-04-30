@@ -160,12 +160,12 @@ void usage( const string& progname ) {
        << "\t-s <output field separator> (default tab)\n"
        << "\t-S <port> (run as server instead of reading from testfile)\n"
        << "\t-K : keep intermediate files, (last sentence only) (default false)\n"
-       << "\t-d <debug level> (for more verbosity)\n"; //this is ambiguous with the -d <dirname> option!!! (MvG)
+       << "\t-d <debug level> (for more verbosity)\n" //this is ambiguous with the -d <dirname> option!!! (MvG)
        << "\t--skip=<components> Allows to skip certain Tadpole components.\n" //added --skip (MvG)
        << "\t\tEspecially the dependency parser is resource intensive and may\n"
        << "\t\twant to be skipped when not required. Components are indicated by\n"
        << "\t\tone character, multiple may be combined:\n"
-       << "\t\t t - tokeniser, p - parser, m - morphological analyser\n"
+       << "\t\t t - tokeniser, p - parser, m - morphological analyser\n";
 }
 
 //**** stuff to process commandline options *********************************
