@@ -95,6 +95,7 @@ Mij
 Min
 Mr
 Mrs
+Mrt
 Ms
 Mus
 Mw
@@ -108,6 +109,7 @@ Nic
 Nov
 O
 Oct
+Okt
 Olym
 Org
 Oud-Eng
@@ -290,6 +292,8 @@ jhr
 jl
 joh
 jr
+jul
+jun
 kHz
 kand
 kath
@@ -389,6 +393,7 @@ scholengem
 schr
 scr
 sec
+sep
 sept
 seq
 ser
