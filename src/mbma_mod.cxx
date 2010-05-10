@@ -234,6 +234,9 @@ namespace Mbma {
     
     size_t pos = this_class.find("+");
     if ( pos != string::npos ) { 
+      if ( mbaDebug){
+	cout << "calculate ins/del for " << this_class << endl;
+      }
       pos++;
       if (this_class[pos]=='D') { // delete operation 
 	deletestring = extract( this_class, pos+1, '/' );
@@ -252,6 +255,10 @@ namespace Mbma {
       if ( pos != string::npos )
 	temp += this_class.substr( pos );
       this_class = temp;
+      if ( mbaDebug){
+	cout << "Insert = " << insertstring << ", delete=" << deletestring << endl;
+	cout << "result class=" << this_class << endl;
+      }
     }
     if ( deletestring == "eeer" )
       deletestring = "eer";
@@ -275,6 +282,9 @@ namespace Mbma {
     string this_class;
     for ( long k=0; k< word.length(); ++k ) { 
       this_class = find_class( step, k, classes, nranal );
+      if ( mbaDebug){
+	cout << "Step1::" << step << " " << this_class << endl;
+      }
       string deletestring;
       string insertstring;
       bool eexcept = check_spell_change( this_class, deletestring, insertstring);
@@ -770,10 +780,8 @@ namespace Mbma {
       }
       string this_class = extract(output, k, "[]" );
       k += this_class.length();
-      if (mbaDebug) {
-	cout << "unpacking thisclass "<< this_class;
-	cout << endl;
-      }
+      if (mbaDebug)
+	cout << "unpacking thisclass "<< this_class << endl;
       if ( !this_class.empty() &&
 	   this_class.find("_") == string::npos ) { 
 	if ((this_class[0]=='i') && (result[0]=='['))
@@ -870,6 +878,8 @@ namespace Mbma {
 	    cout << "result now (4): |" << result << "|" << endl;
 	}
       }
+      if (mbaDebug)
+	cout << "result now (5): |" << result << "|" << endl;
     }
     
     // go back to the last non-inflectional
@@ -934,7 +944,13 @@ namespace Mbma {
 	if (thisnranal>nranal)
 	  nranal=thisnranal;
       }
-    
+    if (mbaDebug){
+      cout << "mbma_bb, word=" << word << ", classes=<";
+      for ( size_t i=0; i < classes.size(); ++i )
+	cout << classes[i] << ",";
+      cout << ">" << endl;
+    }    
+
     /* then for each analysis, produce a labeled bracketed string */
     
     /* produce a basic bracketed string, taking care of
