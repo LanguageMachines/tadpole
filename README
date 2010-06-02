@@ -40,6 +40,10 @@ downloaded from
 
 Please consult the installation instructions with these packages.
 
+Tadpole also relies on Python 2.5 or higher, libboost 1.33 or higher,
+and ICU 3.6 or higher. Please consult your system maintainer if you
+cannot install these packages yourself.
+
 When you have downloaded the Tadpole tarball from
 http://ilk.uvt.nl/downloads/pub/software/tadpole , you can untar the
 package, and go to the Tadpole directory. If you installed Timbl,
