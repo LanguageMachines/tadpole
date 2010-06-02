@@ -1,10 +1,10 @@
-Tadpole 0.2-beta
+Tadpole 0.6
 
   A Tagger-Lemmatizer-Morphological-Analyzer-Dependency-Parser for Dutch
-  Version  0.2-beta
+  Version  0.6
   http://ilk.uvt.nl/tadpole
  
-  Copyright 2006, 2007 Bertjan Busser, Antal van den Bosch, and Ko
+  Copyright 2006-2010 Bertjan Busser, Antal van den Bosch, and Ko
   van der Sloot
   ILK Research Group, Faculty of Humanities, Tilburg University
   http://ilk.uvt.nl
@@ -26,88 +26,96 @@ Tadpole 0.2-beta
       http://ilk.uvt.nl/tadpole
 
 ---------------------------------------------------------------------
-Preliminary note
-
-Tadpole can be considered alpha software, and is in a fair state of flux.
-Some intended functionalities are not there yet, such as a dependency
-parser. These will be added very soon. Other functionalities are there, but
-have not been fully tested yet, such as the multi-word chunker. More
-generally, error handling and reporting is still under development.
-
----------------------------------------------------------------------
 Installation and Quick Start
 
-Tadpole relies on Timbl version 6.1 and Mbt version 3.1; Mbt in turn relies
-on Timbl 6.1 to be installed. Tadpole will NOT work with previous versions
-of Timbl and Mbt. The two software packages can be downloaded from
+Tadpole relies on Timbl version 6.3, TimblServer version 1.0, and Mbt
+version 3.2. TimblServer relies on Timbl; Mbt relies on Timbl and
+TimblServer. The logical order of installation is therefore (1) Timbl,
+(2) TimblServer, (3) Mbt, and (4) Tadpole. Tadpole will NOT work with
+previous versions of Timbl and Mbt. The three software packages can be
+downloaded from
 
-  http://ilk.uvt.nl/timbl
-  http://ilk.uvt.nl/mbt
+  http://ilk.uvt.nl/timbl (Timbl and TimblServer)
+  http://ilk.uvt.nl/mbt   (Mbt)
 
-Please consult the installation instructions with these packages. First
-install Timbl, then install Mbt.
+Please consult the installation instructions with these packages.
 
 When you have downloaded the Tadpole tarball from
-http://ilk.uvt.nl/downloads/pub/software/tadpole , you can untar
-the package, and go to the Tadpole directory. You may want to live
-dangerously and type "make" immediately, but you might check the Makefile
-first to verify that the paths to Timbl and Mbt are correct.
+http://ilk.uvt.nl/downloads/pub/software/tadpole , you can untar the
+package, and go to the Tadpole directory. If you installed Timbl,
+TimblSever and Mbt in the same install directory (i.e., you specified
+the same install directory with "--prefix=<installdir>" in all three
+package installations), it is sufficient to the same with Tadpole.
 
-%prompt$> tar zxvf tadpole-0.2-beta.tar.gz
-%prompt$> cd tadpole-0.2-beta
-%prompt$> ./configure <...>
-%prompt$> make 
+%prompt$> tar zxvf tadpole-0.6.tar.gz
+%prompt$> cd tadpole-0.6
+%prompt$> ./configure --prefix=<installdir>
+%prompt$> make && make install
 
-This should make an executable "Tadpole" in the Tadpole src directory. Running
-Tadpole without arguments provides a list of commandline options:
+Invoking the Tadpole binary without arguments prints a basic usage:
 
 %prompt$> ./Tadpole
+Tadpole v.0.6
 Options:
-        -T <taggerconfigfile> (uses Mbt-style settings file)
-        -M <MBMAconfigfile> (morphological analysis)
-                 accepts:
-                t <treefile>
-                m <mode>
-        -L <MBlemconfigfile> (lemmatizer)
-                accepts:
-                p <prefix> (for filenames)
-                O <timbl options>
-        -U <mwuconfigfile> (multiwordchunker)
-                accepts:
-                t <mwu unit file>
-                c <connect_char> (char between tokens in a mwu)
-        -t <testfile
-        -s <output field separator> (default tab)
-        -d <debug level> (for more verbosity)
+	-d <dirName> path to config dir (default ./config)
+	-T <taggerconfigfile> (uses Mbt-style settings file)
+	-M <MBMAconfigfile> (morphological analysis)
+	   accepts:
+		t <treefile>
+		m <mode>
+	-L <MBlemconfigfile> (lemmatizer)
+	   accepts:
+		p <prefix> (for filenames)
+		O <timbl options>
+	-U <mwuconfigfile> (multiwordchunker)
+	   accepts:
+		t <mwu unit file>
+		c <connect_char> (char between tokens in a mwu)
+	-P <parserconfigfile> 
+	   accepts:
+	   to do...
+	-t <testfile>
+	-testdir=<directory> (all files in this dir will be processed
+	-o <outputfile> (default stdout)
+	-outputdir=<outputfile> (default stdout)
+	-s <output field separator> (default tab)
+	-S <port> (run as server instead of reading from testfile)
+	-K : keep intermediate files, (last sentence only) (default false)
+	-d <debug level> (for more verbosity)
+	--skip=<components> Allows to skip certain Tadpole components.
+	  Especially the dependency parser is resource intensive and may
+	  want to be skipped when not required. Components are indicated by
+	  one character, multiple may be combined:
+	  t - tokeniser, p - parser, m - morphological analyser
 
 The following command line is an example run of Tadpole on the provided
 sample text file test.txt
 
 
-%prompt%> ./Tadpole test.txt
+%prompt%> ./Tadpole -t test.txt
 
-This should produce output like this:
+This should produce output (to stdout) like this:
 
-De	LID(bep,stan,rest)	de	[de]
-oprichter	N(soort,ev,basis,zijd,stan)	oprichter	[op][richt][er]
-van	VZ(init)	van	[van]
-Wikipedia	SPEC(deeleigen)	Wikipedia	[Wikipedia]
-,	LET()	,	[,]
-Jimmy	SPEC(deeleigen)	Jimmy	[Jimmy]
-Wales	SPEC(deeleigen)	Wales	[Wales]
-,	LET()	,	[,]
-wil	WW(pv,tgw,ev)	wil	[wil]
-een	LID(onbep,stan,agr)	een	[een]
-nieuwe	ADJ(prenom,basis,met-e,stan)	nieuw	[nieuw][e]
-zoekmachine	N(soort,ev,basis,zijd,stan)	zoekmachine	[zoek][machine]
-lanceren	WW(inf,vrij,zonder)	lanceren	[lanceren]
-.	LET()	.	[.]
+1    De	    de	    [de]   LID(bep,stan,rest)	2	det
+2    oprichter	    oprichter			[op][richt][er]	N(soort,ev,basis,zijd,stan)	8	su
+3    van	    van				[van]		VZ(init)			2	mod
+4    Wikipedia	    Wikipedia			[Wikipedia]	SPEC(deeleigen)			3	obj1
+5    ,		    ,				[,]		LET()				4	punct
+6    Jimmy_Wales    Jimmy_Wales			[Jimmy]_[Wales]	SPEC(deeleigen)			2	app
+7    ,		    ,				[,]		LET()				6	punct
+8    wil	    willen			[wil]		WW(pv,tgw,ev)			0	ROOT
+9    een	    een				[een]		LID(onbep,stan,agr)		11	det
+10   nieuwe	    nieuw			[nieuw][e]	ADJ(prenom,basis,met-e,stan)	11	mod
+11   zoekmachine    zoekmachine			[zoek][machine]	N(soort,ev,basis,zijd,stan)	8	su
+12   lanceren	    lanceren			[lanceren]	WW(inf,vrij,zonder)		vc
+13   .		    .				[.]		LET()				12	punct
 
-The first column contains word tokens; the second column contains the CGN
-tag for each token predicted by Mbt, the memory-based tagger; the third
-column contains the lemmas generated by MBLEM, the memory-based lemmatizer;
-and finally, the fourth column contains a morphological segmentation of the
-word token by MBMA, the memory-based morphological analyzer.
+The first column is a token counter; the second column is the token
+itself, followed by its lemma and its morphological analysis. The
+fifth column is the CGN POS tag. The sixth column points to the
+token counter of the head token of the line's token in the dependency
+graph; the seventh column contains the type of dependency relation
+between the two tokens.
 
 
 ---------------------------------------------------------------------
@@ -119,19 +127,25 @@ der Sloot, Sabine Buchholz, Sander Canisius, Gert Durieux, and Peter
 Berck. 
 
 Thanks to Erik Tjong Kim Sang and Lieve Macken for stress-testing the
-first versions of Tadpole.
+first versions of Tadpole, and to Rogier Kraf, Guy De Pauw, Joost
+Hengstmengel, Frederik Vaassen, Wouter van Atteveldt, Joseph Turian,
+Barbara Plank, Jan-Pieter Kunst, Robert Hensing, and Theo van den
+Heuvel for valuable bug reports, comments, and suggestions for
+improvements.
 
 
 ---------------------------------------------------------------------
 References
 
-Tadpole is described in a paper that is accepted for publication and
-due to appear in December 2007:
+Tadpole is described in the following paper:
 
 Van den Bosch, A., Busser, G.J., Daelemans, W., and Canisius, S. (to
  appear). An efficient memory-based morphosyntactic tagger and parser for
  Dutch, To appear in Selected Papers of the 17th Computational Linguistics in
  the Netherlands Meeting, Leuven, Belgium.
+
+We kindly ask you to refer to this paper if you make use of Tadpole in
+your own work.
 
 You can find more information on components of Tadpole in these papers,
 which can be downloaded from http://ilk.uvt.nl/publications :
@@ -153,6 +167,3 @@ Van den Bosch, A., and Daelemans, W. (1999). Memory-based morphological
 Zavrel, J., and Daelemans W. (1999).  Recent Advances in Memory-Based
  Part-of-Speech Tagging. In: Actas del VI Simposio Internacional de
  Comunicacion Social, Santiago de Cuba, pp. 590-597.
-
-
-
