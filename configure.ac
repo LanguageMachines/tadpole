@@ -4,7 +4,7 @@
 # $URL: $
 
 AC_PREREQ(2.59)
-AC_INIT([Tadpole], [0.6], [timbl@uvt.nl])
+AC_INIT([Tadpole], [0.7], [timbl@uvt.nl])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
