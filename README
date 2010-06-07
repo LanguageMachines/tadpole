@@ -79,9 +79,9 @@ Options:
 	   accepts:
 	   to do...
 	-t <testfile>
-	-testdir=<directory> (all files in this dir will be processed
+	--testdir=<directory> (all files in this dir will be processed
 	-o <outputfile> (default stdout)
-	-outputdir=<outputfile> (default stdout)
+	--outputdir=<outputfile> (default stdout)
 	-s <output field separator> (default tab)
 	-S <port> (run as server instead of reading from testfile)
 	-K : keep intermediate files, (last sentence only) (default false)
@@ -111,7 +111,7 @@ This should produce output (to stdout) like this:
 9    een	    een				[een]		LID(onbep,stan,agr)		11	det
 10   nieuwe	    nieuw			[nieuw][e]	ADJ(prenom,basis,met-e,stan)	11	mod
 11   zoekmachine    zoekmachine			[zoek][machine]	N(soort,ev,basis,zijd,stan)	8	su
-12   lanceren	    lanceren			[lanceren]	WW(inf,vrij,zonder)		vc
+12   lanceren	    lanceren			[lanceren]	WW(inf,vrij,zonder)		8	vc
 13   .		    .				[.]		LET()				12	punct
 
 The first column is a token counter; the second column is the token
@@ -133,9 +133,9 @@ Berck.
 Thanks to Erik Tjong Kim Sang and Lieve Macken for stress-testing the
 first versions of Tadpole, and to Rogier Kraf, Guy De Pauw, Joost
 Hengstmengel, Frederik Vaassen, Wouter van Atteveldt, Joseph Turian,
-Barbara Plank, Jan-Pieter Kunst, Robert Hensing, and Theo van den
-Heuvel for valuable bug reports, comments, and suggestions for
-improvements.
+Barbara Plank, Jan-Pieter Kunst, Robert Hensing, Theo van den Heuvel,
+and Martha van den Hoven for valuable bug reports, comments, and
+suggestions for improvements.
 
 
 ---------------------------------------------------------------------
