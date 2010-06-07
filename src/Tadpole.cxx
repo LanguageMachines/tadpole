@@ -136,7 +136,7 @@ void init_cgn( const string& dir ) {
 
 void usage( const string& progname ) {
   cout << progname << " v." << VERSION << endl << "Options:\n";
-  cout << "\t-d <dirName> path to config dir (default ./config)\n"
+  cout << "\t-c <dirName> path to config dir (default ./config)\n"
        << "\t-T <taggerconfigfile> (uses Mbt-style settings file)\n"
        << "\t-M <MBMAconfigfile> (morphological analysis)\n"
        <<"\t\t accepts:\n"
@@ -154,9 +154,9 @@ void usage( const string& progname ) {
        <<"\t\taccepts:\n"
        <<"\t\t  to do...\n"
        << "\t-t <testfile>\n"
-       << "\t-testdir=<directory> (all files in this dir will be tested\n"
+       << "\t--testdir=<directory> (all files in this dir will be tested\n"
        << "\t-o <outputfile> (default stdout)\n"
-       << "\t-outputdir=<outputfile> (default stdout)\n"
+       << "\t--outputdir=<outputfile> (default stdout)\n"
        << "\t-s <output field separator> (default tab)\n"
        << "\t-S <port> (run as server instead of reading from testfile)\n"
        << "\t-K : keep intermediate files, (last sentence only) (default false)\n"
