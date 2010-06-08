@@ -63,6 +63,7 @@ fi
 if test $prefix = "NONE"; then
    prefix="$ac_default_prefix"
 fi
+
 useICU=1;
 # inspired by feh-1.3.4/configure.ac.  Tnx Tom Gilbert and feh hackers.
 AC_ARG_WITH(icu,
@@ -137,6 +138,12 @@ AC_ARG_WITH(python,
 AM_PATH_PYTHON([2.5],
 	[AC_DEFINE_DIR([PYTHONDIR],pkgpythondir, PYTHONDIR)],
 	[:])
+
+# set PYTHON_EXTRA_LIBS to a non-empty string
+# this fools AC_PYTHON_DEVEL into NOT setting it.
+# That fails on some systems with linking errors
+# we don't need PYTHON_EXTRA_LIBS
+PYTHON_EXTRA_LIBS=" "
 
 AC_PYTHON_DEVEL([>= '2.5'])
 if test "x$PYTHON_CPPFLAGS" != "x"; then
