@@ -226,12 +226,11 @@ $tags{"nbsp"}=" ";
 # print STDERR "Init done\n";
 
 $counter=0;
-@lines=<STDIN>;
-foreach $line (@lines) {
+while( $line = <STDIN> ) {
     $counter++;
 #   print STDERR "$counter\r";
-    chop($line);
-#   print "inputline: $line\n";
+    chomp($line);
+#   print STDERR "inputline: $line\n";
 
 # tokenize
     $line=~s/(<[^<>]+>)/ $1 /g;             # SGML-tags
