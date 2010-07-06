@@ -51,6 +51,8 @@ namespace Parser {
     
     void assign(PyObject* obj) {
       // assume ref == 0, otherwhise call Py_DECREF
+      if ( ref )
+	Py_XDECREF(ref);
       ref = obj;
     }
     
