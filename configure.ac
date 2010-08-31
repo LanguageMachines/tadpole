@@ -53,13 +53,6 @@ AC_HEADER_SYS_WAIT
 
 # Checks for libraries.
 
-if test "$with_boost" != "no"; then
-   AX_BOOST_BASE([1.33])
-   AX_BOOST_FILESYSTEM
-   LIBS="$LIBS $BOOST_FILESYSTEM_LIBS $BOOST_SYSTEM_LIBS"
-   LDFLAGS="$LDFLAGS $BOOST_FILESYSTEM_LDFLAGS $BOOST_SYSTEM_LDFLAGS"
-fi
-
 if test $prefix = "NONE"; then
    prefix="$ac_default_prefix"
 fi

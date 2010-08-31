@@ -39,11 +39,7 @@ contains help-functions for Tadpole, such as
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifdef HAVE_BOOST_FILESYSTEM_PATH_HPP
-#include "boost/version.hpp"
-#include "boost/filesystem/operations.hpp"
-#include "boost/filesystem/path.hpp"
-#else
+#ifdef HAVE_DIRENT_H
 #include <dirent.h>
 #endif
 
@@ -57,35 +53,7 @@ string prefix( const string& path, const string& fn ){
   return fn;
 }
 
-#ifdef HAVE_BOOST_FILESYSTEM_PATH_HPP
-namespace fs =  boost::filesystem;
-
-bool existsDir( const string& dirName ){
-  return fs::exists( fs::path(dirName) );
-}
-void getFileNames( const string& dirName, set<string>& fileNames ){
-  //  errLog << "get file Names " << dirName << endl;
-  fs::directory_iterator end_itr; // default construction yields past-the-end
-  for ( fs::directory_iterator itr( dirName );
-        itr != end_itr;
-        ++itr ) {
-#if BOOST_VERSION < 103301
-#error BOOST: VERSION TOO OLD 
-#else
-    //    errLog << "found leaf " << itr->leaf() << endl;
-# if BOOST_VERSION <= 103400
-    if ( fs::exists( *itr ) && !fs::is_directory( *itr ) )
-      fileNames.insert( itr->leaf() );
-# else
-    if ( is_regular( itr->status() ) )
-      fileNames.insert( itr->leaf() );
-# endif    
-#endif
-  }
-  
-}
-
-#else
+#ifdef HAVE_DIRENT_H
 bool existsDir( const string& dirName ){
   bool result = false;
   DIR *dir = opendir( dirName.c_str() );

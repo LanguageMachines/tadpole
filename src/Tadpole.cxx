@@ -253,6 +253,7 @@ bool parse_args( TimblOpts& Opts ) {
     p_fileName = prefix( c_dirName, p_fileName );
   
   if ( Opts.Find ( "testdir", value, mood)) {
+#ifdef HAVE_DIRENT_H
     doDirTest = true;
     testDirName = value;
     if ( !testDirName.empty() ){
@@ -271,6 +272,9 @@ bool parse_args( TimblOpts& Opts ) {
       *Log(theErrLog) << "empty testdir name!" << endl;
       return false;
     }
+#else
+    *Log(theErrLog) << "--testdir option not supported" << endl;    
+#endif
     Opts.Delete("testdir");
   }
   else if ( Opts.Find( 't', value, mood )) {
