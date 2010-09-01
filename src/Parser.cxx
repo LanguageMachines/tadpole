@@ -243,20 +243,26 @@ namespace Parser {
     }
     else {
       pairs = new TimblAPI( pairsOptions );
-      if ( pairs->Valid() )
+      if ( pairs->Valid() ){
+	*Log(theErrLog) << "reading " << pairsFileName << endl;
 	happy = pairs->GetInstanceBase( pairsFileName );
+      }
       else
 	*Log(theErrLog) << "creating Timbl for pairs failed:" << pairsOptions << endl;
       if ( happy ){
 	dir = new TimblAPI( dirOptions );
-	if ( dir->Valid() )
+	if ( dir->Valid() ){
+	  *Log(theErrLog) << "reading " << dirFileName << endl;
 	  happy = dir->GetInstanceBase( dirFileName );
+	}
 	else
 	  *Log(theErrLog) << "creating Timbl for dir failed:" << dirOptions << endl;
 	if ( happy ){
 	  rels = new TimblAPI( relsOptions );
-	  if ( rels->Valid() )
+	  if ( rels->Valid() ){
+	    *Log(theErrLog) << "reading " << relsFileName << endl;
 	    happy = rels->GetInstanceBase( relsFileName );
+	  }
 	  else
 	    *Log(theErrLog) << "creating Timbl for rels failed:" << relsOptions << endl;
 	}

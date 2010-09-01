@@ -279,8 +279,17 @@ bool parse_args( TimblOpts& Opts ) {
   }
   else if ( Opts.Find( 't', value, mood )) {
     TestFileName = value;
+    ifstream is( value.c_str() );
+    if ( !is ){
+      *Log(theErrLog) << "input stream " << value << " is not readable" << endl;
+      return false;
+    }
     Opts.Delete('t');
   };
+  if ( TestFileName.empty() && fileNames.empty() ){
+    *Log(theErrLog) << "no action without input!" << endl;
+    return false;
+  }
   if ( Opts.Find( "outputdir", value, mood)) {
     outputDirName = value;
     if ( !outputDirName.empty() ){
