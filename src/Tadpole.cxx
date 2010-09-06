@@ -774,12 +774,10 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
       analysis = postprocess(tagged_words[i], lemma, res);
       
       string tmp = words[i] + myOFS + analysis;
-      if (tpDebug)
-	cout << tmp;
       mwuChunker::ana tmp1(tmp);
       final_ana.push_back( tmp1 );
       if (tpDebug){
-	cout << endl;
+	cout << "temporary result " <<  tmp1 << endl;
       }
       res.clear();
       
