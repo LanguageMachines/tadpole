@@ -1,0 +1,7 @@
+pairsFile mbdp-tadpole-alpino.pairs.sampled.small-ibase
+dirFile mbdp-tadpole-alpino.dir.small-ibase
+relsFile mbdp-tadpole-alpino.rels.small-ibase
+pairsOptions -a1 +D +vS+db+di+O
+dirOptions -a1 +D +vS+db+di
+relsOptions -a1 +D +vS+db+di
+groupSize 20

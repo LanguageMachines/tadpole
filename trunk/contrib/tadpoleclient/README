@@ -1,0 +1,21 @@
+tadpoleclient.py is a very simple tadpole client library for python. Made by Maarten van Gompel, adapted from code by Rogier Kraf, licensed under GPLv3. It takes proper care of encodings (see source for details). 
+
+Example:
+
+>>> from tadpoleclient import TadpoleClient
+>>> client = TadpoleClient('localhost',12345)
+>>> response = client.process("Dit is een test.")
+>>> print response
+[(u'Dit', u'dit', u'[dit]', u'VNW(aanw,pron,stan,vol,3o,ev)'), (u'is', u'zijn', u'[zijn]', u'WW(pv,tgw,ev)'), (u'een', u'een', u'[een]', u'LID(onbep,stan,agr)'), (u'test', u'test', u'[test]', u'N(soort,ev,basis,zijd,stan)'), (u'.', u'.', u'[.]', u'LET()')]
+
+For a more extensive example, see test.py
+
+
+
+
+
+
+
+
+
+
