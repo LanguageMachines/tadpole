@@ -1,3 +1,8 @@
+2010-12-15 16:09  sloot
+
+	* [r7432] ChangeLog, configure.ac, include/tadpole/Tadpole.h: made
+	  it work with recent/decent Timbl and Mbt
+
 2010-11-15 16:34  sloot
 
 	* [r6877] .: propset

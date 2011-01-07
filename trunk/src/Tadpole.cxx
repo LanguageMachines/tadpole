@@ -1,9 +1,8 @@
 /*
-  Copyright (c) 2006 - 2010
+  Copyright (c) 2006 - 2011
   Tilburg University
 
   A Tagger-Lemmatizer-Morphological-Analyzer-Dependency-Parser for Dutch
-  Version 0.04
  
   This file is part of Tadpole.
 
@@ -285,11 +284,7 @@ bool parse_args( TimblOpts& Opts ) {
       return false;
     }
     Opts.Delete('t');
-  };
-  if ( TestFileName.empty() && fileNames.empty() ){
-    *Log(theErrLog) << "no action without input!" << endl;
-    return false;
-  }
+  };  
   if ( Opts.Find( "outputdir", value, mood)) {
     outputDirName = value;
     if ( !outputDirName.empty() ){
@@ -330,6 +325,10 @@ bool parse_args( TimblOpts& Opts ) {
     *Log(theErrLog) << "useless -o option" << endl;
     return false;
   }
+  if ( !doServer && TestFileName.empty() && fileNames.empty() ) {
+    *Log(theErrLog) << "no action without input!" << endl;
+    return false;
+  }
 
   if ( doServer ){
     // we use fork(). omp (GCC version) doesn't do well when omp is used
@@ -351,6 +350,7 @@ bool parse_args( TimblOpts& Opts ) {
     }
   }
   else {
+      
 #pragma omp parallel sections
     {
       init_cgn( c_dirName );
