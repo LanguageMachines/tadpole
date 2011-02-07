@@ -164,7 +164,7 @@ void usage( const string& progname ) {
        << "\t\tEspecially the dependency parser is resource intensive and may\n"
        << "\t\twant to be skipped when not required. Components are indicated by\n"
        << "\t\tone character, multiple may be combined:\n"
-       << "\t\t t - tokeniser, p - parser, m - morphological analyser\n";
+       << "\t\t t - tokeniser, p - parser, m - multi-word units\n";
 }
 
 //**** stuff to process commandline options *********************************
