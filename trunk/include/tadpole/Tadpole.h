@@ -1,34 +1,35 @@
 /*
   Copyright (c) 2006 - 2009
   Tilburg University
-  
+
   This file is part of Tadpole.
 
   Tadpole is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by  
-  the Free Software Foundation; either version 3 of the License, or  
-  (at your option) any later version.  
-  
-  Tadpole is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of  
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
-  GNU General Public License for more details.  
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
 
-  You should have received a copy of the GNU General Public License  
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.  
-  
-  For more information and updates, see:                             
-  http://ilk.uvt.nl/tadpole                                          
-*/                                                                   
+  Tadpole is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  For more information and updates, see:
+  http://ilk.uvt.nl/tadpole
+*/
 
 
 #ifndef __DEMO_OPTIONS__
 #define __DEMO_OPTIONS__
 
-#define MAX_NAMELEN 2048 
+#define MAX_NAMELEN 2048
 
 #include <set>
-#include "timbl/LogStream.h"
+#include "ticcutils/LogStream.h"
+#include "ticcutils/Timer.h"
 #include "tadpole/unicode_utils.h"
 
 std::string prefix( const std::string&, const std::string& );
@@ -40,7 +41,7 @@ void decap( UnicodeString &, const std::string &);
 
 void getFileNames( const std::string&, std::set<std::string>& );
 
-extern LogStream *theErrLog;
+extern TiCC::LogStream *theErrLog;
 
 extern std::string myOFS;
 extern int tpDebug;
@@ -49,17 +50,17 @@ extern bool doServer;
 
 class TimerBlock{
 public:
-  Common::Timer parseTimer;
-  Common::Timer tokTimer;
-  Common::Timer mblemTimer;
-  Common::Timer mbmaTimer;
-  Common::Timer mwuTimer;
-  Common::Timer tagTimer;
-  Common::Timer prepareTimer;
-  Common::Timer pairsTimer;
-  Common::Timer relsTimer;
-  Common::Timer dirTimer;
-  Common::Timer csiTimer;
+  TiCC::Timer parseTimer;
+  TiCC::Timer tokTimer;
+  TiCC::Timer mblemTimer;
+  TiCC::Timer mbmaTimer;
+  TiCC::Timer mwuTimer;
+  TiCC::Timer tagTimer;
+  TiCC::Timer prepareTimer;
+  TiCC::Timer pairsTimer;
+  TiCC::Timer relsTimer;
+  TiCC::Timer dirTimer;
+  TiCC::Timer csiTimer;
 };
 
 

@@ -3,7 +3,7 @@
   Tilburg University
 
   A Tagger-Lemmatizer-Morphological-Analyzer-Dependency-Parser for Dutch
- 
+
   This file is part of Tadpole.
 
   Tadpole is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 
 #include <cstdlib>
 #include <cstdio>
-#include <sys/wait.h> 
+#include <sys/wait.h>
 #include <signal.h>
 #include <string>
 #include <cstring>
@@ -60,7 +60,7 @@ string LineTokenizedTestFileName = "";
 int num_modules = 0;
 int mode = 0; // 0 = cmdline, 1 = webdemo
 int tpDebug = 0; //0 for none, more for more output
-string sep = " "; // "&= " for cgi 
+string sep = " "; // "&= " for cgi
 string myOFS = "\t"; // \t
 string skipMods = "";
 bool doTok = true;
@@ -82,13 +82,13 @@ DemoOptions ** ModOpts;
         which sets variables global to that namespace
 	to be used in the init() for that namespace
 
-   Further, 
-   each component provides a Test(File) which writes output to 
+   Further,
+   each component provides a Test(File) which writes output to
         File.<componentname>_out
-   and a Classify(Instance) which produces relevant output 
-        as a string return 
-	or somehwere else, 
-   to be determined later, 
+   and a Classify(Instance) which produces relevant output
+        as a string return
+	or somehwere else,
+   to be determined later,
    after pre- and postprocessing raw classification data
 
 */
@@ -175,7 +175,7 @@ bool parse_args( TimblOpts& Opts ) {
   string value;
   bool mood;
   // We expect a config file for each module
-  // and therefore each module has a specific cmdline switch for 
+  // and therefore each module has a specific cmdline switch for
   // the module config file
   // The switch is the first CAPITAL of the module NAME
   string c_dirName = string(SYSCONF_PATH) + '/' + PACKAGE;
@@ -184,7 +184,7 @@ bool parse_args( TimblOpts& Opts ) {
   string m_fileName = "mconfig";
   string u_fileName = "mwuconfig";
   string p_fileName = "parserconfig";
-  
+
    // is a config dir specified?
   if ( Opts.Find( 'c',   value, mood ) ) {
     c_dirName = value;
@@ -207,7 +207,7 @@ bool parse_args( TimblOpts& Opts ) {
       doParse = false;
     Opts.Delete("skip");
   };
-  
+
   if ( Opts.Find( 'K',   value, mood ) ) {
     keepIntermediateFiles = true;
   }
@@ -226,7 +226,7 @@ bool parse_args( TimblOpts& Opts ) {
   }
   else
     l_fileName = prefix( c_dirName, l_fileName );
-  
+
   // MBMA opts
   if ( Opts.Find( 'M',   value, mood ) ) {
     m_fileName = prefix( c_dirName, value );
@@ -234,7 +234,7 @@ bool parse_args( TimblOpts& Opts ) {
   }
   else
     m_fileName = prefix( c_dirName, m_fileName );
-  
+
   // mwuChunker Opts
   if ( Opts.Find( 'U',   value, mood ) ) {
     u_fileName = prefix( c_dirName, value );
@@ -242,7 +242,7 @@ bool parse_args( TimblOpts& Opts ) {
   }
   else
     u_fileName = prefix( c_dirName, u_fileName );
-  
+
   // dependency parser Opts
   if ( Opts.Find( 'P', value, mood ) ) {
     p_fileName = prefix( c_dirName, value );
@@ -250,7 +250,7 @@ bool parse_args( TimblOpts& Opts ) {
   }
   else
     p_fileName = prefix( c_dirName, p_fileName );
-  
+
   if ( Opts.Find ( "testdir", value, mood)) {
 #ifdef HAVE_DIRENT_H
     doDirTest = true;
@@ -262,7 +262,7 @@ bool parse_args( TimblOpts& Opts ) {
       }
       getFileNames( testDirName, fileNames );
       if ( fileNames.empty() ){
-	*Log(theErrLog) << "error: couln't find any files in directory: " 
+	*Log(theErrLog) << "error: couln't find any files in directory: "
 	     << testDirName << endl;
 	return false;
       }
@@ -272,7 +272,7 @@ bool parse_args( TimblOpts& Opts ) {
       return false;
     }
 #else
-    *Log(theErrLog) << "--testdir option not supported" << endl;    
+    *Log(theErrLog) << "--testdir option not supported" << endl;
 #endif
     Opts.Delete("testdir");
   }
@@ -284,7 +284,7 @@ bool parse_args( TimblOpts& Opts ) {
       return false;
     }
     Opts.Delete('t');
-  };  
+  };
   if ( Opts.Find( "outputdir", value, mood)) {
     outputDirName = value;
     if ( !outputDirName.empty() ){
@@ -350,7 +350,7 @@ bool parse_args( TimblOpts& Opts ) {
     }
   }
   else {
-      
+
 #pragma omp parallel sections
     {
       init_cgn( c_dirName );
@@ -358,7 +358,7 @@ bool parse_args( TimblOpts& Opts ) {
       myMblem::init( c_dirName, l_fileName );
 #pragma omp section
       Mbma::init( c_dirName, m_fileName );
-#pragma omp section 
+#pragma omp section
       {
 	tagger = new MbtAPI( string( "-s " ) + t_fileName, *theErrLog );
       }
@@ -367,7 +367,7 @@ bool parse_args( TimblOpts& Opts ) {
 	if ( doMwu ){
 	  mwuChunker::init( c_dirName, u_fileName);
 	  if ( doParse ){
-	    Common::Timer initTimer;
+	    TiCC::Timer initTimer;
 	    initTimer.start();
 	    Parser::init( c_dirName, p_fileName );
 	    initTimer.stop();
@@ -393,7 +393,7 @@ bool similar( const string& tag, const string& lookuptag,
     lookuptag.find( CGNentry ) != string::npos ;
 }
 
-string postprocess( const string& wstr, const string& lstr, 
+string postprocess( const string& wstr, const string& lstr,
 		    vector<Mbma::MBMAana>& m) {
   vector<string> ltpairs;
   vector<string> wt;
@@ -405,7 +405,7 @@ string postprocess( const string& wstr, const string& lstr,
 
   int nr = split_at( wstr, wt, "/");
 
-  // be robust against words with forward slashes                             
+  // be robust against words with forward slashes
   if ( nr > 1 ){
     tag = wt[nr-1];
     word = "";
@@ -423,7 +423,7 @@ string postprocess( const string& wstr, const string& lstr,
   /*
   if (split_at(wstr, wt, "/") != 2) {
     wt[1] = wt[2];
-  } 
+  }
   word = wt[0];
   tag = wt[1];
   */
@@ -450,7 +450,7 @@ string postprocess( const string& wstr, const string& lstr,
     	cout << ltpairs[i] << " ";
       }
     }
-    
+
     cout << "\n\tmorph analyses: ";
     for (vector<MBMAana>::iterator it=m.begin(); it != m.end(); it++)
       cout << it->getMorph() << " ";
@@ -473,7 +473,7 @@ string postprocess( const string& wstr, const string& lstr,
 
   while ( l<nrlookup &&
 	  tag != lookuptag[l] &&
-	  
+
 	  // Dutch CGN constraints
 	  !similar( tag, lookuptag[l], "hulpofkopp" ) &&
 	  !similar( tag, lookuptag[l], "neut,zelfst" ) &&
@@ -505,23 +505,23 @@ string postprocess( const string& wstr, const string& lstr,
 
 
   // BJ: HERE l is either < nrlookup which means there is some similarity between tag and lookuptag[l], or == nrlookup, which means no match
-  
+
   string res;
   if ( l==nrlookup ) {
     if (tpDebug)
       cout << "NO CORRESPONDING TAG! " << tag << endl;
-    
+
     /* first print the tag. was there a unique lexicon match, and
        the word is not a hicap plus the tagger said proper noun?
-       then copy the tag from the lexicon. Else, believe the 
+       then copy the tag from the lexicon. Else, believe the
        tagger. */
-    
+
     if ( word[0] >= 'A' &&
 	 word[0] <= 'Z' &&
 	 tag.find( "eigen") != string::npos )	{
       //		cout << tag << " "  << word << endl;
       res = tag + myOFS + word;
-    } 
+    }
     else {
       //		cout << tag << " " << lookuplemma[0] << endl;
       res = tag + myOFS + lookuplemma[0];
@@ -531,7 +531,7 @@ string postprocess( const string& wstr, const string& lstr,
     // l != nrlookup
     if ( word[0] >= 'A' &&
 	 word[0] <= 'Z'&&
-	 tag.find( "eigen" ) != string::npos ) {	    
+	 tag.find( "eigen" ) != string::npos ) {
       //		cout << tag << " " << word << endl;
       res = tag + myOFS + word;
     }
@@ -541,10 +541,10 @@ string postprocess( const string& wstr, const string& lstr,
     }
     //	    lookupvisited[l]=1;
   } // else l == nrlookup
-  
+
   if (tpDebug)
     cout << "before morpho: " << res << endl;
-  
+
   // BJ: OK, this was taglemma, now get the morphological analysis in
   vector<string> tag_parts;
   string converted_main_tag = "";
@@ -573,7 +573,7 @@ string postprocess( const string& wstr, const string& lstr,
     for ( size_t q =0 ; q < tag_parts.size(); ++q ) {
       cout << "\tpart #" << q << ": " << tag_parts[q] << endl;
     }
-  
+
   mymap::const_iterator num_c = TAGconv.find(tag_parts[0]);
   if (tpDebug){
     if(num_c != TAGconv.end())
@@ -581,13 +581,13 @@ string postprocess( const string& wstr, const string& lstr,
     else
       cout << "no match!\n";
   }
-  size_t match = 0;	
+  size_t match = 0;
   vector<size_t> matches;
   // since no match is impossible: check anyway
   if ( num_c != TAGconv.end() ) {
     converted_main_tag = num_c->second;
     match = 0;
-    
+
     for ( size_t m_index = 0; m_index < m.size(); ++m_index ) {
       if (tpDebug)
 	cout << "comparing " << converted_main_tag << " with " << m[m_index].getTag() << endl;
@@ -597,8 +597,8 @@ string postprocess( const string& wstr, const string& lstr,
       }
     }
     if (tpDebug) {
-      cout << "main tag " << converted_main_tag 
-	   << " matches " << match 
+      cout << "main tag " << converted_main_tag
+	   << " matches " << match
 	   << " morpho analyses: " << endl;
       for( size_t p=0; p < match; ++p )  {
 	cout << "\tmatch #" << p << " : " << m[matches[p]].getMorph() << endl;
@@ -607,7 +607,7 @@ string postprocess( const string& wstr, const string& lstr,
     //should be(come?) a switch
     if (match == 1) {
       res += myOFS + m[matches[0]].getMorph();
-    } 
+    }
     else {
       // find the best match
       // from here, everything is going to have a double set of square brackets
@@ -617,7 +617,7 @@ string postprocess( const string& wstr, const string& lstr,
 	  cout << "multiple lemma's\n";
 	map<string, int> possible_lemmas;
 	map<string, int>::iterator lemma_count;
-	
+
 	// find unique lemma's
 	for ( size_t q = 0; q < match; ++q ) {
 	  lemma_count = possible_lemmas.find(m[matches[q]].getMorph());
@@ -633,11 +633,11 @@ string postprocess( const string& wstr, const string& lstr,
 	int hit = 0;
 	if ( possible_lemmas.size() >= 1) {
 	  // find best match
-	  // loop through subparts 1 t/m num_tag_parts-1, 
+	  // loop through subparts 1 t/m num_tag_parts-1,
 	  // and match with inflections from each m
 	  int match_count = 0;
 	  int max_count = 0;
-	  
+
 	  string inflection;
 	  for ( size_t q=0; q < match; ++q ) {
 	    match_count = 0;
@@ -667,12 +667,12 @@ string postprocess( const string& wstr, const string& lstr,
 		}
 	    }
 	  }
-	} 			
+	}
 	if ( hit == 1 ) {
 	  if (tpDebug)
 	    cout << "best match: " << m[matches[current_best]].getMorph() << endl;
 	  res += myOFS + m[matches[current_best]].getMorph();
-	} 
+	}
 	else {
 	  // last resort: append all (> 1) lemma's
 	  if (tpDebug)
@@ -691,7 +691,7 @@ string postprocess( const string& wstr, const string& lstr,
 	  }
 	  //res += "]";
 	} // no current_best
-      } 
+      }
       else {
 	// match < 1
 	// fallback option: put the word in DOUBLE bracket's and pretend it's a lemma ;-)
@@ -720,9 +720,9 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
 					    const string& fileName,
 					    TimerBlock& timers ){
   vector< vector<mwuChunker::ana> > solutions;
-  
+
   if ( !line.empty() ) {
-    if (tpDebug) 
+    if (tpDebug)
       cout << "in: " << line << endl;
     timers.tagTimer.start();
     string tagged = tagger->Tag(line);
@@ -737,12 +737,12 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
     size_t num_tagged_words = split_at( tagged, tagged_words, sep );
     if (tpDebug) {
       cout << "#words: " << num_words << endl;
-      for( size_t i = 0; i < num_words; i++) 
+      for( size_t i = 0; i < num_words; i++)
 	cout << "\tword #" << i <<": " << words[i] << endl;
       cout << "#tagged_words: " << num_tagged_words << endl;
-      for( size_t i = 0; i < num_tagged_words; i++) 
+      for( size_t i = 0; i < num_tagged_words; i++)
 	cout << "\ttagged_word #" << i <<": " << tagged_words[i] << endl;
-      
+
     }
     if (num_words && num_words != num_tagged_words - 1) {
       // the last "word" is <utt> which gets added by the tagger
@@ -770,9 +770,9 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
 	       <<"lemma: " << lemma
 	       << endl;
       }
-      
+
       analysis = postprocess(tagged_words[i], lemma, res);
-      
+
       string tmp = words[i] + myOFS + analysis;
       mwuChunker::ana tmp1(tmp);
       final_ana.push_back( tmp1 );
@@ -780,17 +780,17 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
 	cout << "temporary result " <<  tmp1 << endl;
       }
       res.clear();
-      
+
     } //for int i = 0 to num_words
-    
+
     if ( doMwu && words.size() > 1 ){
-      //mwu chunker goes here, otherwise we get a mess when 
+      //mwu chunker goes here, otherwise we get a mess when
       if (tpDebug)
 	cout << "starting mwu Chunking ... \n";
       timers.mwuTimer.start();
       mwuChunker::Classify(words, final_ana);
       timers.mwuTimer.stop();
-      
+
       if (tpDebug) {
 	cout << "\n\nfinished mwu chunking!\n";
 	for( size_t i =0; i < words.size(); i++)
@@ -811,7 +811,7 @@ vector< vector<mwuChunker::ana> > TestLine( const string& line,
 void Test( const string& infilename, const string& outFileName) {
   // init's are done
   TimerBlock timers;
-  Common::Timer tpTimer;
+  TiCC::Timer tpTimer;
   tpTimer.start();
   ofstream outStream;
   if ( !outFileName.empty() ){
@@ -836,25 +836,25 @@ void Test( const string& infilename, const string& outFileName) {
   }
   else
     LineTokenizedTestFileName = infilename;
-  
+
   ifstream IN( LineTokenizedTestFileName.c_str() );
 
   string line;
   while(getline(IN, line)) {
     if ( line.empty() )
       continue;
-    vector< vector<mwuChunker::ana> > solutions 
+    vector< vector<mwuChunker::ana> > solutions
       = TestLine( line,  LineTokenizedTestFileName, timers );
     int solution_size = solutions.size();
     for (int i = 0; i < solution_size; i++) {
       if ( outFileName.empty() )
-	showResults( cout, solutions[i] ); 
+	showResults( cout, solutions[i] );
       else
-	showResults( outStream, solutions[i] ); 
+	showResults( outStream, solutions[i] );
     }
   }
   tpTimer.stop();
-  
+
   *Log(theErrLog) << "tagging took:     " << timers.tagTimer << endl;
   *Log(theErrLog) << "MBA took:         " << timers.mbmaTimer << endl;
   *Log(theErrLog) << "Mblem took:       " << timers.mblemTimer << endl;
@@ -874,7 +874,7 @@ void Test( const string& infilename, const string& outFileName) {
   if ( doTok && !keepIntermediateFiles ){
     // remove linetokenized file
     if ( std::remove(LineTokenizedTestFileName.c_str()) != 0 ) {
-     *Log(theErrLog) << "Error removing " << LineTokenizedTestFileName 
+     *Log(theErrLog) << "Error removing " << LineTokenizedTestFileName
 	  << ", yet we go on..." << endl;
     }
   }
@@ -886,7 +886,7 @@ void serverthread( Sockets::ServerSocket &conn, const string& random ) {
   //by Maarten van Gompel
   string tmpTestFile = string("tadpole-server-in-") + random;
   string tmpOutFile = string("tadpole-server-out-") + random;
-  
+
   try {
     while (true) {
       string data;
@@ -894,11 +894,11 @@ void serverthread( Sockets::ServerSocket &conn, const string& random ) {
 	throw( runtime_error( "read failed" ) );
       if (tpDebug)
 	std::cerr << "Received: [" << data << "]" << "\n";
-      
+
       ofstream infile;
       infile.open(tmpTestFile.c_str());
       infile << data << "\n";
-      
+
       *Log(theErrLog) << "Processing... " << endl;
       infile.close();
       Test( tmpTestFile, tmpOutFile );
@@ -912,19 +912,19 @@ void serverthread( Sockets::ServerSocket &conn, const string& random ) {
       if ( !conn.write( "READY\n" ) ) //all done
        throw( runtime_error( "write failed" ) );
       outfile.close();
-      
+
       if ( std::remove(tmpTestFile.c_str()) != 0 ) {
 	*Log(theErrLog) << "Error removing " << tmpTestFile << ", yet we go on..." << endl;
       }
       if ( std::remove(tmpOutFile.c_str()) != 0 ) {
 	*Log(theErrLog) << "Error removing " << tmpOutFile << ", yet we go on..." << endl;
-      }  
+      }
     }
   }
   catch ( std::exception& e ) {
     if (tpDebug)
       *Log(theErrLog) << "connection lost: " << e.what() << endl;
-  } 
+  }
   *Log(theErrLog) << "Connection closed.\n";
 }
 
@@ -936,13 +936,13 @@ int main(int argc, char *argv[]) {
     exit(0);
   }
   ProgName = argv[0];
-  
+
   try {
     TimblOpts Opts(argc, argv);
     if ( parse_args(Opts) ){
-      //gets a settingsfile for each component, 
+      //gets a settingsfile for each component,
       //and starts init for that mod
-      
+
       if ( !fileNames.empty() ) {
 	string outPath;
 	if ( !outputDirName.empty() )
@@ -953,18 +953,18 @@ int main(int argc, char *argv[]) {
 	  ++it;
 	}
       }
-      else if ( doServer ) {  
+      else if ( doServer ) {
 	//first set up some things to deal with zombies
 	struct sigaction action;
 	action.sa_handler = SIG_IGN;
 	sigemptyset(&action.sa_mask);
 	action.sa_flags = SA_NOCLDWAIT;
-	sigaction(SIGCHLD, &action, NULL); 
-	
+	sigaction(SIGCHLD, &action, NULL);
+
 	srand((unsigned)time(0));
-	
+
 	std::cerr << "Listening on port " << listenport << "\n";
-	
+
 	try
 	  {
 	    // Create the socket
@@ -973,16 +973,16 @@ int main(int argc, char *argv[]) {
 	      throw( runtime_error( "starting server on port " + listenport + " failed" ) );
 	    if ( !server.listen( 5 ) ) {
 	      // maximum of 5 pending requests
-	      throw( runtime_error( "listen(5) failed" ) ); 
+	      throw( runtime_error( "listen(5) failed" ) );
 	    }
 	    while ( true ) {
-	      
+
 	      Sockets::ServerSocket conn;
 	      if ( server.accept( conn ) ){
 		std::cerr << "New connection...\n";
 		char random_number[12];
 		snprintf(random_number, sizeof(random_number), "%d", rand());
-		int pid = fork();				
+		int pid = fork();
 		if (pid < 0) {
 		  std::cerr << "ERROR on fork\n";
 		  exit(EXIT_FAILURE);
@@ -990,7 +990,7 @@ int main(int argc, char *argv[]) {
 		  //		  server = NULL;
 		  serverthread(conn, random_number );
 		  exit(EXIT_SUCCESS);
-		} 
+		}
 	      }
 	      else {
 		throw( runtime_error( "Accept failed" ) );
@@ -1000,7 +1000,7 @@ int main(int argc, char *argv[]) {
 	  {
 	    std::cerr << "Server error:" << e.what() << "\nExiting.\n";
 	  }
-	
+
       } else {
 	Test( TestFileName, outputFileName );
       }
@@ -1012,6 +1012,6 @@ int main(int argc, char *argv[]) {
   Mbma::cleanUp();
   myMblem::cleanUp();
   delete tagger;
-  
+
   return 0;
 }

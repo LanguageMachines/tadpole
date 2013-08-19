@@ -1,24 +1,24 @@
 /*
   Copyright (c) 2006 - 2009
   Tilburg University
-  
+
   This file is part of Tadpole.
 
   Tadpole is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by  
-  the Free Software Foundation; either version 3 of the License, or  
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
   (at your option) any later version.
 
   Tadpole is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of  
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
-  GNU General Public License for more details.  
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License  
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.  
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-  For more information and updates, see:                             
-  http://ilk.uvt.nl/tadpole                                          
+  For more information and updates, see:
+  http://ilk.uvt.nl/tadpole
 */
 
 #ifndef __MWU_CHUNKER__
@@ -44,18 +44,18 @@ namespace mwuChunker {
 
     ana( const std::string& in) {
       std::vector<std::string> elems;
-      size_t i = Timbl::split_at(in, elems, myOFS);
+      size_t i = TiCC::split_at(in, elems, myOFS);
       if ( i > 3) {
 	word = elems[0];
 	std::vector<std::string> parts;
-	int num = Timbl::split_at_first_of( elems[1], parts, "()" );
+	int num = TiCC::split_at_first_of( elems[1], parts, "()" );
 	if ( num < 1 )
 	  throw "dead";
 	else {
 	  tagHead = parts[0];
 	  if ( num > 1 ){
 	    std::vector<std::string> fields;
-	    int size = Timbl::split_at( parts[1], fields, "," );
+	    int size = TiCC::split_at( parts[1], fields, "," );
 	    for ( int j = 0; j < size; ++j ){
 	      tagMods += fields[j];
 	      if ( j < size-1 )
@@ -68,9 +68,9 @@ namespace mwuChunker {
       }
       isMWU = false;
     }
-    
+
     ~ana() {};
-    
+
     void append( const std::string& s, const ana& add ){
       word += s + add.word;
       tagHead += s + add.tagHead;

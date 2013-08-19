@@ -4,7 +4,7 @@
 
   A Tagger-Lemmatizer-Morphological-Analyzer-Dependency-Parser for Dutch
   Version 0.04
- 
+
   This file is part of Tadpole.
 
   Tadpole is free software; you can redistribute it and/or modify
@@ -38,28 +38,29 @@
 
 using namespace std;
 using namespace Timbl;
+using namespace TiCC;
 
 namespace Parser {
   class PyObjectRef {
   private:
     PyObject* ref;
-    
+
   public:
     PyObjectRef() : ref(0) {}
-    
+
     PyObjectRef(PyObject* obj) : ref(obj) {}
-    
+
     void assign(PyObject* obj) {
       // assume ref == 0, otherwhise call Py_DECREF
       if ( ref )
 	Py_XDECREF(ref);
       ref = obj;
     }
-    
+
     operator PyObject* () {
       return ref;
     }
-    
+
     ~PyObjectRef() {
       Py_XDECREF(ref);
     }
@@ -69,18 +70,18 @@ namespace Parser {
   private:
     PyObjectRef module;
     PyObjectRef mainFunction;
-    
+
   public:
     PythonInterface();
     ~PythonInterface();
-    
+
     void parse(const string& depFile,
 	       const string& modFile,
 	       const string& dirFile,
 	       const string& maxDist,
 	       const string& inputFile,
 	       const string& outputFile);
-  };  
+  };
 
   PythonInterface::PythonInterface( ) {
     Py_OptimizeFlag = 1; // enable optimisation (-O) mode
@@ -114,7 +115,7 @@ namespace Parser {
   PythonInterface::~PythonInterface() {
     Py_Finalize();
   }
-  
+
   void PythonInterface::parse(const string& depFile,
 			      const string& modFile,
 			      const string& dirFile,
@@ -131,7 +132,7 @@ namespace Parser {
 					    "--out", outputFile.c_str(),
 					    inputFile.c_str() );
   }
-  
+
   string pairsFileName;
   string pairsOptions = "-a1 +D +vdb+di";
   string dirFileName;
@@ -148,11 +149,11 @@ namespace Parser {
   static PythonInterface *PI;
   static bool isInit = false;
 
-  Common::Timer prepareTimer;
-  Common::Timer relsTimer;
-  Common::Timer pairsTimer;
-  Common::Timer dirTimer;
-  Common::Timer csiTimer;
+  TiCC::Timer prepareTimer;
+  TiCC::Timer relsTimer;
+  TiCC::Timer pairsTimer;
+  TiCC::Timer dirTimer;
+  TiCC::Timer csiTimer;
 
   bool readsettings( const string& cDir, const string& fname ){
     ifstream setfile(fname.c_str(), ios::in);
@@ -280,10 +281,10 @@ namespace Parser {
     if ( ps ){
       if ( ana.size() == 1 ){
 	ps << "__ " << ana[0].getWord() << " __"
-	   << " ROOT ROOT ROOT __ " << ana[0].getTagHead() 
+	   << " ROOT ROOT ROOT __ " << ana[0].getTagHead()
 	   << " __ ROOT ROOT ROOT "
-	   << ana[0].getTagHead() << "^ROOT ROOT ROOT ROOT^" 
-	   << ana[0].getTagMods() 
+	   << ana[0].getTagHead() << "^ROOT ROOT ROOT ROOT^"
+	   << ana[0].getTagMods()
 	   << " _" << endl;
       }
       else {
@@ -312,12 +313,12 @@ namespace Parser {
 	  }
 	  ps << word_1 << " " << word0 << " " << word1
 	     << " ROOT ROOT ROOT "
-	     << tag_1 << " " << tag0 << " " << tag1 
+	     << tag_1 << " " << tag0 << " " << tag1
 	     << " ROOT ROOT ROOT "
 	     << tag0 << "^ROOT ROOT ROOT ROOT^" << mods0
 	     << " _" << endl;
 	}
-	// 
+	//
 	for ( size_t wPos=0; wPos < ana.size(); ++wPos ){
 	  string w_word_1, w_word0, w_word1;
 	  string w_tag_1, w_tag0, w_tag1;
@@ -381,13 +382,13 @@ namespace Parser {
 	      ps << " " << ana[pos+1].getTagHead();
 	    else
 	      ps << " __";
-	    
+
 	    ps << " " << w_tag0 << "^";
 	    if ( pos < ana.size() )
 	      ps << ana[pos].getTagHead();
 	    else
 	      ps << "__";
-	    
+
 	    if ( wPos > pos )
 	      ps << " LEFT " << wPos - pos;
 	    else
@@ -734,7 +735,7 @@ namespace Parser {
 	}
       }
   }
-  
+
   void Parse( vector<mwuChunker::ana>& final_ana, const string& fileName,
 	      TimerBlock& timers ){
     timers.parseTimer.start();
@@ -746,7 +747,7 @@ namespace Parser {
       *Log(theErrLog) << "unable to parse an analisis without words" << endl;
       return;
     }
-    string resFileName = fileName + ".result"; 
+    string resFileName = fileName + ".result";
     string pairsInName = fileName +".pairs.inst";
     string pairsOutName = fileName +".pairs.out";
     string dirInName = fileName + ".dir.inst";

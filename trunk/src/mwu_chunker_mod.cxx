@@ -11,7 +11,7 @@
 
   Tadpole is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
@@ -34,8 +34,9 @@
 #include "tadpole/Tadpole.h" // defines etc.
 #include "tadpole/mwu_chunker_mod.h"
 
-using namespace Timbl;
 using namespace std;
+using namespace Timbl;
+using namespace TiCC;
 
 #define mymap2 multimap<string, vector<string> >
 
@@ -98,8 +99,8 @@ namespace mwuChunker {
 
   void saveAna( std::ostream& os, const vector<ana> &ana ){
     for( size_t i = 0; i < ana.size(); ++i )
-      os << i+1 << myOFS << ana[i].getWord() << myOFS 
-	 << ana[i].getLemma() << myOFS 
+      os << i+1 << myOFS << ana[i].getWord() << myOFS
+	 << ana[i].getLemma() << myOFS
 	 << displayTag( ana[i] ) << myOFS << "0" << myOFS
 	 << myCFS << myOFS << myCFS << myOFS << myCFS << endl;
   }
@@ -225,7 +226,7 @@ namespace mwuChunker {
 	MWUs.insert( make_pair(key, newmwu) );
       }
     }
-    size_t i; 
+    size_t i;
     for( i = 0; i < max; i++) {
       if (mwuDebug)
 	cout << "checking word[" << i <<"]: " << words_in[i] << endl;
@@ -248,7 +249,7 @@ namespace mwuChunker {
 	  for(; i + j + 1 < max && j < max_match; j++) {
 	    if ( match[j] != words_in[i+j+1] ) {
 	      if (mwuDebug)
-		cout << "match " << j <<" (" << match[j] 
+		cout << "match " << j <<" (" << match[j]
 		     << ") doesn't match with word " << i+ j + 1
 		     << " (" << words_in[i+j + 1] <<")\n";
 	      // mismatch in jth word of current mwu
@@ -274,12 +275,12 @@ namespace mwuChunker {
 	    cout <<"MWU: no match\n";
 	  }
 	}
-	// we found a matching mwu, break out of loop thru sentence, 
+	// we found a matching mwu, break out of loop thru sentence,
 	// do useful stuff, and recurse to find more mwus
 	if (matchLength > 0 )
 	  break;
       } //match found
-      else { 
+      else {
 	if(mwuDebug)
 	  cout <<"MWU:check: no match\n";
       }
@@ -298,10 +299,10 @@ namespace mwuChunker {
 	if (mwuDebug){
 	  cout << "concat tag " << cur_ana[i+j].getTagHead()
 	       << "(" << cur_ana[i+j].getTagMods() << ")" << endl;
-	  cout << "gives : " << cur_ana[i].getTagHead() 
+	  cout << "gives : " << cur_ana[i].getTagHead()
 	       << "(" << cur_ana[i].getTagMods() << ")" << endl;
 	}
-	
+
       }
       // now erase words_in[i+1 .. i+matchLenght]
       vector<string>::iterator tmp1 = words_in.begin() + i;
@@ -313,7 +314,7 @@ namespace mwuChunker {
       if (mwuDebug){
 	cout << "tussenstand" << endl;
 	showResults( cout, cur_ana );
-      }      
+      }
       Classify(words_in, cur_ana);
     } //if (matchLength)
     return;

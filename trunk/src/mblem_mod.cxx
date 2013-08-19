@@ -5,21 +5,21 @@
   This file is part of Tadpole.
 
   Tadpole is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by  
-  the Free Software Foundation; either version 3 of the License, or  
-  (at your option) any later version.  
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
 
   Tadpole is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of  
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
-  GNU General Public License for more details.  
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License  
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.  
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-  For more information and updates, see:                             
-      http://ilk.uvt.nl/tadpole                                          
-*/                                                                   
+  For more information and updates, see:
+      http://ilk.uvt.nl/tadpole
+*/
 
 #include <cstdlib>
 #include <string>
@@ -33,6 +33,7 @@
 
 using namespace std;
 using namespace Timbl;
+using namespace TiCC;
 
 namespace myMblem  {
   string lemprefix="mblem/mblem";
@@ -50,7 +51,7 @@ namespace myMblem  {
   void read_transtable() {
     ifstream bron( transtablename.c_str() );
     if ( !bron ) {
-      *Log(theErrLog) << "translation table file '" << transtablename 
+      *Log(theErrLog) << "translation table file '" << transtablename
 	   << "' appears to be missing." << endl;
       exit(1);
     }
@@ -69,7 +70,7 @@ namespace myMblem  {
     return;
   }
 
-  void create_MBlem_defaults() 
+  void create_MBlem_defaults()
   {
     lexname = lemprefix + ".lex";
     transtablename = lemprefix + ".transtable";
@@ -109,19 +110,19 @@ namespace myMblem  {
     }
     return true;
   }
-  
+
 
   void init( const string& cdir, const string& fname) {
     *Log(theErrLog) << "Initiating lemmatizer...\n";
     opts_lexibase = "-a1";
     mblemDebug = tpDebug;
-    if (!readsettings( cdir, fname)) 
+    if (!readsettings( cdir, fname))
       {
 	*Log(theErrLog) << "Cannot read MBLem settingsfile " << fname << endl;
 	exit(1);
       }
     //make it silent
-    opts_lexibase += " +vs -vf";	    
+    opts_lexibase += " +vs -vf";
     create_MBlem_defaults();
     read_transtable();
     //Read in (igtree) data
@@ -180,9 +181,9 @@ namespace myMblem  {
     lookuplemma.clear();
     lookuptag.clear();
 
-    // BJ: 1st order of business: 
+    // BJ: 1st order of business:
     //     split word and tag, and store num of slashes
-    
+
     if (mblemDebug)
       cout << "mblem::Classify starting with " << in << endl;
 
@@ -191,7 +192,7 @@ namespace myMblem  {
     if ( pos != string::npos ) {
       // double slash: unknown word
 
-      // be robust against words with forward slashes                             
+      // be robust against words with forward slashes
       int num = split_at( in, wstr, "/");
       if ( num > 1 ){
         tag = wstr[num-1];
@@ -217,7 +218,7 @@ namespace myMblem  {
 
 	int num = split_at( in, wstr, "/");
 
-	// be robust against words with forward slashes                             
+	// be robust against words with forward slashes
 	if ( num > 1 ){
 	  tag = wstr[num-1];
 	  word = "";
@@ -237,7 +238,7 @@ namespace myMblem  {
 	tag = in.substr(pos+1);
 	*/
 
-      } 
+      }
       else {
 	*Log(theErrLog) << "no word/tag pair in this line: " << in << endl;
 	return "oops";
@@ -250,7 +251,7 @@ namespace myMblem  {
 	cout << "unknown";
       cout << " word: " << word << "\ttag: " << tag << endl;
     }
-    
+
     // BJ: checking specials 1st
     bool special=false;
     //punctuaton
@@ -278,7 +279,7 @@ namespace myMblem  {
       }
     }
     // if it ain't special, call mblem
-    
+
     if (special) {
       lookuptag.push_back( tag );
       lookuplemma.push_back( word );
@@ -286,12 +287,12 @@ namespace myMblem  {
 	cout << "special case, lemma = word, no MBLEM" << endl;
     }
     else {
-      // decapitalize 1st letter, when appropriate  
+      // decapitalize 1st letter, when appropriate
       UnicodeString uWord = word.c_str();
       decap( uWord, tag);
-      
+
       string inst = make_instance(uWord);
-      if (mblemDebug) 
+      if (mblemDebug)
 	cout << "inst: " << inst << endl;
       myLex->Classify(inst, res);
       if (mblemDebug)
@@ -317,7 +318,7 @@ namespace myMblem  {
 	size_t lpos = part.find("+");
 	if ( lpos != string::npos )
 	  restag = part.substr(0, lpos);
-	else 
+	else
 	  restag = part;
 	map<string,string>::const_iterator it = classes.find(restag);
 	if ( it != classes.end() )
@@ -332,7 +333,7 @@ namespace myMblem  {
 	      size_t tmppos = part.find("+", lpos);
 	      if ( tmppos != string::npos )
 		prefix = part.substr(lpos, tmppos - lpos).c_str();
-	      else 
+	      else
 		prefix = part.substr(lpos).c_str();
 	      if (mblemDebug)
 		cout << "prefix=" << prefix << endl;
@@ -345,7 +346,7 @@ namespace myMblem  {
 	      size_t tmppos = part.find("+", lpos);
 	      if ( tmppos != string::npos )
 		delstr = part.substr(lpos, tmppos - lpos);
-	      else 
+	      else
 		delstr = part.substr(lpos);
 	      if (mblemDebug)
 		cout << "delstr=" << delstr << endl;
@@ -358,7 +359,7 @@ namespace myMblem  {
 	      size_t tmppos = part.find("+", lpos);
 	      if ( tmppos != string::npos )
 		insstr = part.substr(lpos, tmppos - lpos);
-	      else 
+	      else
 		insstr = part.substr(lpos);
 	      if (mblemDebug)
 		cout << "insstr=" << insstr << endl;
@@ -370,12 +371,12 @@ namespace myMblem  {
 	  }
 	  lpos++;
 	} // while lpos < pl
-	
+
 	if (mblemDebug){
 	  cout << "part: " << part << " split up in: " << endl;
 	  cout << "pre-prefix word: '" << word << "' prefix: '"
 	       << prefix << "'" << endl;
-	}	
+	}
 	long prefixpos = 0;
 	if ( !prefix.isEmpty() ) {
 	  prefixpos = uWord.indexOf(prefix);
@@ -397,7 +398,7 @@ namespace myMblem  {
 	  prefixpos = prefixpos + prefix.length();
 	}
 	if (mblemDebug)
-	  cout << "post prefix != 0 word: "<< word 
+	  cout << "post prefix != 0 word: "<< word
 	       << " lemma: " << lemma
 	       << " prefix: " << prefix
 	       << " insstr: " << insstr
@@ -428,16 +429,16 @@ namespace myMblem  {
 	  cout << "appending lemma " << lemma << " and tag " << restag << endl;
 	lookuptag.push_back( restag );
 	lookuplemma.push_back( UnicodeToUTF8(lemma) );
-	
+
 	if (mblemDebug)
 	  cout << "Size after " << lookuplemma.size() << " and " << lookuptag.size() << endl;
 	nrlookup++;
-	
-	// wrap up & prep for next iteration      
+
+	// wrap up & prep for next iteration
 	pos = res.find("|");
 	if ( pos != string::npos ) {
 	  more = true;
-	} 
+	}
 	else {
 	  pos = res.length();
 	  if ( pos > 0 )
@@ -458,7 +459,7 @@ namespace myMblem  {
       }
       cout << "\n\n";
     }
-    
+
     vector<string>::iterator lemmatmp = lookuplemma.begin();
     vector<string>::iterator tagtmp = lookuptag.begin();
     while (lemmatmp != lookuplemma.end() && tagtmp != lookuptag.end()) {
@@ -469,5 +470,5 @@ namespace myMblem  {
     res.erase(res.end() -1);
     return res;
   }
-  
+
 }

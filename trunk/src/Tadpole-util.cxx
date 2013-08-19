@@ -5,21 +5,21 @@
   This file is part of Tadpole.
 
   Tadpole is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by  
-  the Free Software Foundation; either version 3 of the License, or  
-  (at your option) any later version.  
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
 
   Tadpole is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of  
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
-  GNU General Public License for more details.  
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License  
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.  
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-  For more information and updates, see:                             
-      http://ilk.uvt.nl/tadpole                                          
-*/                                                                   
+  For more information and updates, see:
+      http://ilk.uvt.nl/tadpole
+*/
 
 /*
 
@@ -44,6 +44,7 @@ contains help-functions for Tadpole, such as
 #endif
 
 using namespace std;
+using namespace TiCC;
 
 string prefix( const string& path, const string& fn ){
   if ( fn.find( "/" ) == string::npos ){
@@ -89,7 +90,7 @@ void decap( string &w, const string &t) {
     cout << "Decapping " << w << " with tag " << t << endl;
   size_t pos = t.find("eigen");
   unsigned int start = 0;
-  if ( pos != string::npos ) 
+  if ( pos != string::npos )
     // don't decap first letter for Eigennamen
     start = 1;
   for ( unsigned int i=start; i < w.length(); ++i )
@@ -103,7 +104,7 @@ void decap( UnicodeString &w, const string &t ) {
     cout << "Decapping " << UnicodeToUTF8(w) << " with tag " << t;
   size_t pos = t.find("eigen");
   unsigned int start = 0;
-  if ( pos != string::npos ) 
+  if ( pos != string::npos )
     // don't decap Eigennamen
     start = 1;
   for ( int i = start; i < w.length(); ++i )

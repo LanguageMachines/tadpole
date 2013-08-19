@@ -1,440 +1,448 @@
+2011-02-07 09:49  mvgompel
+
+	* configure.ac: minor version bump
+
+2011-02-07 09:48  mvgompel
+
+	* src/Tadpole.cxx: fix
+
+2011-01-07 13:09  mvgompel
+
+	* ChangeLog, configure.ac, m4/pkg.m4, src/Tadpole.cxx: fixed nasty
+	  bug that disabled the server mode, release 0.8
+
 2010-12-15 16:09  sloot
 
-	* [r7432] ChangeLog, configure.ac, include/tadpole/Tadpole.h: made
-	  it work with recent/decent Timbl and Mbt
+	* ChangeLog, configure.ac, include/tadpole/Tadpole.h: made it work
+	  with recent/decent Timbl and Mbt
 
 2010-11-15 16:34  sloot
 
-	* [r6877] .: propset
+	* .: propset
 
 2010-11-15 16:12  sloot
 
-	* [r6876] .cvsignore, config/.cvsignore, include/.cvsignore,
+	* .cvsignore, config/.cvsignore, include/.cvsignore,
 	  include/tadpole/.cvsignore, src/.cvsignore: slack removed
 
 2010-11-15 13:20  sloot
 
-	* [r6869] .: Step 3
+	* .: Step 3
 
 2010-11-15 13:19  sloot
 
-	* [r6867] rebase step 1
+	* rebase step 1
 
 2010-09-06 11:01  sloot
 
-	* [r6006] better debug output
+	* better debug output
 
 2010-09-01 11:02  sloot
 
-	* [r5942] backported improvement from Frog
+	* backported improvement from Frog
 
 2010-08-31 14:39  sloot
 
-	* [r5919] get rid of Boost
+	* get rid of Boost
 
 2010-08-01 08:59  antalb
 
-	* [r5611] updated Mbt tagger files: Gertjan van Noord corrections,
-	  repaired invalid CGN tags
+	* updated Mbt tagger files: Gertjan van Noord corrections, repaired
+	  invalid CGN tags
 
 2010-07-06 15:45  sloot
 
-	* [r5321] try to avoid memory leaks
+	* try to avoid memory leaks
 
 2010-07-05 09:34  sloot
 
-	* [r5304] fixed problem witk oneliners without \n
+	* fixed problem witk oneliners without \n
 
 2010-06-08 16:52  mvgompel
 
-	* [r4975] (this is a duplicate of the tadpoleclient in PyNLPl,
-	  ideally it shouldn't be in SVN multiple times, but unfortunately
-	  there seems to be no symbolic link function in SVN). I do think
-	  it has added value to ship it like this with Tadpole (and Frog)
+	* (this is a duplicate of the tadpoleclient in PyNLPl, ideally it
+	  shouldn't be in SVN multiple times, but unfortunately there seems
+	  to be no symbolic link function in SVN). I do think it has added
+	  value to ship it like this with Tadpole (and Frog)
 
 2010-06-08 13:57  sloot
 
-	* [r4964] fixed config problem on recent Ubuntu versions
+	* fixed config problem on recent Ubuntu versions
 
 2010-06-07 10:58  sloot
 
-	* [r4927] fixed usage
+	* fixed usage
 
 2010-06-07 10:52  antalb
 
-	* [r4926] double hyphens for --testdir and --outputdir, corrected
-	  correct output
+	* double hyphens for --testdir and --outputdir, corrected correct
+	  output
 
 2010-06-07 09:35  sloot
 
-	* [r4924] Bumped version after release
+	* Bumped version after release
 
 2010-06-02 21:20  antalb
 
-	* [r4868] a few more details in the new README for version 0.6
+	* a few more details in the new README for version 0.6
 
 2010-06-02 21:01  antalb
 
-	* [r4867] updated the README
+	* updated the README
 
 2010-05-17 12:55  antalb
 
-	* [r4610] resolved issue with words containing "nationaliteit" in
-	  MBMA igtree
+	* resolved issue with words containing "nationaliteit" in MBMA
+	  igtree
 
 2010-05-10 10:42  sloot
 
-	* [r4551] some better logging
+	* some better logging
 
 2010-05-03 10:41  antalb
 
-	* [r4522] several error-driven additions to money, abbreviations,
-	  MWUs
+	* several error-driven additions to money, abbreviations, MWUs
 
 2010-04-30 09:42  antalb
 
-	* [r4515] moved semicolon to the right place
+	* moved semicolon to the right place
 
 2010-04-29 11:19  mvgompel
 
-	* [r4497] added syntax help on --skip
+	* added syntax help on --skip
 
 2010-04-26 14:44  sloot
 
-	* [r4465] use our own homebrewn openmp.m4 check for openMP
+	* use our own homebrewn openmp.m4 check for openMP
 	  to avoid upsetting MaxOSX
 
 2010-04-26 12:19  sloot
 
-	* [r4457] the Tadpole specic python files are now installed in a
-	  subdir of ...../site-packages
+	* the Tadpole specic python files are now installed in a subdir of
+	  ...../site-packages
 	  This to be able to install a separarete parser for Frog
 
 2010-04-26 10:00  sloot
 
-	* [r4449] remove more intermediate files
+	* remove more intermediate files
 
 2010-04-19 13:51  sloot
 
-	* [r4377] backported Frog patch
+	* backported Frog patch
 
 2010-04-13 09:38  sloot
 
-	* [r4335] backported ARGH fix from Frog
+	* backported ARGH fix from Frog
 	  added extra timing
 
 2010-04-08 11:02  mvgompel
 
-	* [r4305] small correction in in-code documentation
+	* small correction in in-code documentation
 
 2010-04-06 15:31  sloot
 
-	* [r4286] previous change caused some trouble in MWU.
+	* previous change caused some trouble in MWU.
 	  fixed now
 
 2010-04-06 14:49  sloot
 
-	* [r4282] backported fix from Frog
+	* backported fix from Frog
 
 2010-03-30 14:40  antalb
 
-	* [r4222] fixed Mac install
+	* fixed Mac install
 
 2010-03-29 13:54  sloot
 
-	* [r4198] found some examples
+	* found some examples
 
 2010-03-29 13:45  sloot
 
-	* [r4197] typo
+	* typo
 
 2010-03-29 13:45  sloot
 
-	* [r4196] added a debug line. Desparately seeking an example!
+	* added a debug line. Desparately seeking an example!
 	  this code is never executed?
 
 2010-03-29 08:55  sloot
 
-	* [r4186] made it work on older systems
+	* made it work on older systems
 
 2010-03-29 08:41  sloot
 
-	* [r4184] satisfy test om Mac OSX
+	* satisfy test om Mac OSX
 
 2010-03-23 10:23  sloot
 
-	* [r4120] propset
+	* propset
 
 2010-03-23 10:19  sloot
 
-	* [r4119] cleaned up further. no more mips or Intel
+	* cleaned up further. no more mips or Intel
 
 2010-03-23 10:04  sloot
 
-	* [r4115] try to be correct
+	* try to be correct
 
 2010-03-23 09:57  sloot
 
-	* [r4114] not used
+	* not used
 
 2010-03-09 09:37  sloot
 
-	* [r3959] some glitches fixed
+	* some glitches fixed
 
 2010-03-01 17:16  sloot
 
-	* [r3837] cleanup, and added timblserver
+	* cleanup, and added timblserver
 
 2010-02-11 10:21  sloot
 
-	* [r3715] I think this is intended
+	* I think this is intended
 
 2010-02-11 10:14  sloot
 
-	* [r3714] partially fixed decapping
+	* partially fixed decapping
 
 2010-02-01 11:49  sloot
 
-	* [r3621] attemp to fix automake stuff
+	* attemp to fix automake stuff
 
 2010-01-27 17:26  sloot
 
-	* [r3597] ouch, this is ugly
+	* ouch, this is ugly
 	  but works on chaos
 
 2010-01-27 11:26  mvgompel
 
-	* [r3590] took a while, but finally fixed the slash/segfault bug
+	* took a while, but finally fixed the slash/segfault bug
 
 2010-01-27 09:44  mvgompel
 
-	* [r3588] removed debug=0, otherwise it can not be properly
-	  overriden on command line
+	* removed debug=0, otherwise it can not be properly overriden on
+	  command line
 
 2010-01-26 09:55  antalb
 
-	* [r3584] oops, reinstated the correct version of the Mbt
-	  settingsfile
+	* oops, reinstated the correct version of the Mbt settingsfile
 
 2010-01-25 22:32  antalb
 
-	* [r3582] turned mblem.tree into utf8
+	* turned mblem.tree into utf8
 
 2010-01-25 22:18  antalb
 
-	* [r3580] turned all of cgn-wotan-dcoi.mbt files into utf8
+	* turned all of cgn-wotan-dcoi.mbt files into utf8
 
 2010-01-25 14:23  mvgompel
 
-	* [r3574] tiny fix
+	* tiny fix
 
 2010-01-25 11:12  mvgompel
 
-	* [r3570] Tadpole expects utf-8 instead of latin-1 ! Adapted
-	  client.
+	* Tadpole expects utf-8 instead of latin-1 ! Adapted client.
 
 2010-01-19 09:08  sloot
 
-	* [r3525] I give up on 'aclocal --install'.
+	* I give up on 'aclocal --install'.
 	  Just add all needed macros to the m4 dir ;{
 
 2010-01-05 14:38  sloot
 
-	* [r3465] new year
+	* new year
 
 2009-12-23 15:29  sloot
 
-	* [r3437] attempt to synchronize parallel output using LogStream
-	  class.
+	* attempt to synchronize parallel output using LogStream class.
 	  Needed a small addition to Mbt.
 
 2009-12-23 13:22  mvgompel
 
-	* [r3434] fix in send buffer
+	* fix in send buffer
 
 2009-12-23 11:18  sloot
 
-	* [r3433] removed oversized parser from installation
+	* removed oversized parser from installation
 
 2009-12-22 20:23  mvgompel
 
-	* [r3429] fixed problem with socket receive buffer and long
-	  responses
+	* fixed problem with socket receive buffer and long responses
 
 2009-12-22 20:18  antalb
 
-	* [r3428] different resolution strategy for selecting among
-	  multiple morphological
+	* different resolution strategy for selecting among multiple
+	  morphological
 	  analyses
 
 2009-12-22 16:30  sloot
 
-	* [r3427] ik wil het nooit meer zien!
+	* ik wil het nooit meer zien!
 
 2009-12-22 16:29  sloot
 
-	* [r3426] weg ermee!!!
+	* weg ermee!!!
 
 2009-12-22 15:58  sloot
 
-	* [r3425] part 2 of part 2
+	* part 2 of part 2
 
 2009-12-22 15:57  sloot
 
-	* [r3423] part1 of part 2
+	* part1 of part 2
 
 2009-12-22 15:49  sloot
 
-	* [r3422] part1
+	* part1
 
 2009-12-22 15:47  sloot
 
-	* [r3421] new larger parser. Size matters!
+	* new larger parser. Size matters!
 
 2009-12-22 15:45  sloot
 
-	* [r3420] die ook maar weg
+	* die ook maar weg
 
 2009-12-22 15:44  sloot
 
-	* [r3419] meuk
+	* meuk
 
 2009-12-22 15:20  sloot
 
-	* [r3418] added large parser files
+	* added large parser files
 
 2009-12-22 15:12  sloot
 
-	* [r3417] larger parser. Size matters!
+	* larger parser. Size matters!
 
 2009-12-22 14:56  sloot
 
-	* [r3416] add the macro dir to autoreconf path
+	* add the macro dir to autoreconf path
 
 2009-12-22 14:17  antalb
 
-	* [r3413] more robustness towards words with slashes
+	* more robustness towards words with slashes
 
 2009-12-22 09:54  sloot
 
-	* [r3402] added macro that is removed from the macro archive
+	* added macro that is removed from the macro archive
 
 2009-11-25 15:42  sloot
 
-	* [r3301] hmm. hope this works.
+	* hmm. hope this works.
 
 2009-11-25 15:05  sloot
 
-	* [r3298] do the same hack as for Mbt
+	* do the same hack as for Mbt
 
 2009-11-25 15:01  sloot
 
-	* [r3297] attempt to fix autoconfigure problems
+	* attempt to fix autoconfigure problems
 
 2009-10-28 13:28  sloot
 
-	* [r3113] Modernized, and bumped version
+	* Modernized, and bumped version
 
 2009-10-28 13:27  sloot
 
-	* [r3112] -R isn't a valid GCC option. -Wl,-R should work
+	* -R isn't a valid GCC option. -Wl,-R should work
 
 2009-10-27 10:32  sloot
 
-	* [r3108] make gcc 4.4 happy
+	* make gcc 4.4 happy
 
 2009-09-08 14:40  sloot
 
-	* [r2924] arghh
+	* arghh
 
 2009-09-08 14:33  sloot
 
-	* [r2923] better OpenMP checking (thanx
+	* better OpenMP checking (thanx
 	  http://www.nongnu.org/autoconf-archive/)
 
 2009-09-07 09:05  sloot
 
-	* [r2901] fixed configure and 'make distcheck'
+	* fixed configure and 'make distcheck'
 
 2009-09-02 14:28  sloot
 
-	* [r2874] cleanup
+	* cleanup
 
 2009-09-02 13:04  sloot
 
-	* [r2869] more props
+	* more props
 
 2009-09-02 12:59  sloot
 
-	* [r2868] historic remains cleared
+	* historic remains cleared
 
 2009-09-02 12:25  sloot
 
-	* [r2866] cleaned up
+	* cleaned up
 
 2009-09-02 10:47  sloot
 
-	* [r2863] more properties set
+	* more properties set
 
 2009-09-02 10:31  sloot
 
-	* [r2862] removed some old stuff
+	* removed some old stuff
 	  propsets
 
 2009-09-02 10:22  sloot
 
-	* [r2860] propset
+	* propset
 
 2009-08-31 15:30  sloot
 
-	* [r2851] ugly hack to avoid NONE dir's after configure. I suppose
-	  there is a better way ;{
+	* ugly hack to avoid NONE dir's after configure. I suppose there is
+	  a better way ;{
 	  But seems to work ;)
 
 2009-08-31 14:49  sloot
 
-	* [r2850] oesp. forgotten to add to the dist
+	* oesp. forgotten to add to the dist
 
 2009-08-28 21:00  mvgompel
 
-	* [r2843] Added python-tadpoleclient library and test (documented)
+	* Added python-tadpoleclient library and test (documented)
 
 2009-08-27 21:27  mvgompel
 
-	* [r2838] Server mode now says "READY" when done processing input
-	  and ready for new input
+	* Server mode now says "READY" when done processing input and ready
+	  for new input
 
 2009-08-25 08:48  sloot
 
-	* [r2830] fixed forking problems
+	* fixed forking problems
 
 2009-08-24 13:57  sloot
 
-	* [r2828] cleaned up timer stuff
+	* cleaned up timer stuff
 
 2009-08-19 16:36  
 
-	* [r2822] added Dhr. to Dutch abbreviation list
+	* added Dhr. to Dutch abbreviation list
 
 2009-08-19 11:06  
 
-	* [r2821] make sure that rand() is more random :{
+	* make sure that rand() is more random :{
 
 2009-08-19 10:53  
 
-	* [r2820] fixed problem with fork() and omp.
+	* fixed problem with fork() and omp.
 	  servermode now sort-of works
 
 2009-08-18 14:58  
 
-	* [r2819] Ok, without forking, parsing works also.
+	* Ok, without forking, parsing works also.
 	  But multiple clients don't work yet.
 	  Did that ever work?
 
 2009-08-18 14:51  
 
-	* [r2818] For the socket interface, we now use the Socket class
-	  from Timbl 6.2
+	* For the socket interface, we now use the Socket class from Timbl
+	  6.2
 	  Another 6.2 dependency!
 	  
 	  REMARK: Parsing fails. Was never tested by Maarten.
@@ -443,1127 +451,1116 @@
 
 2009-08-18 13:18  
 
-	* [r2817] Now we use Common::Timer from Timbl6.2 to time the
-	  stages.
+	* Now we use Common::Timer from Timbl6.2 to time the stages.
 	  So Timbl 6.2 is obligatory!
 	  Bumped version to 0.4 to signal this
 
 2009-08-18 09:20  
 
-	* [r2814] added cleanup methods
+	* added cleanup methods
 
 2009-05-25 08:21  
 
-	* [r2601] needed for configuration
+	* needed for configuration
 
 2009-05-20 10:46  
 
-	* [r2600] Added server support to Tadpole, use -S <port> switch
+	* Added server support to Tadpole, use -S <port> switch
 
 2009-05-18 13:01  
 
-	* [r2593] refixed autfneuk fixes for Boost and Python
+	* refixed autfneuk fixes for Boost and Python
 
 2009-05-11 12:41  
 
-	* [r2589] made compiler shut up
+	* made compiler shut up
 
 2009-04-21 15:20  
 
-	* [r2587] also use BOOST_SYSTEM_LIBS and BOOST_SYSTEM_LDFLAGS
-	  (introduced by boost 1.35)
+	* also use BOOST_SYSTEM_LIBS and BOOST_SYSTEM_LDFLAGS (introduced
+	  by boost 1.35)
 
 2009-04-20 14:02  
 
-	* [r2586] attempt to make it work for Antal
+	* attempt to make it work for Antal
 
 2009-04-15 15:18  
 
-	* [r2585] better UnicodeString replacement handling for non-ICU
-	  case
+	* better UnicodeString replacement handling for non-ICU case
 
 2009-04-15 13:35  
 
-	* [r2584] first attempt for --with-icu=no
+	* first attempt for --with-icu=no
 
 2009-04-15 10:25  
 
-	* [r2583] make one-liners to prevent messing up when running in
-	  parallel
+	* make one-liners to prevent messing up when running in parallel
 
 2009-04-15 09:56  
 
-	* [r2582] now we use ICU's io lib to output UnicodeString
+	* now we use ICU's io lib to output UnicodeString
 
 2009-04-14 09:42  
 
-	* [r2580] attempt top make '--with-boost=no' work
+	* attempt top make '--with-boost=no' work
 
 2009-04-07 13:34  
 
-	* [r2576] fixed boost config?
+	* fixed boost config?
 
 2009-04-07 13:33  
 
-	* [r2575] adaptted to other BOOST m4 config
+	* adaptted to other BOOST m4 config
 
 2009-04-07 09:40  
 
-	* [r2574] smaal fixes
+	* smaal fixes
 
 2009-04-01 15:42  
 
-	* [r2568] try different boost macros
+	* try different boost macros
 
 2009-03-30 14:05  
 
-	* [r2566] added config for smaller parser
+	* added config for smaller parser
 
 2009-03-24 17:06  
 
-	* [r2565] removed debug lines
+	* removed debug lines
 
 2009-03-24 17:01  
 
-	* [r2564] probably fixed boost stuff
+	* probably fixed boost stuff
 
 2009-03-24 16:47  
 
-	* [r2563] attempt to fix older boost version
+	* attempt to fix older boost version
 
 2009-03-24 15:40  
 
-	* [r2562] be less picky on ICU version
+	* be less picky on ICU version
 
 2009-03-24 15:39  
 
-	* [r2561] unsigned problems
+	* unsigned problems
 
 2009-03-24 15:29  
 
-	* [r2560] better message
+	* better message
 
 2009-03-24 15:20  
 
-	* [r2559] needed!
+	* needed!
 
 2009-03-24 15:16  
 
-	* [r2558] more cleanup
+	* more cleanup
 
 2009-03-24 13:52  
 
-	* [r2557] poetswerk
+	* poetswerk
 
 2009-03-24 11:28  
 
-	* [r2556] some cleanup
+	* some cleanup
 
 2009-03-23 16:28  
 
-	* [r2555] removed a debugging line
+	* removed a debugging line
 
 2009-03-23 16:25  
 
-	* [r2554] first attempt for a UTF8 aware Tadpole
+	* first attempt for a UTF8 aware Tadpole
 
 2009-03-23 10:14  
 
-	* [r2553] muh
+	* muh
 
 2009-03-23 10:12  
 
-	* [r2552] added C++ wrappers for ICU
+	* added C++ wrappers for ICU
 
 2009-03-18 13:59  
 
-	* [r2549] - added -K (keep intermediate files) option
+	* - added -K (keep intermediate files) option
 	  - don't show timing for skipped modules
 
 2009-03-17 16:25  
 
-	* [r2548] fix boost stuff
+	* fix boost stuff
 
 2009-03-17 16:05  
 
-	* [r2547] -added BOOST_FILESYSTEM to config. Use that for directory
-	  and file operations
+	* -added BOOST_FILESYSTEM to config. Use that for directory and
+	  file operations
 
 2009-03-17 13:17  
 
-	* [r2545] added -o and -outputdir= options
+	* added -o and -outputdir= options
 
 2009-03-16 16:04  
 
-	* [r2543] * added code for a -testdir option to test all files from
+	* * added code for a -testdir option to test all files from
 	  testdir. works, but can be improved (UNIX only!)
 	  * some cleanup
 
 2009-02-14 22:40  
 
-	* [r2479] new instance bases for the parser in Tadpole (bigger,
-	  better)
+	* new instance bases for the parser in Tadpole (bigger, better)
 
 2009-02-10 14:51  
 
-	* [r2475] more parallel
+	* more parallel
 
 2009-01-26 15:50  
 
-	* [r2470] added 'unlink' statements. remarkable speedup on Ubuntu
-	  8.10
+	* added 'unlink' statements. remarkable speedup on Ubuntu 8.10
 	  groupSize is configurable now
 
 2009-01-26 10:49  
 
-	* [r2469] another check for Python.h
+	* another check for Python.h
 
 2009-01-26 10:14  
 
-	* [r2468] fix m4 stuff
+	* fix m4 stuff
 
 2009-01-21 15:29  
 
-	* [r2460] modernize
+	* modernize
 
 2009-01-21 15:29  
 
-	* [r2459] attempt to speedup IO
+	* attempt to speedup IO
 
 2009-01-21 14:24  
 
-	* [r2457] removed spurious output line
+	* removed spurious output line
 
 2009-01-21 11:43  
 
-	* [r2456] next attempt to make Parser preparation more insightfull
+	* next attempt to make Parser preparation more insightfull
 
 2009-01-20 15:37  
 
-	* [r2455] try to make preparing more understandable.
+	* try to make preparing more understandable.
 	  more to do
 
 2009-01-19 14:55  
 
-	* [r2450] oesp. removed to many lines
+	* oesp. removed to many lines
 
 2009-01-19 14:30  
 
-	* [r2449] better
+	* better
 
 2009-01-19 14:12  
 
-	* [r2447] The csi script is initilized only once
+	* The csi script is initilized only once
 
 2009-01-13 16:19  
 
-	* [r2445] close file
+	* close file
 
 2009-01-13 15:48  
 
-	* [r2444] ugly fix
+	* ugly fix
 
 2009-01-13 15:42  
 
-	* [r2443] ai
+	* ai
 
 2009-01-13 15:15  
 
-	* [r2442] small improvement
+	* small improvement
 
 2009-01-13 13:46  
 
-	* [r2441] fixed building with python
+	* fixed building with python
 	  PYTHONPATH is set ok at runtime
 
 2009-01-12 16:21  
 
-	* [r2439] bumped year
+	* bumped year
 	  removed boost.python stuff
 	  first attempt to use Python C API
 
 2009-01-07 13:05  
 
-	* [r2427] attempt to fix
+	* attempt to fix
 
 2009-01-07 09:27  
 
-	* [r2424] oesp
+	* oesp
 
 2009-01-07 09:14  
 
-	* [r2423] using boost::python is not a good idea atm
+	* using boost::python is not a good idea atm
 
 2009-01-07 09:03  
 
-	* [r2422] cleanup
+	* cleanup
 
 2009-01-05 16:52  
 
-	* [r2421] improved mwu handling
+	* improved mwu handling
 	  added boost entry to configuation
 
 2008-12-16 10:38  sloot
 
-	* [r2410] fixed parsing for short sentences. Can be optimized!
+	* fixed parsing for short sentences. Can be optimized!
 
 2008-12-15 14:40  sloot
 
-	* [r2409] prepare script not longer needed
+	* prepare script not longer needed
 
 2008-12-15 14:35  sloot
 
-	* [r2408] preparation is done using C++ code. (Not optimized et al)
+	* preparation is done using C++ code. (Not optimized et al)
 
 2008-12-10 16:28  sloot
 
-	* [r2406] started to implement file preparation for parsing. can be
+	* started to implement file preparation for parsing. can be
 	  optimized!
 
 2008-12-08 16:39  sloot
 
-	* [r2402] removed
+	* removed
 
 2008-12-08 10:26  sloot
 
-	* [r2401] more timing added
+	* more timing added
 
 2008-12-08 09:32  sloot
 
-	* [r2400] fixed tokenize time.
+	* fixed tokenize time.
 	  display real mblem time now
 
 2008-12-02 16:41  sloot
 
-	* [r2399] rudimentary timing
+	* rudimentary timing
 
 2008-12-02 10:59  sloot
 
-	* [r2397] the 3 Timbl's can run in parallel
+	* the 3 Timbl's can run in parallel
 
 2008-12-01 16:22  sloot
 
-	* [r2396] added experimental code for another (better?) output
-	  format
+	* added experimental code for another (better?) output format
 
 2008-11-26 14:09  sloot
 
-	* [r2390] suppres messages from the parser script
+	* suppres messages from the parser script
 
 2008-11-26 14:01  sloot
 
-	* [r2389] the parse result is read back into the analysis now
+	* the parse result is read back into the analysis now
 	  added config file for the parser
 
 2008-11-25 15:03  sloot
 
-	* [r2387] be consequent
+	* be consequent
 
 2008-11-25 14:33  sloot
 
-	* [r2386] if we set PYTHON, it's wise to use it
+	* if we set PYTHON, it's wise to use it
 
 2008-11-25 09:45  sloot
 
-	* [r2385] oesp. we need a (d/r)ecent Timbl
+	* oesp. we need a (d/r)ecent Timbl
 
 2008-11-24 16:38  sloot
 
-	* [r2384] aiaiai
+	* aiaiai
 
 2008-11-24 16:35  sloot
 
-	* [r2383] New files
+	* New files
 
 2008-11-24 16:16  sloot
 
-	* [r2382] not needed
+	* not needed
 
 2008-11-24 16:13  sloot
 
-	* [r2381] added python stuff to the autoconfiguration
+	* added python stuff to the autoconfiguration
 
 2008-11-18 15:51  sloot
 
-	* [r2373] new file
+	* new file
 
 2008-11-18 15:50  sloot
 
-	* [r2372] new files
+	* new files
 
 2008-11-18 15:46  sloot
 
-	* [r2371] this works. but is clumsy and contains a lot of magic.
+	* this works. but is clumsy and contains a lot of magic.
 	  Lot to do!
 
 2008-11-18 15:04  sloot
 
-	* [r2370] smaller trees
+	* smaller trees
 
 2008-11-18 14:21  sloot
 
-	* [r2369] made it working for me on erebus
+	* made it working for me on erebus
 
 2008-11-18 10:57  sloot
 
-	* [r2368] next step
+	* next step
 
 2008-11-18 10:43  sloot
 
-	* [r2367] python scripts to run the dependency parser
+	* python scripts to run the dependency parser
 
 2008-11-18 09:47  sloot
 
-	* [r2365] first Dependency parser attempt
+	* first Dependency parser attempt
 
 2008-11-17 10:56  sloot
 
-	* [r2364] oesp
+	* oesp
 
 2008-11-17 10:29  sloot
 
-	* [r2363] now we continue to search for the longest match!
+	* now we continue to search for the longest match!
 
 2008-11-12 17:30  sloot
 
-	* [r2362] starting to fix MWU chunker
+	* starting to fix MWU chunker
 	  changed output to accomodate DepPaarser
 
 2008-09-15 11:07  sloot
 
-	* [r2293] TPtokenize is configured now to search its data at the
-	  'right' place
+	* TPtokenize is configured now to search its data at the 'right'
+	  place
 
 2008-08-12 14:38  sloot
 
-	* [r2269] improved config
+	* improved config
 
 2008-08-11 13:44  sloot
 
-	* [r2263] made icpc more strict using '-Wcheck' (-Wall isn unwise)
+	* made icpc more strict using '-Wcheck' (-Wall isn unwise)
 
 2008-08-11 09:06  sloot
 
-	* [r2260] fixed icpc OpenMP support
+	* fixed icpc OpenMP support
 
 2008-07-14 13:42  sloot
 
-	* [r2247] modified after reinstall
+	* modified after reinstall
 
 2008-07-14 12:08  sloot
 
-	* [r2230] moved
+	* moved
 
 2008-07-08 14:32  sloot
 
-	* [r2219] simple mofification to skip some modules
+	* simple mofification to skip some modules
 
 2008-06-23 15:07  sloot
 
-	* [r2201] gcc 4.3 is happy now
+	* gcc 4.3 is happy now
 
 2008-06-17 12:56  sloot
 
-	* [r2196] more cleanups
+	* more cleanups
 
 2008-06-17 10:29  sloot
 
-	* [r2195] more cleanup
+	* more cleanup
 
 2008-06-17 08:54  sloot
 
-	* [r2194] more cleaner code
+	* more cleaner code
 
 2008-06-16 14:07  sloot
 
-	* [r2193] more cleanup
+	* more cleanup
 
 2008-06-16 13:47  sloot
 
-	* [r2192] cleanups
+	* cleanups
 
 2008-06-16 13:08  sloot
 
-	* [r2191] more c++ like
+	* more c++ like
 
 2008-06-16 09:57  sloot
 
-	* [r2190] reshuffling
+	* reshuffling
 
 2008-06-16 08:45  sloot
 
-	* [r2189] removed unused cleanup() fuinction
+	* removed unused cleanup() fuinction
 
 2008-06-09 10:19  sloot
 
-	* [r2171] svn aware now
+	* svn aware now
 
 2008-05-13 14:22  sloot
 
-	* [r2128] refactored more
+	* refactored more
 
 2008-05-13 12:26  sloot
 
-	* [r2127] more refactoring. more to do
+	* more refactoring. more to do
 
 2008-05-13 12:13  sloot
 
-	* [r2126] and more cleanup
+	* and more cleanup
 
 2008-05-13 11:29  sloot
 
-	* [r2125] minimal changes
+	* minimal changes
 
 2008-05-13 11:06  sloot
 
-	* [r2124] small improvement
+	* small improvement
 
 2008-05-13 08:12  sloot
 
-	* [r2123] code cleanup
+	* code cleanup
 
 2008-05-13 07:55  sloot
 
-	* [r2122] code cleanup and TAGGED a PROBLEM
+	* code cleanup and TAGGED a PROBLEM
 
 2008-05-13 07:13  sloot
 
-	* [r2121] cleaned up debug code
+	* cleaned up debug code
 
 2008-05-13 07:11  sloot
 
-	* [r2120] replaced terrible clumsy code by one-liner
+	* replaced terrible clumsy code by one-liner
 
 2008-05-06 13:50  sloot
 
-	* [r2113] more debugging!
+	* more debugging!
 
 2008-05-06 13:49  sloot
 
-	* [r2112] small improvement again
+	* small improvement again
 
 2008-05-06 13:31  sloot
 
-	* [r2111] cleanup
+	* cleanup
 
 2008-05-06 12:52  sloot
 
-	* [r2110] small update
+	* small update
 
 2008-05-06 12:26  sloot
 
-	* [r2109] more debug cleanup
+	* more debug cleanup
 
 2008-05-06 12:17  sloot
 
-	* [r2108] mblem honours own 'd' option now
+	* mblem honours own 'd' option now
 
 2008-05-06 12:02  sloot
 
-	* [r2107] it's 2008!
+	* it's 2008!
 
 2008-05-06 12:00  sloot
 
-	* [r2106] cleaned up DEBUG mess
+	* cleaned up DEBUG mess
 
 2008-05-06 11:29  sloot
 
-	* [r2105] removed some slack
+	* removed some slack
 	  also fixed strange DARING thing...
 
 2008-05-06 10:52  sloot
 
-	* [r2104] it's 2008 now!
+	* it's 2008 now!
 
 2008-04-22 15:24  sloot
 
-	* [r2096] small clearifying patch
+	* small clearifying patch
 
 2008-04-22 14:41  sloot
 
-	* [r2095] removed WEB demo stuff
+	* removed WEB demo stuff
 
 2008-04-15 14:42  sloot
 
-	* [r2084] One README left
+	* One README left
 
 2008-03-31 10:29  sloot
 
-	* [r2015] added compiler flags for gcc and fixed warnings that
-	  showed up then
+	* added compiler flags for gcc and fixed warnings that showed up
+	  then
 
 2008-03-18 10:47  sloot
 
-	* [r1998] added ignores
+	* added ignores
 
 2008-03-18 09:44  sloot
 
-	* [r1995] - added libtool awareness
+	* - added libtool awareness
 	  - bumped version
 
 2008-02-20 13:06  sloot
 
-	* [r1953] fixed PKG_* stuff
+	* fixed PKG_* stuff
 
 2008-01-22 15:22  sloot
 
-	* [r1910] added pkg-config stuff
+	* added pkg-config stuff
 
 2007-12-04 09:44  sloot
 
-	* [r1820] changed
+	* changed
 
 2007-12-04 09:44  sloot
 
-	* [r1819] changed order of tests. test for libTimbl and libMbt
-	  aftet sockets check.
+	* changed order of tests. test for libTimbl and libMbt aftet
+	  sockets check.
 
 2007-12-03 14:03  sloot
 
-	* [r1815] finishing packaging, i hope
+	* finishing packaging, i hope
 
 2007-11-28 14:58  sloot
 
-	* [r1798] phew again
+	* phew again
 
 2007-11-28 14:24  sloot
 
-	* [r1795] fixed build for openmp for g++ and when CXX=xlc++
+	* fixed build for openmp for g++ and when CXX=xlc++
 
 2007-11-28 11:15  sloot
 
-	* [r1793] conditional mabi=64 test
+	* conditional mabi=64 test
 
 2007-11-28 11:03  sloot
 
-	* [r1792] changed tests for libTimbl and libMbt
+	* changed tests for libTimbl and libMbt
 
 2007-11-26 14:53  sloot
 
-	* [r1784] removed unused (and wrong) unpanic function
+	* removed unused (and wrong) unpanic function
 
 2007-11-26 14:09  sloot
 
-	* [r1783] cleaned build
+	* cleaned build
 
 2007-11-26 10:37  sloot
 
-	* [r1777] added -beta to version.
+	* added -beta to version.
 	  added -mabi=64 test
 
 2007-11-06 14:45  sloot
 
-	* [r1770] fixed PATH
+	* fixed PATH
 
 2007-11-06 14:24  sloot
 
-	* [r1767] more to ignore
+	* more to ignore
 
 2007-11-06 14:22  sloot
 
-	* [r1766] fixed, sort of...
+	* fixed, sort of...
 
 2007-11-06 13:46  sloot
 
-	* [r1760] replaced README by README.in
+	* replaced README by README.in
 
 2007-11-06 13:21  sloot
 
-	* [r1759] to ignore
+	* to ignore
 
 2007-11-06 13:20  sloot
 
-	* [r1758] realy need these files...
+	* realy need these files...
 
 2007-11-05 14:19  sloot
 
-	* [r1755] fixed
+	* fixed
 
 2007-11-05 14:05  sloot
 
-	* [r1754] small cleanup
+	* small cleanup
 
 2007-11-05 13:23  sloot
 
-	* [r1753] removed tagger_mod
+	* removed tagger_mod
 
 2007-11-05 13:23  sloot
 
-	* [r1752] oeps
+	* oeps
 
 2007-11-05 13:05  sloot
 
-	* [r1751] not needed anymore
+	* not needed anymore
 
 2007-11-05 13:05  sloot
 
-	* [r1750] now we use the MBT API directly
+	* now we use the MBT API directly
 	  small code cleanup
 
 2007-11-05 09:39  sloot
 
-	* [r1749] changed config
+	* changed config
 
 2007-10-31 13:27  sloot
 
-	* [r1746] moved to ./config dir, except for tokenize.pl, which is
-	  moved to ./src
+	* moved to ./config dir, except for tokenize.pl, which is moved to
+	  ./src
 
 2007-10-31 11:34  sloot
 
-	* [r1745] included trivial linetokenize.c program as function in
+	* included trivial linetokenize.c program as function in
 	  Tadpole-util
 
 2007-10-29 14:41  sloot
 
-	* [r1744] mbt dir not needed anymore
+	* mbt dir not needed anymore
 
 2007-10-29 14:08  sloot
 
-	* [r1742] added test for libTimbl and libMbt
+	* added test for libTimbl and libMbt
 
 2007-10-29 12:53  sloot
 
-	* [r1741] life got more easy now
+	* life got more easy now
 
 2007-10-29 09:44  sloot
 
-	* [r1740] moved to config dir
+	* moved to config dir
 
 2007-10-26 22:08  antalb
 
-	* [r1739] repaired another problem when prefix not found
+	* repaired another problem when prefix not found
 
 2007-10-26 21:01  antalb
 
-	* [r1738] ready for 0.04
+	* ready for 0.04
 
 2007-10-26 20:19  antalb
 
-	* [r1737] cleaned the mblem tree big time
+	* cleaned the mblem tree big time
 
 2007-10-25 21:10  antalb
 
-	* [r1731] turned debugging off; finalized version 0.04
+	* turned debugging off; finalized version 0.04
 
 2007-10-25 21:06  antalb
 
-	* [r1730] repaired major errors with prefix "ge"/"be"
+	* repaired major errors with prefix "ge"/"be"
 
 2007-10-25 20:19  antalb
 
-	* [r1728] corrected a few past participle cases (credits to Lieve
-	  Macken)
+	* corrected a few past participle cases (credits to Lieve Macken)
 
 2007-10-25 19:46  antalb
 
-	* [r1726] repaired mblem error with words longer than 20 chars
+	* repaired mblem error with words longer than 20 chars
 
 2007-10-25 19:24  antalb
 
-	* [r1725] repaired "onze - onze" -> "onze - ons" lemmatization
-	  (thanks to Lieve Macken)
+	* repaired "onze - onze" -> "onze - ons" lemmatization (thanks to
+	  Lieve Macken)
 
 2007-10-16 15:22  sloot
 
-	* [r1722] something to do ;)
+	* something to do ;)
 
 2007-10-16 15:09  sloot
 
-	* [r1720] cleaned
+	* cleaned
 
 2007-10-16 15:09  sloot
 
-	* [r1719] the default for --with-mbt and --with-timbl is now de
-	  value of --prefix
+	* the default for --with-mbt and --with-timbl is now de value of
+	  --prefix
 
 2007-10-16 12:52  sloot
 
-	* [r1718] hmm
+	* hmm
 
 2007-10-16 12:51  sloot
 
-	* [r1717] moved config files
+	* moved config files
 
 2007-10-16 12:50  sloot
 
-	* [r1716] and more config stuff moved
+	* and more config stuff moved
 
 2007-10-16 12:48  sloot
 
-	* [r1715] reshuffled config stuff. Should all end up in ./config
+	* reshuffled config stuff. Should all end up in ./config
 
 2007-10-16 11:29  sloot
 
-	* [r1714] added -c option to specify location of config files.
-	  Default = ./config/
+	* added -c option to specify location of config files. Default =
+	  ./config/
 	  moved cgn data to config dir
 
 2007-10-16 09:02  sloot
 
-	* [r1713] removed unused file
+	* removed unused file
 	  changed example call of Tadpole
 
 2007-10-16 08:52  sloot
 
-	* [r1712] moved config files to convig dir
+	* moved config files to convig dir
 	  removed braindead calls to prefixWithAbsolutePath()
 
 2007-10-15 13:00  sloot
 
-	* [r1711] use package VERSION
+	* use package VERSION
 
 2007-10-10 06:43  sloot
 
-	* [r1704] forgotten
+	* forgotten
 
 2007-10-09 14:39  sloot
 
-	* [r1703] ok, it works!
+	* ok, it works!
 
 2007-10-09 14:07  sloot
 
-	* [r1702] mwah
+	* mwah
 
 2007-10-09 14:06  sloot
 
-	* [r1701] updated
+	* updated
 
 2007-10-09 14:04  sloot
 
-	* [r1700] cleanup CVS
+	* cleanup CVS
 
 2007-10-09 14:01  sloot
 
-	* [r1699] fixed (but I don't like it)
+	* fixed (but I don't like it)
 
 2007-10-09 13:44  sloot
 
-	* [r1698] almost there
+	* almost there
 
 2007-10-09 13:39  sloot
 
-	* [r1697] and more
+	* and more
 
 2007-10-09 13:38  sloot
 
-	* [r1696] new files
+	* new files
 
 2007-10-09 13:37  sloot
 
-	* [r1695] new files for Package
+	* new files for Package
 
 2007-10-09 13:35  sloot
 
-	* [r1694] added
+	* added
 
 2007-10-09 13:35  sloot
 
-	* [r1693] removed
+	* removed
 
 2007-10-08 20:10  antalb
 
-	* [r1685] altered Makefile to go with new Timbl and Mbt setup;
-	  release should be
+	* altered Makefile to go with new Timbl and Mbt setup; release
+	  should be
 	  simultaneous!
 
 2007-10-08 07:12  antalb
 
-	* [r1681] better handling of mismatch in CGN/CELEX tags in words at
-	  start of sentence
+	* better handling of mismatch in CGN/CELEX tags in words at start
+	  of sentence
 
 2007-10-07 22:06  antalb
 
-	* [r1680] new mblem tree file
+	* new mblem tree file
 
 2007-10-07 19:18  antalb
 
-	* [r1678] resolved terrible error in handling past participles
+	* resolved terrible error in handling past participles
 
 2007-10-07 08:22  antalb
 
-	* [r1677] resolved one more incorrect tag
+	* resolved one more incorrect tag
 
 2007-10-05 21:18  antalb
 
-	* [r1676] resolved + in line again
+	* resolved + in line again
 
 2007-10-04 18:51  antalb
 
-	* [r1675] repaired empty line problem
+	* repaired empty line problem
 
 2007-10-03 17:47  antalb
 
-	* [r1674] avoided URL cleanup procedure, which ate "+" and "%",
-	  causing segfaults when
+	* avoided URL cleanup procedure, which ate "+" and "%", causing
+	  segfaults when
 	  a sentence contained only one "+" or "%".
 
 2007-10-01 20:34  antalb
 
-	* [r1649] added intended handling of sequences of proper names not
-	  in the fixed MWU
+	* added intended handling of sequences of proper names not in the
+	  fixed MWU
 	  list
 
 2007-10-01 18:51  antalb
 
-	* [r1648] repaired % issue. No more checking for hexadecimal
-	  strings.
+	* repaired % issue. No more checking for hexadecimal strings.
 
 2007-10-01 16:10  antalb
 
-	* [r1647] updated the tagger
+	* updated the tagger
 
 2007-10-01 09:56  antalb
 
-	* [r1645] new updated tagger
+	* new updated tagger
 
 2007-10-01 07:53  antalb
 
-	* [r1643] remove .tok and .lin files after processing
+	* remove .tok and .lin files after processing
 
 2007-09-30 22:22  antalb
 
-	* [r1642] updated README to 0.03 and added Ko as programmer
+	* updated README to 0.03 and added Ko as programmer
 
 2007-09-30 21:59  antalb
 
-	* [r1641] repaired some serious errors in mblem, causing mblem to
-	  match with the
+	* repaired some serious errors in mblem, causing mblem to match
+	  with the
 	  incorrect tag
 
 2007-09-30 20:07  antalb
 
-	* [r1640] new mblem.tree
+	* new mblem.tree
 
 2007-09-15 17:59  antalb
 
-	* [r1627] set the right debug options and fixed MWUs
+	* set the right debug options and fixed MWUs
 
 2007-08-20 17:24  antalb
 
-	* [r1596] adapted the README on Erik TKS's suggestions
+	* adapted the README on Erik TKS's suggestions
 
 2007-08-14 12:55  sloot
 
-	* [r1595] removed unused variable.
+	* removed unused variable.
 	  set DEBUG = 0
 
 2007-08-14 12:44  sloot
 
-	* [r1594] change
+	* change
 
 2007-08-14 08:34  sloot
 
-	* [r1593] fixed bug in debugging output SIC
+	* fixed bug in debugging output SIC
 
 2007-08-13 15:49  sloot
 
-	* [r1592] small cleanup
+	* small cleanup
 
 2007-08-06 10:04  sloot
 
-	* [r1573] split up in more leaner/meaner functions
+	* split up in more leaner/meaner functions
 
 2007-08-04 22:33  antalb
 
-	* [r1572] moved mbma.data to background data Tadpole tree
+	* moved mbma.data to background data Tadpole tree
 
 2007-08-04 22:32  antalb
 
-	* [r1571] removed the mbt main file to the background data Tadpole
-	  tree
+	* removed the mbt main file to the background data Tadpole tree
 
 2007-07-31 14:29  sloot
 
-	* [r1570] gcc is the default
+	* gcc is the default
 
 2007-07-31 14:27  sloot
 
-	* [r1569] added lines for icpc + openmp
+	* added lines for icpc + openmp
 
 2007-07-31 14:19  sloot
 
-	* [r1568] parallel usion openmp (when available)
+	* parallel usion openmp (when available)
 
 2007-07-31 14:11  sloot
 
-	* [r1567] phew
+	* phew
 
 2007-07-31 13:24  sloot
 
-	* [r1566] new omp attempt
+	* new omp attempt
 
 2007-07-31 12:54  sloot
 
-	* [r1565] attempt to use a bit of openmp
+	* attempt to use a bit of openmp
 
 2007-07-31 10:33  sloot
 
-	* [r1564] damn
+	* damn
 
 2007-07-31 10:25  sloot
 
-	* [r1563] getting closer
+	* getting closer
 
 2007-07-31 09:24  sloot
 
-	* [r1562] not used at all
+	* not used at all
 
 2007-07-31 08:55  sloot
 
-	* [r1561] 64 bits fix
+	* 64 bits fix
 
 2007-07-31 08:55  sloot
 
-	* [r1560] more C++ than ever
+	* more C++ than ever
 
 2007-07-31 07:34  sloot
 
-	* [r1559] small change
+	* small change
 
 2007-07-31 07:34  sloot
 
-	* [r1558] removed spurious ';'
+	* removed spurious ';'
 
 2007-07-30 15:33  sloot
 
-	* [r1557] more 64 bit stuff
+	* more 64 bit stuff
 
 2007-07-30 15:22  sloot
 
-	* [r1556] one more hiding resolved
+	* one more hiding resolved
 
 2007-07-30 15:19  sloot
 
-	* [r1555] getting closer
+	* getting closer
 
 2007-07-30 15:06  sloot
 
-	* [r1554] 64 bit fix
+	* 64 bit fix
 
 2007-07-30 15:04  sloot
 
-	* [r1553] and more
+	* and more
 
 2007-07-30 14:26  sloot
 
-	* [r1552] 64 bit's stuff
+	* 64 bit's stuff
 
 2007-07-30 14:15  sloot
 
-	* [r1551] and more
+	* and more
 
 2007-07-30 14:02  sloot
 
-	* [r1550] al lot of C ==> C++ stuff
+	* al lot of C ==> C++ stuff
 
 2007-07-30 09:57  sloot
 
-	* [r1549] next step
+	* next step
 
 2007-07-25 15:13  sloot
 
-	* [r1548] gross attempt to split in some usable parts.
+	* gross attempt to split in some usable parts.
 	  more C++ also....
 
 2007-07-24 14:17  sloot
 
-	* [r1547] more improvements. difficult because of bug in original!
+	* more improvements. difficult because of bug in original!
 
 2007-07-23 16:12  sloot
 
-	* [r1546] next step
+	* next step
 
 2007-07-23 15:35  sloot
 
-	* [r1545] a lot of cleanup. More to do!
+	* a lot of cleanup. More to do!
 
 2007-07-17 14:58  sloot
 
-	* [r1544] try to revert
+	* try to revert
 
 2007-07-17 14:24  sloot
 
-	* [r1543] 64 bits adaptations, dumps CORE!64 bits adaptations,
-	  dumps CORE!64 bits adaptations, dumps CORE!64 bits adaptations,
-	  dumps CORE!
+	* 64 bits adaptations, dumps CORE!64 bits adaptations, dumps
+	  CORE!64 bits adaptations, dumps CORE!64 bits adaptations, dumps
+	  CORE!
 
 2007-07-17 13:58  sloot
 
-	* [r1542] satisfy Intel compiler
+	* satisfy Intel compiler
 
 2007-07-17 13:55  sloot
 
-	* [r1541] 64 bits fix
+	* 64 bits fix
 
 2007-07-17 13:46  sloot
 
-	* [r1540] more 64 bit stuff
+	* more 64 bit stuff
 
 2007-07-17 13:14  sloot
 
-	* [r1539] try to make it 64 bit clean
+	* try to make it 64 bit clean
 
 2007-07-16 15:27  sloot
 
-	* [r1538] and more
+	* and more
 
 2007-07-16 15:21  sloot
 
-	* [r1537] start to satisfy Intel compiler
+	* start to satisfy Intel compiler
 
 2007-07-13 16:56  antalb
 
-	* [r1529] fixed for Darwin
+	* fixed for Darwin
 
 2007-07-12 11:23  antalb
 
-	* [r1528] added GPL stuff to tokenize.pl and linetokenize.c
+	* added GPL stuff to tokenize.pl and linetokenize.c
 
 2007-07-12 09:54  antalb
 
-	* [r1527] added README
+	* added README
 
 2007-07-12 09:12  antalb
 
-	* [r1526] updated code with version number (0.02 to start with)
+	* updated code with version number (0.02 to start with)
 
 2007-07-12 08:33  antalb
 
-	* [r1525] *** empty log message ***
+	* *** empty log message ***
 
 2007-07-12 08:19  antalb
 
-	* [r1524] changed Makefile to also compile Tokenizer/linetokenize
+	* changed Makefile to also compile Tokenizer/linetokenize
 
 2007-07-06 12:45  antalb
 
-	* [r1484] changed mblem tree
+	* changed mblem tree
 
 2007-07-04 14:09  antalb
 
-	* [r1482] updated GPL info, added GPL 3 license text (in file
-	  COPYING)
+	* updated GPL info, added GPL 3 license text (in file COPYING)
 
 2007-07-04 11:17  antalb
 
-	* [r1481] entered GPL notices
+	* entered GPL notices
 
 2007-07-03 21:44  antalb
 
-	* [r1480] *** empty log message ***
+	* *** empty log message ***
 
 2007-06-18 21:37  antalb
 
-	* [r1440] changed all internal references from ILKWrapper to
-	  Tadpole;
+	* changed all internal references from ILKWrapper to Tadpole;
 	  Tadpole now builds.
 
 2007-06-18 21:30  antalb
 
-	* [r1439] renamed ILKWrapper to Tadpole
+	* renamed ILKWrapper to Tadpole
 
 2007-06-18 21:11  antalb
 
-	* [r1436] Initial revision
+	* Initial revision
 

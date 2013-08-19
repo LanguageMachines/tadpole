@@ -101,6 +101,14 @@ PKG_CHECK_MODULES([timbl], [timbl >= 6.3.1] )
 CXXFLAGS="$CXXFLAGS $timbl_CFLAGS"
 LIBS="$LIBS $timbl_LIBS"
 
+AC_ARG_WITH(ticcutils,
+       [  --with-ticcutils=DIR       use ticcutils installed in <DIR>],
+       [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$withval/lib/pkgconfig"],
+       [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$prefix/lib/pkgconfig"])
+PKG_CHECK_MODULES([ticcutils], [ticcutils >= 0.5] )
+CXXFLAGS="$CXXFLAGS $ticcutils_CFLAGS"
+LIBS="$LIBS $ticcutils_LIBS"
+
 AC_ARG_WITH(timblserver,
        [  --with-timblserver=DIR     use timblserver installed in <DIR>],
        [PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$withval/lib/pkgconfig"],
