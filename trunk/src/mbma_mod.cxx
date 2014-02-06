@@ -93,7 +93,7 @@ namespace Mbma {
 	int itmp;
 	sscanf(SetBuffer, "m %d", &itmp);
 	switch ( itmp ){
-	case 0: mode = normalMode;
+	case 0: mode = daringMode;
 	  break;
 	case 1: mode = daringMode;
 	  break;
@@ -1011,9 +1011,11 @@ namespace Mbma {
       }
 
       string affixleft;
-      if (mode==daringMode)
+      if (mode==daringMode){
+	cout << "Daring!" << endl;
 	Step3( output, affixleft );
-      if (mbaDebug){
+      }
+      if (true){
 	cout << "intermediate analysis 3: " << output;
 	cout << endl;
       }
